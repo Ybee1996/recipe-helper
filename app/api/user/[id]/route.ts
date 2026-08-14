@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { getRecipe } from "@/lib/recipes";
+import { getRecipe, isProtein } from "@/lib/recipes";
 import type { Ingredient, Step, UserRecipeOverlay } from "@/lib/types";
 import { getOverlay, patchOverlay } from "@/lib/user-store";
 
@@ -83,6 +83,13 @@ export async function PATCH(
     patch.steps = body.steps
       .filter((s) => s.title.trim() || s.text.trim())
       .map((s, i) => ({ n: i + 1, title: s.title, text: s.text }));
+  }
+
+  if ("protein" in body) {
+    if (!isProtein(body.protein)) {
+      return NextResponse.json({ error: "Invalid protein" }, { status: 400 });
+    }
+    patch.protein = body.protein;
   }
 
   const overlay = await patchOverlay(id, patch);

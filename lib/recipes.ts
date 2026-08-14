@@ -32,8 +32,10 @@ export function slugId(text: string, prefix = "web"): string {
   return `${prefix}-${slug}`;
 }
 
-export function toStoredData(recipe: Recipe): Omit<Recipe, "rating" | "note"> {
-  const { rating: _rating, note: _note, ...data } = recipe;
+export function toStoredData(
+  recipe: Recipe,
+): Omit<Recipe, "rating" | "note" | "imageUrl"> {
+  const { rating: _rating, note: _note, imageUrl: _imageUrl, ...data } = recipe;
   return data;
 }
 
@@ -43,6 +45,8 @@ export function applyOverlay(recipe: Recipe, overlay?: UserRecipeOverlay): Recip
     ...recipe,
     rating: overlay.rating ?? null,
     note: overlay.note ?? null,
+    imageUrl: overlay.imageUrl ?? null,
+    protein: overlay.protein ?? recipe.protein,
     ingredients: overlay.ingredients ?? recipe.ingredients,
     pantry: overlay.pantry ?? recipe.pantry,
     steps: overlay.steps ?? recipe.steps,

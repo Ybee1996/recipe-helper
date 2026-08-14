@@ -1,4 +1,5 @@
-import type { Ingredient, Step, UserRecipeOverlay } from "./types";
+import type { Ingredient, Protein, Step, UserRecipeOverlay } from "./types";
+import { PROTEINS } from "./types";
 import { getSql } from "./db";
 
 export type OverlayMap = Record<string, UserRecipeOverlay>;
@@ -37,6 +38,11 @@ export function parseOverlay(value: unknown): UserRecipeOverlay | null {
   if (raw.note === null) overlay.note = null;
   else if (typeof raw.note === "string") overlay.note = raw.note;
 
+  if (raw.imageUrl === null) overlay.imageUrl = null;
+  else if (typeof raw.imageUrl === "string" && /^https?:\/\//.test(raw.imageUrl)) {
+    overlay.imageUrl = raw.imageUrl;
+  }
+
   if (Array.isArray(raw.ingredients) && raw.ingredients.every(isIngredient)) {
     overlay.ingredients = raw.ingredients;
   }
@@ -46,6 +52,12 @@ export function parseOverlay(value: unknown): UserRecipeOverlay | null {
   if (Array.isArray(raw.steps) && raw.steps.every(isStep)) {
     overlay.steps = raw.steps.map((s, i) => ({ ...s, n: i + 1 }));
   }
+  if (
+    typeof raw.protein === "string" &&
+    (PROTEINS as readonly string[]).includes(raw.protein)
+  ) {
+    overlay.protein = raw.protein as Protein;
+  }
   if (typeof raw.updatedAt === "string") overlay.updatedAt = raw.updatedAt;
   return overlay;
 }
@@ -54,9 +66,11 @@ export function overlayIsEmpty(overlay: UserRecipeOverlay): boolean {
   return (
     overlay.rating == null &&
     !overlay.note &&
+    !overlay.imageUrl &&
     overlay.ingredients === undefined &&
     overlay.pantry === undefined &&
-    overlay.steps === undefined
+    overlay.steps === undefined &&
+    overlay.protein === undefined
   );
 }
 
@@ -105,17 +119,35 @@ export async function patchOverlay(
     if (patch.note === null || patch.note === "") delete next.note;
     else next.note = patch.note;
   }
+  if ("imageUrl" in patch) {
+    if (patch.imageUrl === null || patch.imageUrl === "") delete next.imageUrl;
+    else next.imageUrl = patch.imageUrl;
+  }
   if ("ingredients" in patch) next.ingredients = patch.ingredients;
   if ("pantry" in patch) next.pantry = patch.pantry;
   if ("steps" in patch) {
     next.steps = (patch.steps ?? []).map((s, i) => ({ ...s, n: i + 1 }));
   }
+  if ("protein" in patch) {
+    if (patch.protein === undefined) delete next.protein;
+    else next.protein = patch.protein;
+  }
 
   const stored = overlayIsEmpty(next) ? {} : next;
-  await sql`
-    UPDATE recipes
-    SET overlay = ${JSON.stringify(stored)}::jsonb, updated_at = now()
-    WHERE id = ${id}
-  `;
+  if ("protein" in patch && patch.protein) {
+    await sql`
+      UPDATE recipes
+      SET overlay = ${JSON.stringify(stored)}::jsonb,
+          protein = ${patch.protein},
+          updated_at = now()
+      WHERE id = ${id}
+    `;
+  } else {
+    await sql`
+      UPDATE recipes
+      SET overlay = ${JSON.stringify(stored)}::jsonb, updated_at = now()
+      WHERE id = ${id}
+    `;
+  }
   return overlayIsEmpty(next) ? {} : next;
 }

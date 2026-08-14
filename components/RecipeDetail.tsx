@@ -9,12 +9,13 @@ import {
   type ListedIngredient,
 } from "@/components/EditableIngredients";
 import { EditableSteps } from "@/components/EditableSteps";
+import { RecipeImage } from "@/components/RecipeImage";
 import { RecipeNote } from "@/components/RecipeNote";
 import { SourceRecipeLink } from "@/components/SourceRecipeLink";
 import { StarRating } from "@/components/StarRating";
 import { saveOverlay } from "@/lib/save-overlay";
-import type { Recipe, Step } from "@/lib/types";
-import { ALLERGEN_LABELS, PROTEIN_LABELS } from "@/lib/types";
+import type { Protein, Recipe, Step } from "@/lib/types";
+import { ALLERGEN_LABELS, PROTEIN_LABELS, PROTEINS } from "@/lib/types";
 
 function listedFrom(recipe: Recipe): ListedIngredient[] {
   return [
@@ -32,6 +33,8 @@ export function RecipeDetail({ recipe }: { recipe: Recipe }) {
   const [checked, setChecked] = useState<Set<string>>(new Set());
   const [rating, setRating] = useState<number | null>(recipe.rating ?? null);
   const [note, setNote] = useState<string | null>(recipe.note ?? null);
+  const [imageUrl, setImageUrl] = useState<string | null>(recipe.imageUrl ?? null);
+  const [protein, setProtein] = useState<Protein>(recipe.protein);
   const [items, setItems] = useState<ListedIngredient[]>(() => listedFrom(recipe));
   const [steps, setSteps] = useState<Step[]>(recipe.steps);
   const [editingIngredients, setEditingIngredients] = useState(false);
@@ -41,9 +44,15 @@ export function RecipeDetail({ recipe }: { recipe: Recipe }) {
   const skipIngredientSave = useRef(true);
   const skipStepSave = useRef(true);
 
+  function handleImageChange(url: string | null) {
+    setImageUrl(url);
+    router.refresh();
+  }
+
   useEffect(() => {
     setRating(recipe.rating ?? null);
     setNote(recipe.note ?? null);
+    setImageUrl(recipe.imageUrl ?? null);
     setItems(listedFrom(recipe));
     setSteps(recipe.steps);
     setEditingIngredients(false);
@@ -109,13 +118,56 @@ export function RecipeDetail({ recipe }: { recipe: Recipe }) {
         >
           {recipe.title}
         </h1>
-        {recipe.sourceUrl ? <SourceRecipeLink url={recipe.sourceUrl} /> : null}
+        <div className="mt-1 flex shrink-0 items-center">
+          {!imageUrl ? (
+            <RecipeImage
+              recipeId={recipe.id}
+              imageUrl={imageUrl}
+              onChange={handleImageChange}
+              onError={setError}
+            />
+          ) : null}
+          {recipe.sourceUrl ? <SourceRecipeLink url={recipe.sourceUrl} /> : null}
+        </div>
       </div>
 
-      <div className="mt-3 flex flex-wrap gap-2">
-        <span className="rounded-full bg-[var(--chip)] px-3 py-1 text-xs font-semibold uppercase tracking-wide">
-          {PROTEIN_LABELS[recipe.protein]}
-        </span>
+      {imageUrl ? (
+        <RecipeImage
+          recipeId={recipe.id}
+          imageUrl={imageUrl}
+          onChange={handleImageChange}
+          onError={setError}
+        />
+      ) : null}
+
+      <fieldset className="mt-3">
+        <legend className="sr-only">Protein category</legend>
+        <div className="flex flex-wrap gap-2">
+          {PROTEINS.map((p) => {
+            const on = protein === p;
+            return (
+              <button
+                key={p}
+                type="button"
+                onClick={() => {
+                  if (p === protein) return;
+                  setProtein(p);
+                  void persist({ protein: p });
+                }}
+                className={`rounded-full px-3 py-1 text-xs font-semibold uppercase tracking-wide ${
+                  on
+                    ? "bg-[var(--ink)] text-[var(--paper)]"
+                    : "bg-[var(--chip)] text-[var(--ink)]"
+                }`}
+              >
+                {PROTEIN_LABELS[p]}
+              </button>
+            );
+          })}
+        </div>
+      </fieldset>
+
+      <div className="mt-2 flex flex-wrap gap-2">
         {recipe.highProtein && (
           <span className="rounded-full bg-[var(--sage)] px-3 py-1 text-xs font-semibold uppercase tracking-wide text-white">
             High protein

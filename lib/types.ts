@@ -71,12 +71,15 @@ export interface Recipe {
   pdf?: { file: string; page: number };
   rating?: number | null;
   note?: string | null;
+  imageUrl?: string | null;
 }
 
 /** Personal edits stored separately so PDF ingest never overwrites them. */
 export interface UserRecipeOverlay {
   rating?: number | null;
   note?: string | null;
+  imageUrl?: string | null;
+  protein?: Protein;
   ingredients?: Ingredient[];
   pantry?: Ingredient[];
   steps?: Step[];
