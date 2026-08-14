@@ -1,0 +1,446 @@
+[
+  {
+    "id": "hf-beef-05",
+    "title": "Cajun Beef and Bean Tacos",
+    "source": "hellofresh",
+    "protein": "beef",
+    "cookTimeMin": null,
+    "servings": 2,
+    "tags": ["tacos", "cajun", "mexican"],
+    "allergens": ["milk", "gluten", "sulphites"],
+    "ingredients": [
+      {"name": "Mature Cheddar Cheese", "qty2": "45g", "qty3": "60g", "qty4": "90g"},
+      {"name": "Garlic Clove", "qty2": "1", "qty3": "2", "qty4": "2"},
+      {"name": "Baby Gem Lettuce", "qty2": "1", "qty3": "2", "qty4": "2"},
+      {"name": "Red Kidney Beans", "qty2": "1 carton", "qty3": "1½ cartons", "qty4": "2 cartons"},
+      {"name": "Beef Mince", "qty2": "240g", "qty3": "360g", "qty4": "480g"},
+      {"name": "Tomato Puree", "qty2": "1 sachet", "qty3": "2 sachets", "qty4": "2 sachets"},
+      {"name": "Cajun Spice Mix", "qty2": "10g", "qty3": "15g", "qty4": "20g"},
+      {"name": "Beef Stock Paste", "qty2": "1 sachet", "qty3": "1½ sachets", "qty4": "2 sachets"},
+      {"name": "Cider Vinegar", "qty2": "1 sachet", "qty3": "1½ sachets", "qty4": "2 sachets"},
+      {"name": "Plain Taco Tortilla", "qty2": "6", "qty3": "9", "qty4": "12"}
+    ],
+    "pantry": [
+      {"name": "Water for the Beef", "qty2": "75ml", "qty3": "100ml", "qty4": "150ml", "pantry": true},
+      {"name": "Olive Oil for the Dressing", "qty2": "1 tbsp", "qty3": "1½ tbsp", "qty4": "2 tbsp", "pantry": true},
+      {"name": "Sugar for the Dressing", "qty2": "¼ tsp", "qty3": "½ tsp", "qty4": "½ tsp", "pantry": true}
+    ],
+    "tools": ["grater", "garlic press", "bowl", "frying pan", "sieve", "baking tray"],
+    "steps": [
+      {"n": 1, "title": "Get Prepped", "text": "a) Grate the cheese. Peel and grate the garlic (or use a garlic press). b) Trim the baby gem, halve lengthways, then thinly slice. c) Drain and rinse the kidney beans in a sieve. Pop half the kidney beans into a bowl and mash with a fork until broken up."},
+      {"n": 2, "title": "Brown the Mince", "text": "a) Pop a frying pan on medium-high heat (no oil). b) Once hot, add the beef mince and fry until browned, 5-6 mins. c) Use a spoon to break it up as it cooks, then drain and discard any excess fat. IMPORTANT: Wash your hands and equipment after handling raw mince. The mince is cooked when no longer pink in the middle."},
+      {"n": 3, "title": "Add the Flavour", "text": "a) Reduce the heat to medium and add the garlic, tomato puree and Cajun spice mix to the beef (add less if you'd prefer things milder). b) Stir to combine, then cook until fragrant, 1-2 mins. c) Meanwhile, preheat your oven to 220°C/200°C fan/gas mark 7."},
+      {"n": 4, "title": "Bring on the Beans", "text": "a) Pour in the water for the beef (see pantry for amount) and add the beef stock paste. b) Add the kidney beans (whole and mashed). Stir until everything is evenly mixed and the sauce has thickened, 2-3 mins. c) Season with salt and pepper. Add a splash more water if it's a little dry."},
+      {"n": 5, "title": "Salad Time", "text": "a) Meanwhile, pour the cider vinegar, olive oil and sugar for the dressing into a medium bowl (see pantry for amounts). b) Season with salt and pepper, then mix together until combined. Add the lettuce to the dressing and toss well. c) Pop the tortillas onto a baking tray and into your oven to warm through, 1-2 mins."},
+      {"n": 6, "title": "Assemble your Tacos", "text": "a) Taste the beef and bean mix and season with salt and pepper if needed. b) Share the tortillas between your plates (3 per person) and top with spoonfuls of the beef and bean mix - as much as you'd like. c) Sprinkle over the cheese and top with some salad. d) Serve any remaining salad alongside. TIP: Tacos are best enjoyed eaten by hand - get stuck in! Enjoy!"}
+    ],
+    "nutrition": {"kcal": 810, "kj": 3389, "fat_g": 34.7, "sat_fat_g": 15.7, "carbs_g": 67.6, "sugars_g": 7.7, "protein_g": 46.9, "salt_g": 3.19},
+    "highProtein": true,
+    "pdf": {"file": "beef.pdf", "page": 5}
+  },
+  {
+    "id": "hf-beef-06",
+    "title": "Black Bean Beef Stir-Fry with Jasmine Rice",
+    "source": "hellofresh",
+    "protein": "beef",
+    "cookTimeMin": null,
+    "servings": 2,
+    "tags": ["stir-fry", "chinese", "rice"],
+    "allergens": ["peanut", "soy"],
+    "ingredients": [
+      {"name": "Jasmine Rice", "qty2": "150g", "qty3": "225g", "qty4": "300g"},
+      {"name": "Green Beans", "qty2": "150g", "qty3": "150g", "qty4": "200g"},
+      {"name": "Garlic Clove", "qty2": "1", "qty3": "2", "qty4": "2"},
+      {"name": "Onion", "qty2": "1", "qty3": "1", "qty4": "1"},
+      {"name": "Salted Peanuts", "qty2": "25g", "qty3": "40g", "qty4": "40g"},
+      {"name": "Beef Mince", "qty2": "240g", "qty3": "360g", "qty4": "480g"},
+      {"name": "Sugar Snap Peas", "qty2": "80g", "qty3": "150g", "qty4": "160g"},
+      {"name": "Black Bean Sauce", "qty2": "1 sachet", "qty3": "1½ sachets", "qty4": "2 sachets"}
+    ],
+    "pantry": [
+      {"name": "Water for the Sauce", "qty2": "50ml", "qty3": "75ml", "qty4": "100ml", "pantry": true}
+    ],
+    "tools": ["kettle", "saucepan", "lid", "sieve", "garlic press", "frying pan", "bowl"],
+    "steps": [
+      {"n": 1, "title": "Cook the Rice", "text": "a) Boil a full kettle. b) When boiling, pour the water into a large saucepan with ¼ tsp salt on high heat. Add the rice and cook for 12-13 mins. c) Drain in a sieve and pop back in the pan. Cover with a lid and leave to the side until ready to serve."},
+      {"n": 2, "title": "Prep Time", "text": "a) While the rice cooks, halve, peel and thinly slice the onion. b) Trim the green beans. c) Peel and grate the garlic (or use a garlic press). d) Roughly chop the peanuts."},
+      {"n": 3, "title": "Fry the Beef", "text": "a) Heat a drizzle of oil in a large frying pan on medium-high heat. b) When the oil is hot, add the beef mince and cook until browned, 5-6 mins. Use a spoon to break it up as it cooks, then drain and discard any excess fat. IMPORTANT: Wash your hands and equipment after handling raw mince. The mince is cooked when no longer pink in the middle. c) Season with salt and pepper."},
+      {"n": 4, "title": "Add the Veg", "text": "a) Add the garlic, onion and green beans to the beef and stir-fry until softened slightly, 5-6 mins. b) Add in the sugar snap peas and stir-fry for 1 min more."},
+      {"n": 5, "title": "Finish Up", "text": "a) Stir in the black bean sauce and water for the sauce (see pantry for amount), then bring to the boil. b) Cook until the sauce has thickened, 1 min, then remove from the heat. c) Taste and season with salt and pepper if needed."},
+      {"n": 6, "title": "Serve", "text": "a) Fluff up the rice with a fork, then share between your bowls. b) Top with the beef and veg stir-fry, making sure you get all the black bean sauce from the pan. c) Sprinkle over the peanuts to finish for those who'd like them. Enjoy!"}
+    ],
+    "nutrition": {"kcal": 807, "kj": 3379, "fat_g": 28.4, "sat_fat_g": 9.8, "carbs_g": 96.4, "sugars_g": 27.1, "protein_g": 39.0, "salt_g": 1.79},
+    "highProtein": true,
+    "pdf": {"file": "beef.pdf", "page": 6}
+  },
+  {
+    "id": "hf-beef-07",
+    "title": "Beef and Lentil Rogan Josh with Mango Chutney",
+    "source": "hellofresh",
+    "protein": "beef",
+    "cookTimeMin": null,
+    "servings": 2,
+    "tags": ["curry", "indian", "rice"],
+    "allergens": [],
+    "ingredients": [
+      {"name": "Onion", "qty2": "1", "qty3": "1", "qty4": "2"},
+      {"name": "Garlic Clove", "qty2": "2", "qty3": "3", "qty4": "4"},
+      {"name": "Beef Mince", "qty2": "240g", "qty3": "360g", "qty4": "480g"},
+      {"name": "Basmati Rice", "qty2": "150g", "qty3": "225g", "qty4": "300g"},
+      {"name": "Tomato Puree", "qty2": "1 sachet", "qty3": "2 sachets", "qty4": "2 sachets"},
+      {"name": "Rogan Josh Paste", "qty2": "1 sachet", "qty3": "2 sachets", "qty4": "2 sachets"},
+      {"name": "Red Split Lentils", "qty2": "50g", "qty3": "100g", "qty4": "100g"},
+      {"name": "Beef Stock Paste", "qty2": "10g", "qty3": "15g", "qty4": "20g"},
+      {"name": "Baby Spinach", "qty2": "100g", "qty3": "150g", "qty4": "200g"},
+      {"name": "Mango Chutney", "qty2": "1 sachet", "qty3": "2 sachets", "qty4": "2 sachets"}
+    ],
+    "pantry": [
+      {"name": "Water for the Rice", "qty2": "300ml", "qty3": "450ml", "qty4": "600ml", "pantry": true},
+      {"name": "Water for the Sauce", "qty2": "350ml", "qty3": "500ml", "qty4": "700ml", "pantry": true}
+    ],
+    "tools": ["garlic press", "frying pan", "measuring jug", "saucepan", "lid"],
+    "steps": [
+      {"n": 1, "title": "Get Prepped", "text": "a) Halve, peel and thinly slice the onion. Peel and grate the garlic (or use a garlic press). b) Heat a drizzle of oil in a frying pan on high heat. When the oil is hot, add the beef mince and cook until browned, 5-6 mins. Use a spoon to break it up as it cooks. Once browned, drain and discard any excess fat if needed. IMPORTANT: Wash your hands and equipment after handling raw mince. The mince is cooked when no longer pink in the middle."},
+      {"n": 2, "title": "Cook the Rice", "text": "a) Meanwhile, pour the cold water for the rice (see pantry for amount) into a medium saucepan with a tight-fitting lid. Stir in the rice and ¼ tsp salt, cover with the lid and bring to the boil on medium-high heat. b) Once boiling, turn the heat down to its lowest setting. Leave to cook for 10 mins, then remove the pan from the heat (still covered) and leave to the side for another 10 mins or until ready to serve (the rice will continue to cook in its own steam)."},
+      {"n": 3, "title": "Cook the Onion", "text": "a) Once the beef is browned, add the onion to the pan. Stir together and cook until softened, 4-5 mins, stirring occasionally. b) Add the garlic, tomato puree and rogan josh paste, stir together and cook for 1 min."},
+      {"n": 4, "title": "Simmer", "text": "a) Pour in the water for the sauce (see pantry for amount), red split lentils and beef stock paste. Season with salt and pepper, bring to the boil, then turn the heat down to medium. b) Simmer until the lentils are tender, 20-25 mins. Stir every few minutes to ensure the lentils are not sticking to the bottom of the pan."},
+      {"n": 5, "title": "Finish Off", "text": "a) Once the lentils are tender, add the spinach to the curry in handfuls and cook until wilted and piping hot, 2-3 mins. b) Stir in the mango chutney. TIP: Add a splash of water if it's a little dry. Taste and add salt and pepper if you feel it needs it."},
+      {"n": 6, "title": "Serve", "text": "a) Fluff up the rice with a fork and spoon into bowls. b) Top with the curry. Enjoy!"}
+    ],
+    "nutrition": {"kcal": 785, "kj": 3284, "fat_g": 25, "sat_fat_g": 9, "carbs_g": 95, "sugars_g": 19, "protein_g": 43, "salt_g": 2.37},
+    "highProtein": true,
+    "pdf": {"file": "beef.pdf", "page": 7}
+  },
+  {
+    "id": "hf-beef-08",
+    "title": "Mexican Style Beef Chilli with Rice",
+    "source": "hellofresh",
+    "protein": "beef",
+    "cookTimeMin": null,
+    "servings": 2,
+    "tags": ["chilli", "mexican", "rice"],
+    "allergens": ["milk", "sulphites"],
+    "ingredients": [
+      {"name": "Basmati Rice", "qty2": "150g", "qty3": "225g", "qty4": "300g"},
+      {"name": "Bell Pepper", "qty2": "1", "qty3": "2", "qty4": "2"},
+      {"name": "Garlic Clove", "qty2": "1", "qty3": "2", "qty4": "2"},
+      {"name": "Beef Mince", "qty2": "240g", "qty3": "360g", "qty4": "480g"},
+      {"name": "Red Kidney Beans", "qty2": "1 carton", "qty3": "1½ cartons", "qty4": "2 cartons"},
+      {"name": "Mexican Style Spice Mix", "qty2": "2 sachets", "qty3": "3 sachets", "qty4": "4 sachets"},
+      {"name": "Tomato Passata", "qty2": "1 carton", "qty3": "1 carton", "qty4": "2 cartons"},
+      {"name": "Red Wine Stock Paste", "qty2": "1 sachet", "qty3": "1½ sachets", "qty4": "2 sachets"},
+      {"name": "Soured Cream", "qty2": "75g", "qty3": "120g", "qty4": "150g"}
+    ],
+    "pantry": [
+      {"name": "Water for the Sauce", "qty2": "150ml", "qty3": "225ml", "qty4": "300ml", "pantry": true}
+    ],
+    "tools": ["kettle", "saucepan", "lid", "sieve", "frying pan", "garlic press"],
+    "steps": [
+      {"n": 1, "title": "Cook the Rice", "text": "a) Boil a full kettle. b) Pour the boiled water into a large saucepan with ¼ tsp salt on high heat. Add the rice and cook for 10-12 mins. c) Once cooked, drain in a sieve and pop back in the pan. Cover with a lid and leave to the side until ready to serve."},
+      {"n": 2, "title": "Fry the Beef", "text": "a) While the rice cooks, heat a large frying pan on medium-high heat (no oil). b) Once hot, add the beef mince and fry until browned, 5-6 mins. Use a spoon to break it up as it cooks, then drain and discard any excess fat. IMPORTANT: Wash your hands and equipment after handling raw mince."},
+      {"n": 3, "title": "Prep Time", "text": "a) Meanwhile, halve the pepper and discard the core and seeds. Slice into thin strips. b) Peel and grate the garlic (or use a garlic press). c) Drain and rinse the kidney beans in a sieve."},
+      {"n": 4, "title": "Add the Veg and Spice", "text": "a) Add the sliced pepper and garlic to the mince and stir-fry for 2 mins. b) Stir in the Mexican style spice mix, passata and red wine stock paste. c) Add the kidney beans and water for the sauce (see pantry for amount), then bring to the boil."},
+      {"n": 5, "title": "Simmer your Chilli", "text": "a) Lower the heat to medium and simmer until the sauce has thickened, 8-10 mins. Stir occasionally. IMPORTANT: The mince is cooked when no longer pink in the middle. b) Once thickened, season the chilli to taste with salt and pepper."},
+      {"n": 6, "title": "Serve", "text": "a) Fluff up the rice with a fork and share between your bowls. b) Serve the chilli on top and finish with a spoonful of soured cream. Enjoy!"}
+    ],
+    "nutrition": {"kcal": 817, "kj": 3417, "fat_g": 29.7, "sat_fat_g": 13.4, "carbs_g": 94.4, "sugars_g": 14.5, "protein_g": 46.6, "salt_g": 3.42},
+    "highProtein": true,
+    "pdf": {"file": "beef.pdf", "page": 8}
+  },
+  {
+    "id": "hf-beef-09",
+    "title": "Beef Pilaf with Mango Chutney",
+    "source": "hellofresh",
+    "protein": "beef",
+    "cookTimeMin": null,
+    "servings": 2,
+    "tags": ["pilaf", "curry", "indian", "rice"],
+    "allergens": [],
+    "ingredients": [
+      {"name": "Beef Mince", "qty2": "240g", "qty3": "360g", "qty4": "480g"},
+      {"name": "Red Onion", "qty2": "1", "qty3": "1", "qty4": "2"},
+      {"name": "Green Beans", "qty2": "80g", "qty3": "150g", "qty4": "150g"},
+      {"name": "Medium Tomato", "qty2": "2", "qty3": "3", "qty4": "4"},
+      {"name": "Garlic Clove", "qty2": "2", "qty3": "3", "qty4": "4"},
+      {"name": "Basmati Rice", "qty2": "150g", "qty3": "225g", "qty4": "300g"},
+      {"name": "Ground Turmeric", "qty2": "1 sachet", "qty3": "1½ sachets", "qty4": "2 sachets"},
+      {"name": "Rogan Josh Curry Paste", "qty2": "1 sachet", "qty3": "1½ sachets", "qty4": "2 sachets"},
+      {"name": "Chilli Flakes", "qty2": "1 pinch", "qty3": "2 pinches", "qty4": "2 pinches"},
+      {"name": "Beef Stock Paste", "qty2": "10g", "qty3": "15g", "qty4": "20g"},
+      {"name": "Coriander", "qty2": "1 bunch", "qty3": "1 bunch", "qty4": "1 bunch"},
+      {"name": "Mango Chutney", "qty2": "1 sachet", "qty3": "2 sachets", "qty4": "2 sachets"}
+    ],
+    "pantry": [
+      {"name": "Water for the Rice", "qty2": "300ml", "qty3": "450ml", "qty4": "600ml", "pantry": true},
+      {"name": "Water for the Beef", "qty2": "50ml", "qty3": "75ml", "qty4": "100ml", "pantry": true}
+    ],
+    "tools": ["kettle", "frying pan", "garlic press", "saucepan", "lid", "sieve"],
+    "steps": [
+      {"n": 1, "title": "Get Prepped", "text": "a) Boil a full kettle. b) Heat oil in a large frying pan on high heat. Brown the beef mince, 4-5 mins. c) Halve, peel and chop the red onion. Trim and chop the green beans into thirds. Cut the tomato into 1cm pieces. Peel and grate the garlic."},
+      {"n": 2, "title": "Cook the Rice and Beans", "text": "a) Boil the water for the rice in a saucepan with salt. Add the rice and cook for 10-12 mins. b) Add the green beans to the rice for the last 5 mins of cooking. c) Drain the rice and beans, return to the pan, and cover."},
+      {"n": 3, "title": "Add the Flavour", "text": "a) Drain fat from the beef pan. Add the onion and cook until softened, 3-4 mins. b) Lower the heat; add the garlic, turmeric, rogan josh curry paste and chilli flakes. Stir for 1 min."},
+      {"n": 4, "title": "Build the Sauce", "text": "a) Add the tomatoes, beef stock paste and water for the beef (see pantry for amount). Season with salt and pepper. b) Cover and simmer until the tomatoes soften, 6-8 mins."},
+      {"n": 5, "title": "Finish Up", "text": "a) Chop the coriander. b) Fold the rice and beans and half the coriander into the beef mixture."},
+      {"n": 6, "title": "Serve", "text": "a) Divide the beef pilaf between bowls. b) Top with the remaining coriander and mango chutney. Enjoy!"}
+    ],
+    "nutrition": {"kcal": 707, "kj": 2960, "fat_g": 26, "sat_fat_g": 9, "carbs_g": 84, "sugars_g": 18, "protein_g": 34, "salt_g": 2.25},
+    "highProtein": true,
+    "pdf": {"file": "beef.pdf", "page": 9}
+  },
+  {
+    "id": "hf-beef-10",
+    "title": "Teriyaki Beef Noodles",
+    "source": "hellofresh",
+    "protein": "beef",
+    "cookTimeMin": null,
+    "servings": 2,
+    "tags": ["noodles", "teriyaki", "stir-fry"],
+    "allergens": ["egg", "soy", "gluten"],
+    "ingredients": [
+      {"name": "Bell Pepper", "qty2": "1", "qty3": "2", "qty4": "2"},
+      {"name": "Green Beans", "qty2": "80g", "qty3": "150g", "qty4": "150g"},
+      {"name": "Egg Noodle Nest", "qty2": "2 nests", "qty3": "3 nests", "qty4": "4 nests"},
+      {"name": "Beef Mince", "qty2": "240g", "qty3": "360g", "qty4": "480g"},
+      {"name": "Ginger, Garlic & Lemongrass Puree", "qty2": "15g", "qty3": "22g", "qty4": "30g"},
+      {"name": "Teriyaki Sauce", "qty2": "150g", "qty3": "225g", "qty4": "300g"}
+    ],
+    "pantry": [],
+    "tools": ["kettle", "saucepan", "colander", "frying pan", "bowl"],
+    "steps": [
+      {"n": 1, "title": "Get Prepped", "text": "a) Boil a full kettle. b) Halve the pepper and discard the core and seeds. Slice into thin strips. c) Trim the green beans, then cut into thirds. d) Pour the boiled water into a large saucepan and bring back to the boil with ¼ tsp salt for the noodles."},
+      {"n": 2, "title": "Cook the Noodles and Beans", "text": "a) Add the noodles and green beans to the pan of water and bring back to the boil. b) Cook until tender, 4 mins. c) Once cooked, drain in a colander. TIP: Run the noodles and veg under cold water to stop them sticking together and to keep the veg vibrant."},
+      {"n": 3, "title": "Bring on the Beef", "text": "a) Meanwhile, heat a drizzle of oil in a frying pan on medium-high heat. b) Once hot, add the beef mince and pepper. Fry until browned, 5-6 mins. Use a spoon to break up the mince as it cooks, then drain and discard any excess fat. c) Season with salt and pepper. IMPORTANT: Wash your hands and equipment after handling raw mince. The mince is cooked when no longer pink in the middle."},
+      {"n": 4, "title": "Add the Flavour", "text": "a) Add the ginger, garlic & lemongrass puree to the beef. b) Cook, stirring, for 1 min."},
+      {"n": 5, "title": "Combine and Stir", "text": "a) Add the cooked noodles, green beans and teriyaki sauce to the beef. b) Cook, stirring, until piping hot, 1-2 mins. c) Add a splash of water if it's a little too thick. Taste and season with salt and pepper if needed."},
+      {"n": 6, "title": "Serve", "text": "a) Share the teriyaki noodles between your bowls. Enjoy!"}
+    ],
+    "nutrition": {"kcal": 673, "kj": 2816, "fat_g": 19.9, "sat_fat_g": 8.3, "carbs_g": 82.3, "sugars_g": 30.2, "protein_g": 38.3, "salt_g": 5.19},
+    "highProtein": true,
+    "pdf": {"file": "beef.pdf", "page": 10}
+  },
+  {
+    "id": "hf-beef-11",
+    "title": "Sticky Hoisin Beef with Basmati Rice",
+    "source": "hellofresh",
+    "protein": "beef",
+    "cookTimeMin": null,
+    "servings": 2,
+    "tags": ["stir-fry", "hoisin", "thai", "rice"],
+    "allergens": ["sesame", "soy", "gluten"],
+    "ingredients": [
+      {"name": "Basmati Rice", "qty2": "150g", "qty3": "225g", "qty4": "300g"},
+      {"name": "Red Onion", "qty2": "1", "qty3": "1", "qty4": "2"},
+      {"name": "Green Pepper", "qty2": "1", "qty3": "2", "qty4": "2"},
+      {"name": "Coriander", "qty2": "1 bunch", "qty3": "1 bunch", "qty4": "2 bunches"},
+      {"name": "Beef Steak Strips", "qty2": "240g", "qty3": "360g", "qty4": "480g"},
+      {"name": "Thai Style Spice Blend", "qty2": "1 pot", "qty3": "1 pot", "qty4": "2 pots"},
+      {"name": "Hoisin Sauce", "qty2": "64g", "qty3": "96g", "qty4": "128g"},
+      {"name": "Soy Sauce", "qty2": "25ml", "qty3": "38ml", "qty4": "50ml"}
+    ],
+    "pantry": [],
+    "tools": ["kettle", "saucepan", "lid", "sieve", "frying pan", "aluminium foil"],
+    "steps": [
+      {"n": 1, "title": "Cook the Rice", "text": "a) Boil a full kettle. b) When boiling, pour the water into a large saucepan with ¼ tsp salt on high heat. Add the rice and cook for 10-12 mins. c) When cooked, drain in a sieve and pop back in the pan. Cover with a lid and leave to the side until ready to serve."},
+      {"n": 2, "title": "Get Prepped", "text": "a) Meanwhile, halve, peel and thinly slice the red onion. b) Halve the pepper and discard the core and seeds. Slice into thin strips. c) Roughly chop the coriander (stalks and all)."},
+      {"n": 3, "title": "Fry the Beef", "text": "a) Heat a drizzle of oil in a large frying pan on high heat. b) When the oil is hot, add the beef strips and sprinkle over the Thai style spice blend (add less if you don't like heat). c) Stir-fry until browned, 1-2 mins. TIP: Fry in batches if necessary - you want the beef to brown, not stew. IMPORTANT: Wash your hands and equipment after handling raw meat. The beef is safe to eat when the outside is browned. d) Once browned, transfer the beef to a plate and cover with foil to keep warm."},
+      {"n": 4, "title": "Veg Time", "text": "a) Wipe out the pan and return to high heat with a drizzle of oil if needed. b) When hot, add the onion and pepper, then stir-fry until slightly softened, 2-3 mins. c) Lower the heat and stir in the hoisin sauce and soy sauce. Bring to a bubble, then remove from the heat."},
+      {"n": 5, "title": "Finish Up", "text": "a) Just before the rice is cooked, return the pan to medium heat and add the browned beef strips to the peppers and onion. b) Stir-fry until everything is piping hot. c) Remove from the heat, then stir through the coriander, reserving a little for garnishing."},
+      {"n": 6, "title": "Serve", "text": "a) Share the rice between your bowls and spoon your sticky beef on top. b) Sprinkle over the reserved coriander to finish. Enjoy!"}
+    ],
+    "nutrition": {"kcal": 531, "kj": 2223, "fat_g": 7.5, "sat_fat_g": 2.9, "carbs_g": 80.4, "sugars_g": 16.1, "protein_g": 34.8, "salt_g": 4.12},
+    "highProtein": true,
+    "pdf": {"file": "beef.pdf", "page": 11}
+  },
+  {
+    "id": "hf-beef-12",
+    "title": "Minced Beef and Pea Keema with Garlicky Naans",
+    "source": "hellofresh",
+    "protein": "beef",
+    "cookTimeMin": null,
+    "servings": 2,
+    "tags": ["keema", "curry", "indian", "naan"],
+    "allergens": ["tree_nut", "milk", "gluten"],
+    "ingredients": [
+      {"name": "Beef Mince", "qty2": "240g", "qty3": "360g", "qty4": "480g"},
+      {"name": "Onion", "qty2": "1", "qty3": "1", "qty4": "2"},
+      {"name": "Garlic Clove", "qty2": "1", "qty3": "2", "qty4": "3"},
+      {"name": "North Indian Style Spice Mix", "qty2": "2 sachets", "qty3": "2 sachets", "qty4": "4 sachets"},
+      {"name": "Tomato Passata", "qty2": "1 carton", "qty3": "1½ cartons", "qty4": "2 cartons"},
+      {"name": "Beef Stock Paste", "qty2": "10g", "qty3": "15g", "qty4": "20g"},
+      {"name": "Cashew Nuts", "qty2": "25g", "qty3": "40g", "qty4": "50g"},
+      {"name": "Plain Naan", "qty2": "2", "qty3": "3", "qty4": "4"},
+      {"name": "Peas", "qty2": "120g", "qty3": "180g", "qty4": "240g"}
+    ],
+    "pantry": [
+      {"name": "Water for the Sauce", "qty2": "150ml", "qty3": "225ml", "qty4": "300ml", "pantry": true},
+      {"name": "Olive Oil for the Bread", "qty2": "2 tbsp", "qty3": "3 tbsp", "qty4": "3 tbsp", "pantry": true}
+    ],
+    "tools": ["frying pan", "bowl", "baking tray", "garlic press"],
+    "steps": [
+      {"n": 1, "title": "Fry Time", "text": "a) Preheat your oven to 220°C/200°C fan/gas mark 7. Halve, peel and finely chop the onion. b) Heat a frying pan on medium-high heat. Once the pan is hot, add the beef mince and cook until browned, 4-5 mins. Use a spoon to break it up as it cooks, then drain and discard any excess fat. Season with salt and pepper. IMPORTANT: Wash your hands and equipment after handling raw mince."},
+      {"n": 2, "title": "Get Prepped", "text": "a) Once the mince has browned, add the onion to the pan and cook until softened, 4-5 mins. Stir occasionally. b) While it cooks, peel and grate the garlic (or use a garlic press)."},
+      {"n": 3, "title": "Simmer and Spice", "text": "a) Once the onion has softened, lower the heat to medium, add the North Indian spice mix and half the garlic. Stir-fry until fragrant, 1 min. b) Stir in the passata, beef stock paste and water for the sauce (see pantry for amount). Bring to the boil, then reduce the heat if necessary and simmer until the sauce has thickened, 5-6 mins. IMPORTANT: The mince is cooked when no longer pink in the middle."},
+      {"n": 4, "title": "Toast the Cashews", "text": "a) In the meantime, heat another small frying pan on medium heat (no oil). Once hot, add the cashews and dry-fry, stirring regularly, until lightly toasted, 1-2 mins. TIP: Watch them like a hawk as they can burn easily. Once toasted, transfer to a bowl and set aside."},
+      {"n": 5, "title": "Finish Up", "text": "a) In a small bowl, mix together the remaining garlic and the olive oil for the bread (see pantry for amount). Pop the naans onto a baking tray, drizzle over the garlic oil and put the tray onto the top shelf of your oven to warm through, 3-4 mins. b) Once the curry has thickened, stir in the peas. Simmer for 1-2 mins, then remove from the heat. Taste and add more salt and pepper if needed."},
+      {"n": 6, "title": "Serve", "text": "a) When everything is ready, share the minced beef and pea keema curry between your bowls. Scatter over the cashews. b) Cut the garlicky naans in half and serve them alongside for scooping. Enjoy!"}
+    ],
+    "nutrition": {"kcal": 806, "kj": 3371, "fat_g": 36.8, "sat_fat_g": 11.0, "carbs_g": 73.1, "sugars_g": 13.8, "protein_g": 42.4, "salt_g": 2.41},
+    "highProtein": true,
+    "pdf": {"file": "beef.pdf", "page": 12}
+  },
+  {
+    "id": "hf-beef-13",
+    "title": "Beef Keema Naans with Garlic Yoghurt",
+    "source": "hellofresh",
+    "protein": "beef",
+    "cookTimeMin": null,
+    "servings": 2,
+    "tags": ["keema", "curry", "indian", "naan"],
+    "allergens": ["milk", "gluten", "sulphites"],
+    "ingredients": [
+      {"name": "Baking Potato", "qty2": "1", "qty3": "2", "qty4": "2"},
+      {"name": "Garlic Clove", "qty2": "2", "qty3": "3", "qty4": "4"},
+      {"name": "Baby Gem Lettuce", "qty2": "1", "qty3": "2", "qty4": "2"},
+      {"name": "Red Wine Vinegar Dressing", "qty2": "1 tbsp", "qty3": "1½ tbsp", "qty4": "2 tbsp"},
+      {"name": "Beef Mince", "qty2": "240g", "qty3": "360g", "qty4": "480g"},
+      {"name": "Tomato Puree", "qty2": "1 sachet", "qty3": "2 sachets", "qty4": "2 sachets"},
+      {"name": "North Indian Style Spice Mix", "qty2": "2 sachets", "qty3": "3 sachets", "qty4": "4 sachets"},
+      {"name": "Beef Stock Paste", "qty2": "10g", "qty3": "15g", "qty4": "20g"},
+      {"name": "Mango Chutney", "qty2": "1 sachet", "qty3": "2 sachets", "qty4": "2 sachets"},
+      {"name": "Plain Naan", "qty2": "2", "qty3": "3", "qty4": "4"},
+      {"name": "Low Fat Natural Yoghurt", "qty2": "75g", "qty3": "100g", "qty4": "150g"}
+    ],
+    "pantry": [
+      {"name": "Water for the Sauce", "qty2": "100ml", "qty3": "150ml", "qty4": "200ml", "pantry": true}
+    ],
+    "tools": ["saucepan", "aluminium foil", "garlic press", "bowl", "frying pan", "kitchen scissors", "colander", "baking tray"],
+    "steps": [
+      {"n": 1, "title": "Cook the Potato", "text": "a) Preheat your oven to 220°C/200°C fan/gas mark 7. b) Bring a large saucepan of water to the boil with ½ tsp salt. c) Peel and chop the potato into 1cm chunks. d) When boiling, add the potato to the pan of water and cook until you can easily slip a knife through, 10-15 mins."},
+      {"n": 2, "title": "Get Prepped", "text": "a) Meanwhile, pop 1 garlic clove (unpeeled) into a small piece of foil with a drizzle of oil and scrunch to enclose it. Roast in the oven until soft, 10-12 mins. b) Peel and grate the remaining garlic (or use a garlic press). c) Trim the baby gem, halve lengthways, then thinly slice widthways. d) In a medium bowl, mix together the red wine vinegar and olive oil for the dressing (see ingredients for amount). Season with salt, pepper and a pinch of sugar, then set aside."},
+      {"n": 3, "title": "Fry the Beef", "text": "a) Heat a large frying pan on medium-high heat (no oil). b) Once the pan is hot, add the beef mince and cook until browned, 5-6 mins. Use a spoon to break it up as it cooks, then drain and discard any excess fat. IMPORTANT: Wash your hands and equipment after handling raw mince. The mince is cooked when no longer pink in the middle. c) Once the garlic has roasted and cooled, cut the end with scissors, squeeze it out of the skin and mash with a fork."},
+      {"n": 4, "title": "Make the Keema", "text": "a) When the mince is browned, stir in the grated garlic, tomato puree and North Indian style spice mix. Cook for 1 min. b) Stir in the beef stock paste and water for the sauce (see pantry for amount). Bring to the boil, then simmer until thickened, 3-4 mins. TIP: Add a splash of water if needed, but you don't want the mixture too wet or the naan will become soggy. c) When the potatoes are cooked, drain in a colander, then carefully add to the beef. Stir in the mango chutney. Season to taste."},
+      {"n": 5, "title": "Finishing Touches", "text": "a) Meanwhile, put the naans onto a baking tray. Sprinkle with a little water and pop them into the oven to warm through, 2-3 mins. b) Add the yoghurt to a small bowl and stir in the roasted garlic. Season with salt and pepper, then set aside. c) Add the baby gem to the bowl of dressing and toss to coat."},
+      {"n": 6, "title": "Serve", "text": "a) Share the naans between your plates. b) Top with the beef keema and a handful of salad. c) Finish with a dollop of garlic yoghurt. Enjoy!"}
+    ],
+    "nutrition": {"kcal": 801, "kj": 3350, "fat_g": 26.9, "sat_fat_g": 9.6, "carbs_g": 95.8, "sugars_g": 19.3, "protein_g": 41.5, "salt_g": 2.24},
+    "highProtein": true,
+    "pdf": {"file": "beef.pdf", "page": 13}
+  },
+  {
+    "id": "hf-beef-14",
+    "title": "Mexican Style Pork Meatballs with Rice",
+    "source": "hellofresh",
+    "protein": "pork",
+    "cookTimeMin": null,
+    "servings": 2,
+    "tags": ["meatballs", "mexican", "rice"],
+    "allergens": ["milk", "gluten"],
+    "ingredients": [
+      {"name": "Basmati Rice", "qty2": "150g", "qty3": "225g", "qty4": "300g"},
+      {"name": "Bell Pepper", "qty2": "1", "qty3": "2", "qty4": "2"},
+      {"name": "Garlic Clove", "qty2": "1", "qty3": "2", "qty4": "2"},
+      {"name": "Mature Cheddar Cheese", "qty2": "30g", "qty3": "45g", "qty4": "60g"},
+      {"name": "Panko Breadcrumbs", "qty2": "10g", "qty3": "15g", "qty4": "20g"},
+      {"name": "Pork Mince", "qty2": "240g", "qty3": "360g", "qty4": "480g"},
+      {"name": "Mexican Style Spice Mix", "qty2": "1 sachet", "qty3": "1 sachet", "qty4": "2 sachets"},
+      {"name": "Tomato Passata", "qty2": "1 carton", "qty3": "1½ cartons", "qty4": "2 cartons"},
+      {"name": "Chicken Stock Paste", "qty2": "10g", "qty3": "15g", "qty4": "20g"},
+      {"name": "Peas", "qty2": "120g", "qty3": "180g", "qty4": "240g"}
+    ],
+    "pantry": [
+      {"name": "Water for the Rice", "qty2": "300ml", "qty3": "450ml", "qty4": "600ml", "pantry": true},
+      {"name": "Salt for the Breadcrumbs", "qty2": "¼ tsp", "qty3": "½ tsp", "qty4": "¾ tsp", "pantry": true},
+      {"name": "Water for the Breadcrumbs", "qty2": "2 tbsp", "qty3": "3 tbsp", "qty4": "4 tbsp", "pantry": true},
+      {"name": "Sugar for the Sauce", "qty2": "¼ tsp", "qty3": "½ tsp", "qty4": "1 tsp", "pantry": true},
+      {"name": "Water for the Sauce", "qty2": "100ml", "qty3": "150ml", "qty4": "200ml", "pantry": true}
+    ],
+    "tools": ["saucepan", "lid", "garlic press", "grater", "bowl", "baking tray", "frying pan"],
+    "steps": [
+      {"n": 1, "title": "Cook the Rice", "text": "a) Preheat your oven to 220°C/200°C fan/gas mark 7. Pour the cold water for the rice (see pantry for amount) into a medium saucepan with a tight-fitting lid. Stir in the rice and ¼ tsp salt and bring to the boil. b) Once boiling, turn the heat down to medium and cover with the lid. Leave to cook for 10 mins, then remove from heat (still covered) and leave to the side for another 10 mins or until ready to serve."},
+      {"n": 2, "title": "Start the Prep", "text": "a) While the rice cooks, halve the pepper and discard the core and seeds. Slice into thin strips. b) Peel and grate the garlic (or use a garlic press). Grate the cheese. c) In a large bowl, combine the breadcrumbs, half the garlic, and the water and salt for the breadcrumbs (see pantry for amounts)."},
+      {"n": 3, "title": "Make your Meatballs", "text": "a) Add the pork mince to the bowl and season with pepper, then mix together with your hands. Roll the mince into even-sized balls, 4 per person. IMPORTANT: Wash your hands and equipment after handling raw mince."},
+      {"n": 4, "title": "Get Baking", "text": "a) Pop the meatballs and peppers onto a large baking tray and drizzle with oil. Bake on the top shelf until the peppers are soft and the meatballs are browned on the outside and cooked through, 12-15 mins. IMPORTANT: The meatballs are cooked when no longer pink in the middle."},
+      {"n": 5, "title": "Bring on the Spiced Sauce", "text": "a) Meanwhile, heat a drizzle of oil in a large frying pan on medium-high heat. Once hot, add the remaining garlic and Mexican style spice mix and cook for 30 secs. b) Stir in the passata, chicken stock paste, sugar and water for the sauce (see pantry for amounts). Bring to the boil, then lower the heat and simmer for 3-4 mins. c) When the meatballs and peppers are cooked, stir them into the sauce and simmer until thickened, 3-4 mins more. Add a splash of water if it gets too thick."},
+      {"n": 6, "title": "Finish and Serve", "text": "a) When everything is ready, add the peas to the rice and fluff it up using a fork, then share between your bowls. b) Spoon the meatballs and spiced tomato sauce over the top of the rice. Finish with a sprinkle of cheese. Enjoy!"}
+    ],
+    "nutrition": {"kcal": 706, "kj": 2956, "fat_g": 24.6, "sat_fat_g": 9.8, "carbs_g": 83.9, "sugars_g": 13.2, "protein_g": 38.1, "salt_g": 2.92},
+    "highProtein": true,
+    "pdf": {"file": "beef.pdf", "page": 14}
+  },
+  {
+    "id": "hf-beef-15",
+    "title": "Beef Ragu Penne with Cheesy Garlic Bread",
+    "source": "hellofresh",
+    "protein": "beef",
+    "cookTimeMin": null,
+    "servings": 2,
+    "tags": ["pasta", "ragu", "italian"],
+    "allergens": ["milk", "gluten", "sulphites"],
+    "ingredients": [
+      {"name": "Penne Pasta", "qty2": "180g", "qty3": "270g", "qty4": "360g"},
+      {"name": "Beef Mince", "qty2": "240g", "qty3": "360g", "qty4": "480g"},
+      {"name": "Garlic Clove", "qty2": "1", "qty3": "2", "qty4": "2"},
+      {"name": "Carrot", "qty2": "1", "qty3": "2", "qty4": "2"},
+      {"name": "Tomato Puree", "qty2": "1 sachet", "qty3": "1½ sachets", "qty4": "2 sachets"},
+      {"name": "Red Wine Stock Paste", "qty2": "1 sachet", "qty3": "1½ sachets", "qty4": "2 sachets"},
+      {"name": "Finely Chopped Tomatoes", "qty2": "1 carton", "qty3": "1½ cartons", "qty4": "2 cartons"},
+      {"name": "Italian Style Herbs", "qty2": "1 sachet", "qty3": "1 sachet", "qty4": "2 sachets"},
+      {"name": "Mature Cheddar Cheese", "qty2": "30g", "qty3": "40g", "qty4": "60g"},
+      {"name": "Ciabatta", "qty2": "1", "qty3": "1½", "qty4": "2"}
+    ],
+    "pantry": [
+      {"name": "Water for the Ragu", "qty2": "100ml", "qty3": "150ml", "qty4": "200ml", "pantry": true},
+      {"name": "Olive Oil for the Garlic Bread", "qty2": "1 tbsp", "qty3": "1½ tbsp", "qty4": "2 tbsp", "pantry": true}
+    ],
+    "tools": ["kettle", "saucepan", "colander", "frying pan", "garlic press", "grater", "baking tray"],
+    "steps": [
+      {"n": 1, "title": "Cook the Pasta", "text": "a) Preheat your grill to high. Fill and boil your kettle. b) Pour the boiled water into a large saucepan on high heat with ½ tsp salt. c) Add the penne and bring back to the boil. Cook until tender, 12 mins. d) Once cooked, drain in a colander and pop back into the pan. Drizzle with oil and stir through to stop it sticking together."},
+      {"n": 2, "title": "Get Frying", "text": "a) Meanwhile, heat a large frying pan on medium-high heat (no oil). b) Once hot, add the beef mince and fry until browned, 5-6 mins. Use a spoon to break it up as it cooks. IMPORTANT: Wash your hands and equipment after handling raw mince. c) While the beef cooks, peel and grate the garlic (or use a garlic press). Trim and coarsely grate the carrot (no need to peel). d) Drain and discard any excess fat from the beef, then season with salt and pepper."},
+      {"n": 3, "title": "Ragu Time", "text": "a) Add the carrot and half the garlic to the beef. Cook until the carrot has softened, stirring frequently, 2-3 mins. b) Stir in the tomato puree, red wine stock paste, chopped tomatoes, Italian style herbs and water for the ragu (see pantry for amount). Bring to a boil, then reduce to a simmer. c) Cook, stirring occasionally, until thickened, 10-12 mins. IMPORTANT: The beef is cooked when no longer pink in the middle."},
+      {"n": 4, "title": "Cheese Please", "text": "a) About 5 mins before everything is ready, grate the Cheddar cheese."},
+      {"n": 5, "title": "Make your Garlic Bread", "text": "a) Halve the ciabatta and lay onto a baking tray, cut-side up. b) Spread over the remaining garlic and drizzle with the olive oil for the garlic bread (see pantry for amount). c) Sprinkle over the cheese and grill on the top shelf of your oven until golden brown, 2-3 mins. TIP: Watch it carefully as it can burn easily."},
+      {"n": 6, "title": "Finish and Serve", "text": "a) When everything's ready, taste and season the beef ragu if needed. Reheat if necessary, then stir through the cooked penne. b) Share the penne ragu between your bowls. c) Serve with the cheesy garlic bread alongside. Enjoy!"}
+    ],
+    "nutrition": {"kcal": 946, "kj": 3959, "fat_g": 33.4, "sat_fat_g": 13.3, "carbs_g": 112.4, "sugars_g": 23.5, "protein_g": 50.4, "salt_g": 5.0},
+    "highProtein": true,
+    "pdf": {"file": "beef.pdf", "page": 15}
+  },
+  {
+    "id": "hf-beef-16",
+    "title": "Beef Penne Ragu with Cheesy Garlic Bread",
+    "source": "hellofresh",
+    "protein": "beef",
+    "cookTimeMin": null,
+    "servings": 2,
+    "tags": ["pasta", "ragu", "italian"],
+    "allergens": ["milk", "gluten", "sulphites"],
+    "ingredients": [
+      {"name": "Penne Pasta", "qty2": "180g", "qty3": "270g", "qty4": "360g"},
+      {"name": "Beef Mince", "qty2": "240g", "qty3": "360g", "qty4": "480g"},
+      {"name": "Garlic Clove", "qty2": "1", "qty3": "2", "qty4": "2"},
+      {"name": "Carrot", "qty2": "1", "qty3": "2", "qty4": "2"},
+      {"name": "Tomato Puree", "qty2": "1 sachet", "qty3": "1½ sachets", "qty4": "2 sachets"},
+      {"name": "Red Wine Stock Paste", "qty2": "1 sachet", "qty3": "1½ sachets", "qty4": "2 sachets"},
+      {"name": "Finely Chopped Tomatoes with Basil", "qty2": "1 carton", "qty3": "1½ cartons", "qty4": "2 cartons"},
+      {"name": "Italian Style Herbs", "qty2": "1 sachet", "qty3": "1 sachet", "qty4": "2 sachets"},
+      {"name": "Mature Cheddar Cheese", "qty2": "30g", "qty3": "40g", "qty4": "60g"},
+      {"name": "Ciabatta", "qty2": "1", "qty3": "1½", "qty4": "2"}
+    ],
+    "pantry": [
+      {"name": "Water for the Ragu", "qty2": "100ml", "qty3": "150ml", "qty4": "200ml", "pantry": true},
+      {"name": "Olive Oil for the Garlic Bread", "qty2": "1 tbsp", "qty3": "1½ tbsp", "qty4": "2 tbsp", "pantry": true}
+    ],
+    "tools": ["kettle", "saucepan", "colander", "frying pan", "garlic press", "grater", "baking tray"],
+    "steps": [
+      {"n": 1, "title": "Cook the Pasta", "text": "a) Preheat your grill to high. Fill and boil your kettle. b) Pour the boiled water into a large saucepan on high heat with ½ tsp salt. c) Add the penne and bring back to the boil. Cook until tender, 12 mins. d) Once cooked, drain in a colander and pop back into the pan. Drizzle with oil and stir through to stop it sticking together."},
+      {"n": 2, "title": "Get Frying", "text": "a) Meanwhile, heat a large frying pan on medium-high heat (no oil). b) Once hot, add the beef mince and fry until browned, 5-6 mins. Use a spoon to break it up as it cooks. IMPORTANT: Wash your hands and equipment after handling raw mince. c) While the beef cooks, peel and grate the garlic (or use a garlic press). Trim and coarsely grate the carrot (no need to peel). d) Drain and discard any excess fat from the beef, then season with salt and pepper."},
+      {"n": 3, "title": "Ragu Time", "text": "a) Add the carrot and half the garlic to the beef. Cook until the carrot has softened, stirring frequently, 2-3 mins. b) Stir in the tomato puree, red wine stock paste, chopped tomatoes, Italian style herbs and water for the ragu (see pantry for amount). Bring to a boil, then reduce to a simmer. c) Cook, stirring occasionally, until thickened, 10-12 mins. IMPORTANT: The beef is cooked when no longer pink in the middle."},
+      {"n": 4, "title": "Cheese Please", "text": "a) About 5 mins before everything is ready, grate the Cheddar cheese."},
+      {"n": 5, "title": "Make your Garlic Bread", "text": "a) Halve the ciabatta and lay onto a baking tray, cut-side up. b) Spread over the remaining garlic and drizzle with the olive oil for the garlic bread (see pantry for amount). c) Sprinkle over the cheese and grill on the top shelf of your oven until golden brown, 2-3 mins. TIP: Watch it carefully as it can burn easily."},
+      {"n": 6, "title": "Finish and Serve", "text": "a) When everything's ready, taste and season the beef ragu if needed. Reheat if necessary, then stir through the cooked penne. b) Share the penne ragu between your bowls. c) Serve with the cheesy garlic bread alongside. Enjoy!"}
+    ],
+    "nutrition": {"kcal": 946, "kj": 3939, "fat_g": 33.4, "sat_fat_g": 13.3, "carbs_g": 112.4, "sugars_g": 23.5, "protein_g": 50.4, "salt_g": 5.0},
+    "highProtein": true,
+    "pdf": {"file": "beef.pdf", "page": 16}
+  }
+]

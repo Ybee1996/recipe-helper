@@ -1,0 +1,51 @@
+import type { Metadata, Viewport } from "next";
+import { Fraunces, Nunito_Sans } from "next/font/google";
+import { BottomNav } from "@/components/BottomNav";
+import "./globals.css";
+
+const display = Fraunces({
+  subsets: ["latin"],
+  variable: "--font-display",
+});
+
+const sans = Nunito_Sans({
+  subsets: ["latin"],
+  variable: "--font-sans",
+});
+
+export const metadata: Metadata = {
+  title: "Recipe Box",
+  description: "Personal recipe search and cooking assistant",
+  appleWebApp: {
+    capable: true,
+    title: "Recipe Box",
+    statusBarStyle: "default",
+  },
+  manifest: "/manifest.webmanifest",
+};
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
+  viewportFit: "cover",
+  themeColor: "#f4efe6",
+};
+
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  return (
+    <html lang="en" className={`${display.variable} ${sans.variable}`}>
+      <body
+        className="font-[family-name:var(--font-sans)] antialiased"
+        style={{ fontFamily: "var(--font-sans), system-ui, sans-serif" }}
+      >
+        <div className="mx-auto min-h-dvh w-full max-w-lg pb-24">{children}</div>
+        <BottomNav />
+      </body>
+    </html>
+  );
+}

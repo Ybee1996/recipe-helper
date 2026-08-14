@@ -1,0 +1,489 @@
+[
+  {
+    "id": "hf-chicken-01",
+    "title": "Korma-Style Chicken Curry with Rice",
+    "source": "hellofresh",
+    "protein": "chicken",
+    "cookTimeMin": null,
+    "servings": 2,
+    "tags": ["curry", "indian"],
+    "allergens": ["mustard"],
+    "ingredients": [
+      {"name": "Basmati Rice", "qty2": "150g", "qty3": "225g", "qty4": "300g"},
+      {"name": "Onion", "qty2": "1", "qty3": "1", "qty4": "2"},
+      {"name": "Garlic Clove", "qty2": "1", "qty3": "2", "qty4": "2"},
+      {"name": "Green Chilli", "qty2": "1/2", "qty3": "1", "qty4": "1"},
+      {"name": "Korma Style Paste", "qty2": "1 sachet", "qty3": "1 1/2 sachets", "qty4": "2 sachets"},
+      {"name": "Garam Masala", "qty2": "1 pot", "qty3": "1 pot", "qty4": "2 pots"},
+      {"name": "Diced Chicken Thigh", "qty2": "280g", "qty3": "420g", "qty4": "560g"},
+      {"name": "Tomato Passata", "qty2": "1 carton", "qty3": "1 1/2 cartons", "qty4": "2 cartons"},
+      {"name": "Chicken Stock Paste", "qty2": "10g", "qty3": "15g", "qty4": "20g"},
+      {"name": "Baby Spinach", "qty2": "100g", "qty3": "150g", "qty4": "200g"},
+      {"name": "Mango Chutney", "qty2": "1 sachet", "qty3": "2 sachets", "qty4": "2 sachets"}
+    ],
+    "pantry": [
+      {"name": "Water for the Sauce", "qty2": "100ml", "qty3": "150ml", "qty4": "200ml", "pantry": true},
+      {"name": "Butter", "qty2": "20g", "qty3": "30g", "qty4": "40g", "pantry": true}
+    ],
+    "tools": ["kettle", "saucepan", "lid", "sieve", "garlic press", "frying pan"],
+    "steps": [
+      {"n": 1, "title": "Cook the Rice", "text": "Boil a full kettle. When boiling, pour the water into a large saucepan with 1/4 tsp salt on high heat. Add the rice and cook for 10-12 mins. Once cooked, drain in a sieve and pop back in the pan. Cover with a lid and leave to the side until ready to serve."},
+      {"n": 2, "title": "Get Prepped", "text": "While the rice cooks, halve, peel and chop the onion into small pieces. Peel and grate the garlic (or use a garlic press). Halve the chilli lengthways, deseed, then finely chop."},
+      {"n": 3, "title": "Fry the Onion", "text": "Heat a drizzle of oil in a large frying pan on medium-high heat. Once hot, add the onion and cook, stirring, until softened, 3-4 mins."},
+      {"n": 4, "title": "Build the Flavour", "text": "Stir in the korma style paste, garam masala, garlic and half the green chilli (careful, it's hot — add less if you don't like heat). Cook, stirring, for 1 min. Add the chicken, passata, water for the sauce and chicken stock paste, then bring to the boil. Season with salt and pepper, then lower the heat and simmer until thickened, 8-10 mins."},
+      {"n": 5, "title": "Finish Up", "text": "Once thickened, add the spinach to the sauce a handful at a time until wilted and piping hot, 1-2 mins. Simmer until the sauce has reduced slightly and the chicken is cooked through, 3-4 mins. The chicken is cooked when no longer pink in the middle. Stir through the mango chutney and butter. Taste and season with salt and pepper if needed."},
+      {"n": 6, "title": "Serve", "text": "Fluff up the rice with a fork, then divide between your bowls. Top with the chicken curry. Finish with a sprinkle of the remaining green chilli. Enjoy!"}
+    ],
+    "nutrition": {"kcal": 778, "kj": 3254, "fat_g": 28.9, "sat_fat_g": 9.9, "carbs_g": 86.8, "sugars_g": 21.7, "protein_g": 41.1, "salt_g": 3.48},
+    "highProtein": true,
+    "pdf": {"file": "chicken.pdf", "page": 1}
+  },
+  {
+    "id": "hf-chicken-02",
+    "title": "Coconut Lime Chicken Stew with Rice",
+    "source": "hellofresh",
+    "protein": "chicken",
+    "cookTimeMin": null,
+    "servings": 2,
+    "tags": ["stew", "coconut"],
+    "allergens": ["soy", "gluten"],
+    "ingredients": [
+      {"name": "Diced Chicken Breast", "qty2": "260g", "qty3": "390g", "qty4": "520g"},
+      {"name": "Garlic Clove", "qty2": "2", "qty3": "3", "qty4": "4"},
+      {"name": "Lime", "qty2": "1/2", "qty3": "1", "qty4": "1"},
+      {"name": "Basmati Rice", "qty2": "150g", "qty3": "225g", "qty4": "300g"},
+      {"name": "Ginger Puree", "qty2": "1 sachet", "qty3": "1 sachet", "qty4": "2 sachets"},
+      {"name": "Tomato Puree", "qty2": "1 sachet", "qty3": "2 sachets", "qty4": "2 sachets"},
+      {"name": "Coconut Milk", "qty2": "200ml", "qty3": "400ml", "qty4": "400ml"},
+      {"name": "Chicken Stock Paste", "qty2": "10g", "qty3": "15g", "qty4": "20g"},
+      {"name": "Baby Spinach", "qty2": "100g", "qty3": "150g", "qty4": "200g"},
+      {"name": "Soy Sauce", "qty2": "15ml", "qty3": "15ml", "qty4": "30ml"}
+    ],
+    "pantry": [
+      {"name": "Sugar for the Sauce", "qty2": "1 tsp", "qty3": "1 1/2 tsp", "qty4": "2 tsp", "pantry": true},
+      {"name": "Water for the Sauce", "qty2": "50ml", "qty3": "75ml", "qty4": "100ml", "pantry": true}
+    ],
+    "tools": ["kettle", "frying pan", "garlic press", "fine grater", "saucepan", "sieve", "lid"],
+    "steps": [
+      {"n": 1, "title": "Fry your Chicken", "text": "Boil a full kettle. While it boils, heat a drizzle of oil in a large frying pan on medium-high heat. Once hot, add the chicken and season with salt and pepper. Fry until golden brown on the outside and cooked through, 8-10 mins."},
+      {"n": 2, "title": "Prep Time", "text": "While the chicken cooks, peel and grate the garlic (or use a garlic press). Zest and halve the lime."},
+      {"n": 3, "title": "Cook the Rice", "text": "Once the water has boiled, pour into a large saucepan with 1/4 tsp salt on high heat. Add the rice and cook for 10-12 mins. Once cooked, drain in a sieve and pop back into the pan. Cover with a lid and leave to the side until ready to serve."},
+      {"n": 4, "title": "Simmer and Spice", "text": "Once the chicken is cooked, stir in the garlic, ginger puree and tomato puree. Cook for 1 min. Pour in the coconut milk, chicken stock paste, sugar and water for the sauce, then stir together. Bring to the boil, then lower the heat to medium and simmer until the sauce has thickened, 4-5 mins. Add a splash of water if it gets too thick."},
+      {"n": 5, "title": "Add the Spinach", "text": "Once the sauce has thickened, stir the spinach into the stew a handful at a time until wilted and piping hot, 1-2 mins. Remove from the heat, squeeze in some of the lime juice and stir in the soy sauce. Taste and add more lime if needed, and a splash more water if it's a bit too thick."},
+      {"n": 6, "title": "Serve", "text": "Share the rice between your bowls and spoon the chicken stew on top. Finish with a sprinkling of lime zest. Enjoy!"}
+    ],
+    "nutrition": {"kcal": 655, "kj": 2740, "fat_g": 20.9, "sat_fat_g": 17.0, "carbs_g": 75.3, "sugars_g": 6.4, "protein_g": 43.8, "salt_g": 3.24},
+    "highProtein": true,
+    "pdf": {"file": "chicken.pdf", "page": 2}
+  },
+  {
+    "id": "hf-chicken-03",
+    "title": "Bulgogi Chicken Noodles",
+    "source": "hellofresh",
+    "protein": "chicken",
+    "cookTimeMin": null,
+    "servings": 2,
+    "tags": ["noodles", "korean"],
+    "allergens": ["peanut", "egg", "soy", "gluten"],
+    "ingredients": [
+      {"name": "Green Pepper", "qty2": "1", "qty3": "2", "qty4": "2"},
+      {"name": "Garlic Clove", "qty2": "1", "qty3": "1", "qty4": "2"},
+      {"name": "Spring Onion", "qty2": "2", "qty3": "3", "qty4": "4"},
+      {"name": "Lime", "qty2": "1", "qty3": "1", "qty4": "1"},
+      {"name": "Salted Peanuts", "qty2": "25g", "qty3": "25g", "qty4": "50g"},
+      {"name": "Green Beans", "qty2": "80g", "qty3": "120g", "qty4": "150g"},
+      {"name": "Diced Chicken Thigh", "qty2": "210g", "qty3": "350g", "qty4": "420g"},
+      {"name": "Egg Noodle Nest", "qty2": "2 nests", "qty3": "3 nests", "qty4": "4 nests"},
+      {"name": "Bulgogi Sauce", "qty2": "100g", "qty3": "175g", "qty4": "200g"},
+      {"name": "Soy Sauce", "qty2": "25ml", "qty3": "38ml", "qty4": "50ml"}
+    ],
+    "pantry": [],
+    "tools": ["garlic press", "zester", "saucepan", "frying pan", "colander"],
+    "steps": [
+      {"n": 1, "title": "Prep Time", "text": "Halve the pepper and discard the core and seeds. Slice into thin strips. Peel and grate the garlic (or use a garlic press). Trim and thinly slice the spring onions. Zest and cut the lime into wedges. Roughly chop the peanuts. Trim the green beans and chop into thirds."},
+      {"n": 2, "title": "Fry the Chicken", "text": "Bring a large saucepan of water to the boil with 1/4 tsp salt for the noodles. Heat a drizzle of oil in a large frying pan on medium-high heat. Once the oil is hot, add the diced chicken thigh to the pan and season with salt and pepper. Fry until golden brown on the outside, 5-6 mins."},
+      {"n": 3, "title": "Cook the Noodles", "text": "When the pan of water is boiling, add the noodles and cook until tender, 3-4 mins. Once cooked, drain in a colander. TIP: Run the noodles under cold water to stop them sticking together."},
+      {"n": 4, "title": "Bring on the Veg", "text": "Add the pepper and green beans to the chicken pan. Stir-fry until they begin to soften, 5-6 mins. Once the veg has softened, stir in the garlic, lime zest, bulgogi sauce and soy sauce. Stir-fry until piping hot, 1-2 mins. The chicken is cooked when no longer pink in the middle."},
+      {"n": 5, "title": "Mix it Up", "text": "Once the noodles have cooked, add them to the pan with the chicken. Toss to coat and cook until piping hot, 1-2 mins. TIP: Add a splash of water if the noodles look a little dry."},
+      {"n": 6, "title": "Serve", "text": "Share the bulgogi chicken noodles between your bowls and sprinkle over the peanuts and spring onion for those who'd like them. Serve with a lime wedge on the side for squeezing over. Enjoy!"}
+    ],
+    "nutrition": {"kcal": 637, "kj": 2664, "fat_g": 20, "sat_fat_g": 4, "carbs_g": 76, "sugars_g": 23, "protein_g": 37, "salt_g": 3.95},
+    "highProtein": true,
+    "pdf": {"file": "chicken.pdf", "page": 3}
+  },
+  {
+    "id": "hf-chicken-04",
+    "title": "Sweet Chilli Chicken with Roasted Veg and Wedges",
+    "source": "hellofresh",
+    "protein": "chicken",
+    "cookTimeMin": null,
+    "servings": 2,
+    "tags": ["traybake", "sweet chilli"],
+    "allergens": [],
+    "ingredients": [
+      {"name": "Potatoes", "qty2": "450g", "qty3": "700g", "qty4": "900g"},
+      {"name": "Red Onion", "qty2": "1", "qty3": "1", "qty4": "2"},
+      {"name": "Carrot", "qty2": "2", "qty3": "3", "qty4": "4"},
+      {"name": "Green Pepper", "qty2": "1", "qty3": "2", "qty4": "2"},
+      {"name": "Flat Leaf Parsley", "qty2": "1 bunch", "qty3": "1 bunch", "qty4": "1 bunch"},
+      {"name": "Chicken Breast", "qty2": "2", "qty3": "3", "qty4": "4"},
+      {"name": "Dried Thyme", "qty2": "1 sachet", "qty3": "1 sachet", "qty4": "2 sachets"},
+      {"name": "Chicken Stock Paste", "qty2": "10g", "qty3": "15g", "qty4": "20g"},
+      {"name": "Sweet Chilli Sauce", "qty2": "32g", "qty3": "64g", "qty4": "64g"}
+    ],
+    "pantry": [
+      {"name": "Olive Oil", "qty2": "1 tbsp", "qty3": "1 1/2 tbsp", "qty4": "2 tbsp", "pantry": true},
+      {"name": "Water for the Glaze", "qty2": "50ml", "qty3": "75ml", "qty4": "100ml", "pantry": true}
+    ],
+    "tools": ["baking tray", "bowl", "frying pan"],
+    "steps": [
+      {"n": 1, "title": "Cook the Wedges", "text": "Preheat the oven to 200°C. Chop the potatoes into 2cm wide wedges (no need to peel). Pop onto a large baking tray. Drizzle with oil, season with salt and pepper, then toss to coat. Spread in a single layer. TIP: Use two trays if necessary. Roast on the middle shelf until golden, 30-40 mins, turning halfway through."},
+      {"n": 2, "title": "Prep Time", "text": "Meanwhile, halve and peel the red onion, then cut each half into 3 wedges. Trim the carrots, then halve lengthways (no need to peel). Chop into roughly 1cm wide, 5cm long batons. Halve the pepper and discard the core and seeds. Slice into 1cm wide strips. Roughly chop the parsley (stalks and all)."},
+      {"n": 3, "title": "Marinate the Chicken", "text": "Put the chicken into a bowl with the olive oil and half the dried thyme. Season with salt and pepper, mix together then set aside. Pop the onion, carrots and peppers onto a baking tray. Drizzle with oil, sprinkle on the remaining dried thyme and season with salt and pepper. Toss to coat, then roast on the top shelf of your oven until soft and golden, 25-30 mins. Turn halfway through."},
+      {"n": 4, "title": "Fry the Chicken", "text": "While the veg roasts, heat a drizzle of oil in a frying pan on medium-high heat. Brown the chicken 3-5 mins each side. Once the veg has roasted for 10 mins, pop the chicken on top and roast for the remaining 15-20 mins. Set the pan aside. Once cooked, transfer the chicken to a board and cover loosely with foil. The chicken is cooked when no longer pink in the middle."},
+      {"n": 5, "title": "Make the Glaze", "text": "Pop the (now empty) frying pan back on medium heat. Add the water for the glaze and chicken stock paste. Bring to a boil, then reduce the heat and simmer for 1-2 mins. Add the sweet chilli sauce and stir well to combine (use a whisk if necessary). Simmer until thickened and glossy, 3-4 mins, then remove from the heat."},
+      {"n": 6, "title": "Finish and Serve", "text": "When ready, slice each chicken breast into 5 pieces. Add the roasted veg to the wedges' baking tray, sprinkle over the parsley and gently toss together. Transfer to your plates and arrange the chicken on top. Reheat the sweet chilli glaze if needed (add a splash of water if it needs loosening), then spoon over the chicken. Enjoy!"}
+    ],
+    "nutrition": {"kcal": 492, "kj": 2058, "fat_g": 8, "sat_fat_g": 2, "carbs_g": 61, "sugars_g": 19, "protein_g": 46, "salt_g": 1.37},
+    "highProtein": true,
+    "pdf": {"file": "chicken.pdf", "page": 4}
+  },
+  {
+    "id": "hf-chicken-05",
+    "title": "Indonesian-Style Chicken Curry with Jasmine Rice",
+    "source": "hellofresh",
+    "protein": "chicken",
+    "cookTimeMin": null,
+    "servings": 2,
+    "tags": ["curry", "indonesian", "coconut"],
+    "allergens": ["soy"],
+    "ingredients": [
+      {"name": "Echalion Shallot", "qty2": "1", "qty3": "1", "qty4": "2"},
+      {"name": "Courgette", "qty2": "1", "qty3": "2", "qty4": "2"},
+      {"name": "Garlic Clove", "qty2": "1", "qty3": "2", "qty4": "2"},
+      {"name": "Lime", "qty2": "1", "qty3": "1", "qty4": "1"},
+      {"name": "Jasmine Rice", "qty2": "150g", "qty3": "225g", "qty4": "300g"},
+      {"name": "Diced Chicken Thigh", "qty2": "260g", "qty3": "390g", "qty4": "520g"},
+      {"name": "Indonesian Style Spice Mix", "qty2": "2 sachets", "qty3": "2 sachets", "qty4": "4 sachets"},
+      {"name": "Coconut Milk", "qty2": "200ml", "qty3": "400ml", "qty4": "400ml"},
+      {"name": "Ketjap Manis", "qty2": "1 sachet", "qty3": "1 sachet", "qty4": "2 sachets"}
+    ],
+    "pantry": [
+      {"name": "Water for the Rice", "qty2": "300ml", "qty3": "450ml", "qty4": "600ml", "pantry": true},
+      {"name": "Water for the Curry", "qty2": "50ml", "qty3": "75ml", "qty4": "100ml", "pantry": true}
+    ],
+    "tools": ["garlic press", "fine grater", "saucepan", "lid", "frying pan"],
+    "steps": [
+      {"n": 1, "title": "Get Prepped", "text": "Halve, peel and chop the shallot into small pieces. Trim the courgette, then quarter lengthways and chop into small pieces. Peel and grate the garlic (or use a garlic press). Zest the lime and cut into wedges."},
+      {"n": 2, "title": "Cook the Rice", "text": "Pour the water for the rice into a medium saucepan with a tight-fitting lid. Stir in the rice and 1/4 tsp salt and bring to the boil. Once boiling, turn the heat down to medium and cover with the lid. Leave to cook for 10 mins, then remove from the heat (still covered) and leave to the side for another 10 mins."},
+      {"n": 3, "title": "Start the Curry", "text": "Meanwhile, heat a drizzle of oil in a large frying pan on medium-high heat. Once hot, add the diced chicken and season with salt and pepper. Cook until browned all over, 5-6 mins. Add the shallot and cook until softened, 4-5 mins. Stir in the Indonesian style spice mix and garlic, cook, stirring, for 1 min."},
+      {"n": 4, "title": "Simmer the Sauce", "text": "Stir in the coconut milk, water for the curry and courgette, then season with salt and pepper. Bring to the boil, then reduce the heat slightly and simmer until the sauce has thickened, the courgette is tender and the chicken is cooked through, 8-10 mins. Stir occasionally. The chicken is cooked when no longer pink in the middle."},
+      {"n": 5, "title": "Finish Up", "text": "When the curry is cooked, stir in the ketjap manis and a squeeze of juice from a lime wedge. Add a splash of water if it's a little thick. Taste and season with salt and pepper if needed. Fluff up the rice with a fork and stir through the lime zest."},
+      {"n": 6, "title": "Serve", "text": "Share the rice between your bowls. Top with the chicken curry and serve with the remaining lime wedges for squeezing over. Enjoy!"}
+    ],
+    "nutrition": {"kcal": 748, "kj": 3131, "fat_g": 31.2, "sat_fat_g": 19.6, "carbs_g": 84.5, "sugars_g": 16.2, "protein_g": 40.0, "salt_g": 1.13},
+    "highProtein": true,
+    "pdf": {"file": "chicken.pdf", "page": 5}
+  },
+  {
+    "id": "hf-chicken-06",
+    "title": "Teriyaki Chicken with Rice",
+    "source": "hellofresh",
+    "protein": "chicken",
+    "cookTimeMin": null,
+    "servings": 2,
+    "tags": ["teriyaki", "stir-fry"],
+    "allergens": ["sesame", "soy"],
+    "ingredients": [
+      {"name": "Basmati Rice", "qty2": "150g", "qty3": "225g", "qty4": "300g"},
+      {"name": "Diced Chicken Thigh", "qty2": "280g", "qty3": "420g", "qty4": "560g"},
+      {"name": "Red Onion", "qty2": "1", "qty3": "1", "qty4": "2"},
+      {"name": "Green Beans", "qty2": "80g", "qty3": "150g", "qty4": "150g"},
+      {"name": "Garlic Clove", "qty2": "1", "qty3": "2", "qty4": "2"},
+      {"name": "Teriyaki Sauce", "qty2": "150g", "qty3": "200g", "qty4": "300g"},
+      {"name": "Red Chilli", "qty2": "1/2", "qty3": "3/4", "qty4": "1"},
+      {"name": "Spring Onion", "qty2": "1", "qty3": "2", "qty4": "2"},
+      {"name": "Roasted White Sesame Seeds", "qty2": "5g", "qty3": "7g", "qty4": "10g"}
+    ],
+    "pantry": [
+      {"name": "Water for the Sauce", "qty2": "50ml", "qty3": "75ml", "qty4": "125ml", "pantry": true}
+    ],
+    "tools": ["kettle", "saucepan", "sieve", "frying pan"],
+    "steps": [
+      {"n": 1, "title": "Cook the Rice", "text": "Boil a full kettle. When boiling, pour into a large saucepan with 1/4 tsp salt. Add the rice and cook for 10-12 mins. When cooked, drain in a sieve and pop back in the pan. Cover with a lid and leave to the side until ready to serve."},
+      {"n": 2, "title": "Fry the Chicken", "text": "While the rice cooks, heat a large frying pan on medium-high heat with a drizzle of oil. When the oil is hot, add the chicken and stir-fry until browned all over, 5-6 mins. Meanwhile, halve, peel and thinly slice the red onion. Trim the green beans and chop into thirds."},
+      {"n": 3, "title": "Stir-Fry the Veg", "text": "Once the chicken has browned, stir in the onion and green beans. Stir-fry until the veg has softened, 3-4 mins. While the veg cooks, peel and grate the garlic (or use a garlic press). Once the veg has softened, add the garlic and stir-fry for 1 min."},
+      {"n": 4, "title": "Add the Sauce", "text": "Stir the teriyaki sauce into the pan with the water for the sauce. Lower the heat and simmer until the sauce is sticky, the beans are tender and the chicken is cooked through, 3-4 mins. The chicken is cooked when no longer pink in the middle. While it simmers, halve the chilli lengthways, deseed and thinly slice. Trim and thinly slice the spring onion."},
+      {"n": 5, "title": "Finish Up", "text": "Once cooked, taste the sauce and season with salt and pepper if needed. Stir in the sesame seeds. Add a splash of water if it needs loosening, then remove from heat."},
+      {"n": 6, "title": "Serve", "text": "Fluff up the rice and serve with the teriyaki chicken on top. Sprinkle over the spring onion and chilli (add less chilli if you don't like heat). Enjoy!"}
+    ],
+    "nutrition": {"kcal": 684, "kj": 2862, "fat_g": 16.3, "sat_fat_g": 4.0, "carbs_g": 94.6, "sugars_g": 28.7, "protein_g": 38.8, "salt_g": 4.13},
+    "highProtein": true,
+    "pdf": {"file": "chicken.pdf", "page": 6}
+  },
+  {
+    "id": "hf-chicken-07",
+    "title": "Chicken with Chilli and Chive Sauce",
+    "source": "hellofresh",
+    "protein": "chicken",
+    "cookTimeMin": null,
+    "servings": 2,
+    "tags": ["creamy", "sauce"],
+    "allergens": ["milk"],
+    "ingredients": [
+      {"name": "Chicken Breast Skin-On", "qty2": "2", "qty3": "3", "qty4": "4"},
+      {"name": "Potatoes", "qty2": "450g", "qty3": "700g", "qty4": "900g"},
+      {"name": "Baby Spinach", "qty2": "100g", "qty3": "150g", "qty4": "200g"},
+      {"name": "Red Chilli", "qty2": "1/2", "qty3": "3/4", "qty4": "1"},
+      {"name": "Chives", "qty2": "1 bunch", "qty3": "1 bunch", "qty4": "1 bunch"},
+      {"name": "Garlic Clove", "qty2": "1", "qty3": "2", "qty4": "2"},
+      {"name": "Chicken Stock Paste", "qty2": "5g", "qty3": "7g", "qty4": "10g"},
+      {"name": "Creme Fraiche", "qty2": "75g", "qty3": "120g", "qty4": "150g"}
+    ],
+    "pantry": [
+      {"name": "Water for the Sauce", "qty2": "75ml", "qty3": "100ml", "qty4": "150ml", "pantry": true},
+      {"name": "Butter", "qty2": "15g", "qty3": "20g", "qty4": "30g", "pantry": true}
+    ],
+    "tools": ["kettle", "frying pan", "baking tray", "saucepan", "colander", "lid", "kitchen scissors", "garlic press"],
+    "steps": [
+      {"n": 1, "title": "Roast the Chicken", "text": "Preheat the oven to 240°C/220°C fan/gas mark 9. Boil a full kettle. Heat a drizzle of oil in a frying pan on high heat. Once hot, lay the chicken into the pan, skin-side down. Season with salt and pepper. Fry until golden, 3-4 mins, then turn and cook for 1 min on the other side. Transfer the chicken to a baking tray, skin-side up, then roast on the top shelf until cooked, 12-15 mins. The chicken is cooked when no longer pink in the middle."},
+      {"n": 2, "title": "Prep the Potatoes", "text": "Meanwhile, fill a large saucepan with boiling water from your kettle and return to the boil with 1/2 tsp salt. Chop the potatoes into 2cm chunks (no need to peel) and add to the pan. Cook until you can easily slip a knife through, 12-15 mins. Add the spinach for the final min of cooking time. Drain well in a colander and return to the pan, off the heat. Cover with the lid to keep warm."},
+      {"n": 3, "title": "Chop and Grate", "text": "While the potatoes cook, halve, deseed and finely chop the chilli. Finely chop the chives (use scissors if easier). Peel and grate the garlic (or use a garlic press). Return the (now empty) frying pan to medium heat. Add a drizzle of oil if the pan is dry."},
+      {"n": 4, "title": "Make the Sauce", "text": "When hot, add the chilli (add less if you don't like too much heat) and garlic to the pan and fry for 1 min. Stir in the water for the sauce and chicken stock paste, bring to the boil and simmer until slightly reduced, 1-2 mins. Mix in the creme fraiche and three quarters of the chives. Season to taste with pepper and remove from the heat."},
+      {"n": 5, "title": "Finish Up", "text": "When the chicken is almost cooked, gently reheat the sauce. Add a splash of hot water if it needs loosening. Season the cooked spinach and potatoes with salt and pepper. Add the butter and stir to combine."},
+      {"n": 6, "title": "Serve", "text": "Cut the chicken widthways into 2cm slices, then transfer to your plates. Share out the spinach and potatoes alongside, then spoon the chilli and chive sauce over the chicken. Finish with a sprinkling of the remaining chives. Enjoy!"}
+    ],
+    "nutrition": {"kcal": 577, "kj": 2414, "fat_g": 25.7, "sat_fat_g": 13.3, "carbs_g": 42.4, "sugars_g": 3.8, "protein_g": 45.9, "salt_g": 0.87},
+    "highProtein": true,
+    "pdf": {"file": "chicken.pdf", "page": 7}
+  },
+  {
+    "id": "hf-chicken-08",
+    "title": "Chicken Masala Curry with Mustard Seed Broccoli",
+    "source": "hellofresh",
+    "protein": "chicken",
+    "cookTimeMin": null,
+    "servings": 2,
+    "tags": ["curry", "indian"],
+    "allergens": ["milk", "mustard"],
+    "ingredients": [
+      {"name": "Ginger", "qty2": "1", "qty3": "1", "qty4": "2"},
+      {"name": "Basmati Rice", "qty2": "150g", "qty3": "225g", "qty4": "300g"},
+      {"name": "Diced Chicken Thigh", "qty2": "260g", "qty3": "390g", "qty4": "520g"},
+      {"name": "Garlic Clove", "qty2": "2", "qty3": "3", "qty4": "4"},
+      {"name": "Tenderstem Broccoli", "qty2": "80g", "qty3": "150g", "qty4": "150g"},
+      {"name": "Tomato Puree", "qty2": "30g", "qty3": "45g", "qty4": "60g"},
+      {"name": "North Indian Style Spice Mix", "qty2": "1 sachet", "qty3": "1 sachet", "qty4": "2 sachets"},
+      {"name": "Chicken Stock Paste", "qty2": "10g", "qty3": "15g", "qty4": "20g"},
+      {"name": "Mustard Seeds", "qty2": "1 sachet", "qty3": "1 sachet", "qty4": "2 sachets"},
+      {"name": "Creme Fraiche", "qty2": "75g", "qty3": "150g", "qty4": "150g"},
+      {"name": "Unsalted Butter", "qty2": "20g", "qty3": "30g", "qty4": "40g"}
+    ],
+    "pantry": [
+      {"name": "Sugar for the Sauce", "qty2": "1/2 tsp", "qty3": "3/4 tsp", "qty4": "1 tsp", "pantry": true},
+      {"name": "Water for the Sauce", "qty2": "100ml", "qty3": "150ml", "qty4": "200ml", "pantry": true}
+    ],
+    "tools": ["kettle", "saucepan", "sieve", "lid", "frying pan", "fine grater"],
+    "steps": [
+      {"n": 1, "title": "Cook the Ginger Rice", "text": "Boil a full kettle. Peel and halve the ginger. TIP: Use a spoon to easily scrape away the peel. Pour the boiled water into a large saucepan with 1/4 tsp salt on high heat. Add the rice and half the ginger and cook for 10-12 mins. Once cooked, drain in a sieve and pop back in the pan. Cover with a lid and leave to the side ready to serve."},
+      {"n": 2, "title": "Fry the Chicken", "text": "Meanwhile, heat a drizzle of oil in a large frying pan on medium-high heat. Once hot, add the chicken and season with salt and pepper. Stir-fry until golden brown, 5-6 mins. While the chicken cooks, grate the remaining ginger. Peel and grate the garlic (or use a garlic press). Chop the broccoli in half widthways."},
+      {"n": 3, "title": "Simmer and Spice", "text": "Once the chicken has browned, stir in the tomato puree, North Indian style spice mix, grated ginger and half the garlic. Pour in the sugar and water for the sauce. Stir in the chicken stock paste. Bring to the boil and simmer until reduced by half, 3-5 mins."},
+      {"n": 4, "title": "Fry the Broccoli", "text": "While everything cooks, heat a drizzle of oil in another frying pan on medium-high heat. Once hot, add the broccoli. Season with salt and pepper, then stir-fry until starting to brown, 2-3 mins. Stir in the mustard seeds and remaining garlic and cook for 1 min. Add a splash of water and immediately cover with a lid or some foil. Allow to cook until the broccoli is tender, 3-4 mins. Drain any excess water, then remove from the heat and keep covered."},
+      {"n": 5, "title": "Finish the Curry", "text": "Once the sauce has reduced, stir in the creme fraiche. Bring to the boil, then stir in the butter until melted. Remove from the heat. The chicken is cooked when no longer pink in the middle. Taste and add salt and pepper if needed."},
+      {"n": 6, "title": "Serve", "text": "Remove and discard the ginger from the rice and share between your bowls. Top with the chicken masala curry and scatter over the mustard seed broccoli. Enjoy!"}
+    ],
+    "nutrition": {"kcal": 745, "kj": 3115, "fat_g": 35.1, "sat_fat_g": 16.6, "carbs_g": 70.2, "sugars_g": 6.5, "protein_g": 40.0, "salt_g": 1.41},
+    "highProtein": true,
+    "pdf": {"file": "chicken.pdf", "page": 8}
+  },
+  {
+    "id": "hf-chicken-09",
+    "title": "Coconut Lime Chicken Stew with Rice",
+    "source": "hellofresh",
+    "protein": "chicken",
+    "cookTimeMin": null,
+    "servings": 2,
+    "tags": ["stew", "coconut"],
+    "allergens": ["soy", "gluten"],
+    "ingredients": [
+      {"name": "Basmati Rice", "qty2": "150g", "qty3": "225g", "qty4": "300g"},
+      {"name": "Diced Chicken Breast", "qty2": "260g", "qty3": "390g", "qty4": "520g"},
+      {"name": "Garlic Clove", "qty2": "2", "qty3": "3", "qty4": "4"},
+      {"name": "Lime", "qty2": "1/2", "qty3": "1", "qty4": "1"},
+      {"name": "Ginger Puree", "qty2": "15g", "qty3": "15g", "qty4": "30g"},
+      {"name": "Tomato Puree", "qty2": "30g", "qty3": "60g", "qty4": "60g"},
+      {"name": "Coconut Milk", "qty2": "200ml", "qty3": "400ml", "qty4": "400ml"},
+      {"name": "Chicken Stock Paste", "qty2": "10g", "qty3": "15g", "qty4": "20g"},
+      {"name": "Baby Spinach", "qty2": "100g", "qty3": "150g", "qty4": "200g"},
+      {"name": "Soy Sauce", "qty2": "15ml", "qty3": "15ml", "qty4": "30ml"}
+    ],
+    "pantry": [
+      {"name": "Sugar for the Sauce", "qty2": "1 tsp", "qty3": "1 1/2 tsp", "qty4": "2 tsp", "pantry": true},
+      {"name": "Water for the Sauce", "qty2": "75ml", "qty3": "100ml", "qty4": "150ml", "pantry": true}
+    ],
+    "tools": ["kettle", "frying pan", "garlic press", "fine grater", "saucepan", "sieve", "lid"],
+    "steps": [
+      {"n": 1, "title": "Get Frying", "text": "Boil a full kettle. Heat a drizzle of oil in a frying pan on medium-high heat. Add the chicken, season with salt and pepper, and fry until golden brown and cooked through, 8-10 mins."},
+      {"n": 2, "title": "Prep Time", "text": "While the chicken cooks, peel and grate the garlic (or use a garlic press). Zest and halve the lime."},
+      {"n": 3, "title": "Cook the Rice", "text": "Once the water has boiled, pour into a large saucepan with 1/4 tsp salt on high heat. Add the rice and cook for 10-12 mins. Once cooked, drain in a sieve and pop back into the pan. Cover with a lid and leave to the side until ready to serve."},
+      {"n": 4, "title": "Simmer and Spice", "text": "Stir in the garlic, ginger puree and tomato puree. Cook for 1 min. Pour in the coconut milk, chicken stock paste, sugar and water for the sauce. Bring to the boil, then simmer until the sauce has thickened, 4-5 mins."},
+      {"n": 5, "title": "Add the Spinach", "text": "Once thickened, stir the spinach into the stew a handful at a time until wilted and piping hot, 1-2 mins. Remove from the heat, squeeze in some of the lime juice and stir in the soy sauce. Taste and add more lime if needed and a splash more water if it's a bit too thick."},
+      {"n": 6, "title": "Serve", "text": "Share the rice between your bowls and spoon the chicken stew on top. Finish with a sprinkling of lime zest. Enjoy!"}
+    ],
+    "nutrition": {"kcal": 651, "kj": 2724, "fat_g": 20.8, "sat_fat_g": 17.0, "carbs_g": 70.7, "sugars_g": 7.0, "protein_g": 43.6, "salt_g": 3.24},
+    "highProtein": true,
+    "pdf": {"file": "chicken.pdf", "page": 9}
+  },
+  {
+    "id": "hf-chicken-10",
+    "title": "Coronation Chicken with Rice",
+    "source": "hellofresh",
+    "protein": "chicken",
+    "cookTimeMin": null,
+    "servings": 2,
+    "tags": ["curry", "coronation"],
+    "allergens": ["milk"],
+    "ingredients": [
+      {"name": "Basmati Rice", "qty2": "150g", "qty3": "225g", "qty4": "300g"},
+      {"name": "Echalion Shallot", "qty2": "1", "qty3": "2", "qty4": "2"},
+      {"name": "Green Beans", "qty2": "80g", "qty3": "150g", "qty4": "150g"},
+      {"name": "Garlic Clove", "qty2": "1", "qty3": "2", "qty4": "2"},
+      {"name": "Coriander", "qty2": "1 bunch", "qty3": "1 bunch", "qty4": "1 bunch"},
+      {"name": "Diced Chicken Breast", "qty2": "280g", "qty3": "420g", "qty4": "560g"},
+      {"name": "Curry Powder", "qty2": "1 sachet", "qty3": "1 sachet", "qty4": "2 sachets"},
+      {"name": "Mango Chutney", "qty2": "1 sachet", "qty3": "1 1/2 sachets", "qty4": "2 sachets"},
+      {"name": "Chicken Stock Paste", "qty2": "10g", "qty3": "15g", "qty4": "20g"},
+      {"name": "Soured Cream", "qty2": "150g", "qty3": "225g", "qty4": "300g"}
+    ],
+    "pantry": [
+      {"name": "Water for the Rice", "qty2": "300ml", "qty3": "450ml", "qty4": "600ml", "pantry": true},
+      {"name": "Water for the Sauce", "qty2": "100ml", "qty3": "175ml", "qty4": "250ml", "pantry": true}
+    ],
+    "tools": ["saucepan", "lid", "garlic press", "frying pan", "aluminium foil"],
+    "steps": [
+      {"n": 1, "title": "Cook the Rice", "text": "Pour the cold water for the rice into a medium saucepan with a lid. Stir in the rice and 1/4 tsp salt and bring to the boil. Once boiling, turn the heat down to medium and cover with the lid. Leave to cook for 10 mins, then remove from the heat (still covered) and leave to stand for another 10 mins."},
+      {"n": 2, "title": "Get Prepped", "text": "While the rice cooks, halve, peel and thinly slice the shallot. Trim the green beans and cut into thirds. Peel and grate the garlic (or use a garlic press). Roughly chop the coriander (stalks and all)."},
+      {"n": 3, "title": "Fry the Chicken", "text": "Heat a drizzle of oil in a large frying pan on medium-high heat. Once hot, add the diced chicken and season with salt and pepper. Stir-fry until browned all over, 5-6 mins. TIP: Fry in batches if your pan is small — you want it to fry, not stew. Once the chicken is browned, add the shallot to the pan and cook, stirring frequently, until softened, 3-4 mins."},
+      {"n": 4, "title": "Simmer your Sauce", "text": "Stir in the garlic, curry powder and mango chutney to coat the chicken and cook for 1 min. Pour in the water for the sauce and stir in the chicken stock paste. Add the beans, bring to the boil, then reduce heat to medium. Cover with a lid or some foil and simmer until the beans are tender, 5-7 mins."},
+      {"n": 5, "title": "Finish Up", "text": "Once the beans are tender and the chicken is cooked, remove the lid and stir in the soured cream. Bring to the boil, then remove from the heat. The chicken is cooked when no longer pink in the middle. Stir in half the coriander. Taste and add salt and pepper if needed."},
+      {"n": 6, "title": "Serve", "text": "When ready, fluff up the rice with a fork and share between your bowls. Serve with the coronation chicken on top and the remaining coriander sprinkled over. Enjoy!"}
+    ],
+    "nutrition": {"kcal": 648, "kj": 2711, "fat_g": 17.6, "sat_fat_g": 9.4, "carbs_g": 77.1, "sugars_g": 14.9, "protein_g": 44.4, "salt_g": 1.41},
+    "highProtein": true,
+    "pdf": {"file": "chicken.pdf", "page": 10}
+  },
+  {
+    "id": "hf-chicken-11",
+    "title": "Chicken Curry with Mustard Seed Green Beans",
+    "source": "hellofresh",
+    "protein": "chicken",
+    "cookTimeMin": null,
+    "servings": 2,
+    "tags": ["curry", "indian"],
+    "allergens": ["milk", "mustard"],
+    "ingredients": [
+      {"name": "Ginger", "qty2": "1", "qty3": "1", "qty4": "2"},
+      {"name": "Basmati Rice", "qty2": "150g", "qty3": "225g", "qty4": "300g"},
+      {"name": "Diced Chicken Thigh", "qty2": "280g", "qty3": "420g", "qty4": "560g"},
+      {"name": "Garlic Clove", "qty2": "2", "qty3": "3", "qty4": "4"},
+      {"name": "Green Beans", "qty2": "80g", "qty3": "150g", "qty4": "150g"},
+      {"name": "Tomato Puree", "qty2": "1 sachet", "qty3": "1 1/2 sachets", "qty4": "2 sachets"},
+      {"name": "North Indian Style Spice Mix", "qty2": "1 sachet", "qty3": "1 sachet", "qty4": "2 sachets"},
+      {"name": "Chicken Stock Paste", "qty2": "10g", "qty3": "15g", "qty4": "20g"},
+      {"name": "Mustard Seeds", "qty2": "1 sachet", "qty3": "1 sachet", "qty4": "2 sachets"},
+      {"name": "Double Cream", "qty2": "75g", "qty3": "150g", "qty4": "150g"},
+      {"name": "Unsalted Butter", "qty2": "30g", "qty3": "45g", "qty4": "60g"}
+    ],
+    "pantry": [
+      {"name": "Sugar", "qty2": "1/2 tsp", "qty3": "3/4 tsp", "qty4": "1 tsp", "pantry": true},
+      {"name": "Water for the Sauce", "qty2": "100ml", "qty3": "150ml", "qty4": "200ml", "pantry": true}
+    ],
+    "tools": ["kettle", "saucepan", "sieve", "lid", "frying pan", "grater", "garlic press", "aluminium foil"],
+    "steps": [
+      {"n": 1, "title": "Cook the Rice", "text": "Boil a full kettle. Peel and halve the ginger. TIP: Use a teaspoon to scrape away the peel. Pour boiling water into a saucepan with 1/4 tsp salt on high heat. Add the rice and half the ginger and cook for 10-12 mins. Drain in a sieve and return to the pan. Cover with a lid and leave until ready to serve."},
+      {"n": 2, "title": "Get Frying", "text": "Meanwhile, heat a drizzle of oil in a frying pan on medium-high heat. Once hot, add the chicken and season with salt and pepper. Stir-fry until golden brown, 4-5 mins. While the chicken cooks, grate the remaining ginger. Peel and grate the garlic (or use a garlic press). Trim the green beans."},
+      {"n": 3, "title": "Simmer and Spice", "text": "Once the chicken has browned, add the tomato puree, North Indian style spice mix, grated ginger and half the garlic. Stir together, then pour in the sugar and water for the sauce. Stir in the chicken stock paste. Bring to the boil and simmer until reduced by half, 3-5 mins."},
+      {"n": 4, "title": "Bring on the Beans", "text": "Heat a drizzle of oil in another frying pan on medium-high heat. Add the green beans, season with salt and pepper, and stir-fry until starting to char, 2-3 mins. Stir in the mustard seeds and remaining garlic and cook for 1 min. Add a splash of water, cover with a lid or foil, and cook until tender, 4-5 mins. Drain and keep covered."},
+      {"n": 5, "title": "Finish the Curry", "text": "Once the sauce has reduced, stir in the cream. Bring to the boil, then stir in the butter until melted. Remove from the heat. The chicken is cooked when no longer pink in the middle. Taste and add salt and pepper if needed."},
+      {"n": 6, "title": "Serve", "text": "Remove the ginger from the rice and spoon the rice into bowls. Top with the curry and scatter over the mustard seed green beans. Enjoy!"}
+    ],
+    "nutrition": {"kcal": 845, "kj": 3535, "fat_g": 46, "sat_fat_g": 23, "carbs_g": 69, "sugars_g": 6, "protein_g": 39, "salt_g": 1.15},
+    "highProtein": true,
+    "pdf": {"file": "chicken.pdf", "page": 11}
+  },
+  {
+    "id": "hf-chicken-12",
+    "title": "Korma-Style Chicken Curry with Rice",
+    "source": "hellofresh",
+    "protein": "chicken",
+    "cookTimeMin": null,
+    "servings": 2,
+    "tags": ["curry", "indian"],
+    "allergens": ["mustard"],
+    "ingredients": [
+      {"name": "Basmati Rice", "qty2": "150g", "qty3": "225g", "qty4": "300g"},
+      {"name": "Red Onion", "qty2": "1", "qty3": "1", "qty4": "2"},
+      {"name": "Garlic Clove", "qty2": "1", "qty3": "2", "qty4": "2"},
+      {"name": "Red Chilli", "qty2": "1/2", "qty3": "3/4", "qty4": "1"},
+      {"name": "Korma Style Paste", "qty2": "1 sachet", "qty3": "1 1/2 sachets", "qty4": "2 sachets"},
+      {"name": "North Indian Style Spice Mix", "qty2": "1 sachet", "qty3": "1 sachet", "qty4": "2 sachets"},
+      {"name": "Diced Chicken Thigh", "qty2": "280g", "qty3": "420g", "qty4": "560g"},
+      {"name": "Tomato Passata", "qty2": "1 carton", "qty3": "1 1/2 cartons", "qty4": "2 cartons"},
+      {"name": "Chicken Stock Paste", "qty2": "10g", "qty3": "15g", "qty4": "20g"},
+      {"name": "Coriander", "qty2": "1 bunch", "qty3": "1 bunch", "qty4": "1 bunch"},
+      {"name": "Baby Spinach", "qty2": "100g", "qty3": "100g", "qty4": "200g"},
+      {"name": "Mango Chutney", "qty2": "1 sachet", "qty3": "2 sachets", "qty4": "2 sachets"}
+    ],
+    "pantry": [
+      {"name": "Water for the Sauce", "qty2": "100ml", "qty3": "150ml", "qty4": "200ml", "pantry": true},
+      {"name": "Butter", "qty2": "20g", "qty3": "30g", "qty4": "40g", "pantry": true}
+    ],
+    "tools": ["kettle", "saucepan", "lid", "sieve", "garlic press", "frying pan"],
+    "steps": [
+      {"n": 1, "title": "Cook the Rice", "text": "Boil a full kettle. When boiling, pour the water into a saucepan with 1/4 tsp salt on high heat. Add the rice and cook for 10-12 mins. Drain in a sieve and pop back in the pan. Cover with a lid and leave to the side until ready to serve."},
+      {"n": 2, "title": "Get Prepped", "text": "While the rice cooks, halve, peel and chop the red onion into small pieces. Peel and grate the garlic (or use a garlic press). Halve the chilli lengthways, deseed, then finely chop."},
+      {"n": 3, "title": "Fry the Onion", "text": "Heat a drizzle of oil in a large frying pan on medium-high heat. Once hot, add the onion and cook, stirring, until softened, 3-4 mins."},
+      {"n": 4, "title": "Build the Flavour", "text": "Add the korma style paste, North Indian style spice mix, garlic and half the red chilli (careful, it's hot — add less if you don't like heat). Cook, stirring, for 1 min, then add the chicken, passata, water for the sauce and chicken stock paste, then bring to a simmer. Season with salt and pepper and simmer until thickened, 8-10 mins. Meanwhile, roughly chop the coriander (stalks and all)."},
+      {"n": 5, "title": "Finish Up", "text": "Once thickened, add the spinach to the sauce a handful at a time until wilted and piping hot, 1-2 mins. Simmer until the sauce has reduced slightly, 3-4 mins. The chicken is cooked when no longer pink in the middle. Stir through the mango chutney, butter and half the coriander. Taste and season with salt and pepper if needed."},
+      {"n": 6, "title": "Serve", "text": "Fluff up the rice with a fork and stir through the remaining coriander. Divide the rice and curry between your bowls. Top with the remaining chilli. Enjoy!"}
+    ],
+    "nutrition": {"kcal": 771, "kj": 3228, "fat_g": 29, "sat_fat_g": 10, "carbs_g": 86, "sugars_g": 20, "protein_g": 41, "salt_g": 3.48},
+    "highProtein": true,
+    "pdf": {"file": "chicken.pdf", "page": 12}
+  },
+  {
+    "id": "hf-chicken-13",
+    "title": "Bulgogi Chicken Noodles",
+    "source": "hellofresh",
+    "protein": "chicken",
+    "cookTimeMin": null,
+    "servings": 2,
+    "tags": ["noodles", "korean"],
+    "allergens": ["peanut", "egg", "soy", "gluten"],
+    "ingredients": [
+      {"name": "Green Pepper", "qty2": "1", "qty3": "2", "qty4": "2"},
+      {"name": "Garlic Clove", "qty2": "1", "qty3": "1", "qty4": "2"},
+      {"name": "Spring Onion", "qty2": "2", "qty3": "3", "qty4": "4"},
+      {"name": "Lime", "qty2": "1", "qty3": "1", "qty4": "1"},
+      {"name": "Salted Peanuts", "qty2": "25g", "qty3": "25g", "qty4": "50g"},
+      {"name": "Green Beans", "qty2": "80g", "qty3": "120g", "qty4": "150g"},
+      {"name": "Diced Chicken Thigh", "qty2": "210g", "qty3": "350g", "qty4": "420g"},
+      {"name": "Egg Noodle Nest", "qty2": "2 nests", "qty3": "3 nests", "qty4": "4 nests"},
+      {"name": "Bulgogi Sauce", "qty2": "100g", "qty3": "175g", "qty4": "200g"},
+      {"name": "Soy Sauce", "qty2": "25ml", "qty3": "38ml", "qty4": "50ml"}
+    ],
+    "pantry": [],
+    "tools": ["garlic press", "zester", "saucepan", "frying pan", "colander"],
+    "steps": [
+      {"n": 1, "title": "Prep Time", "text": "Halve the pepper and discard the core and seeds. Slice into thin strips. Peel and grate the garlic (or use a garlic press). Trim and thinly slice the spring onions. Zest and cut the lime into wedges. Roughly chop the peanuts. Trim the green beans and chop into thirds."},
+      {"n": 2, "title": "Fry the Chicken", "text": "Bring a large saucepan of water to the boil with 1/4 tsp salt for the noodles. Heat a drizzle of oil in a large frying pan on medium-high heat. Once the oil is hot, add the diced chicken thigh to the pan and season with salt and pepper. Fry until golden brown on the outside, 5-6 mins."},
+      {"n": 3, "title": "Cook the Noodles", "text": "When the pan of water is boiling, add the noodles and cook until tender, 3-4 mins. Once cooked, drain in a colander. TIP: Run the noodles under cold water to stop them sticking together."},
+      {"n": 4, "title": "Bring on the Veg", "text": "Add the pepper and green beans to the chicken pan. Stir-fry until they begin to soften, 5-6 mins. Once the veg has softened, stir in the garlic, lime zest, bulgogi sauce and soy sauce. Stir-fry until piping hot, 1-2 mins. The chicken is cooked when no longer pink in the middle."},
+      {"n": 5, "title": "Mix it Up", "text": "Once the noodles have cooked, add them to the pan with the chicken. Toss to coat and cook until piping hot, 1-2 mins. TIP: Add a splash of water if the noodles look a little dry."},
+      {"n": 6, "title": "Serve", "text": "Share the bulgogi chicken noodles between your bowls and sprinkle over the peanuts and spring onion for those who'd like them. Serve with a lime wedge on the side for squeezing over. Enjoy!"}
+    ],
+    "nutrition": {"kcal": 637, "kj": 2664, "fat_g": 20, "sat_fat_g": 4, "carbs_g": 76, "sugars_g": 23, "protein_g": 37, "salt_g": 3.95},
+    "highProtein": true,
+    "pdf": {"file": "chicken.pdf", "page": 13}
+  }
+]

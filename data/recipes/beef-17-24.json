@@ -1,0 +1,309 @@
+[
+  {
+    "id": "hf-beef-17",
+    "title": "Beef Stir-Fry with Zesty Rice",
+    "source": "hellofresh",
+    "protein": "beef",
+    "cookTimeMin": null,
+    "servings": 2,
+    "tags": ["stir-fry", "thai", "rice"],
+    "allergens": ["sesame", "soy"],
+    "ingredients": [
+      {"name": "Red Onion", "qty2": "1", "qty3": "1", "qty4": "2"},
+      {"name": "Bell Pepper", "qty2": "1", "qty3": "2", "qty4": "2"},
+      {"name": "Ginger", "qty2": "1/2", "qty3": "3/4", "qty4": "1"},
+      {"name": "Beef Mince", "qty2": "240g", "qty3": "360g", "qty4": "480g"},
+      {"name": "Jasmine Rice", "qty2": "150g", "qty3": "225g", "qty4": "300g"},
+      {"name": "Thai Style Spice Blend", "qty2": "1 sachet", "qty3": "1 sachet", "qty4": "2 sachets"},
+      {"name": "Chicken Stock Paste", "qty2": "10g", "qty3": "15g", "qty4": "20g"},
+      {"name": "Mangetout", "qty2": "80g", "qty3": "150g", "qty4": "150g"},
+      {"name": "Lime", "qty2": "1/2", "qty3": "3/4", "qty4": "1"},
+      {"name": "Ketjap Manis", "qty2": "1 sachet", "qty3": "2 sachets", "qty4": "2 sachets"}
+    ],
+    "pantry": [
+      {"name": "Water for the Rice", "qty2": "300ml", "qty3": "450ml", "qty4": "600ml", "pantry": true},
+      {"name": "Water for the Beef", "qty2": "100ml", "qty3": "150ml", "qty4": "200ml", "pantry": true}
+    ],
+    "tools": ["grater", "frying pan", "saucepan with lid", "zester"],
+    "steps": [
+      {"n": 1, "title": "Get Prepped", "text": "Halve, peel and thinly slice the red onion. Halve the pepper and discard the core and seeds. Slice into thin strips. Peel and grate the ginger. TIP: Use a teaspoon to easily scrape away the peel."},
+      {"n": 2, "title": "Fry the Mince", "text": "Heat a large frying pan on medium-high heat (no oil). Once hot, add the beef mince and cook until browned, 4-5 mins. Use a spoon to break it up as it cooks. IMPORTANT: Wash your hands and equipment after handling raw mince."},
+      {"n": 3, "title": "Rice Time", "text": "While the beef cooks, pour the cold water for the rice (see pantry for amount) into a medium saucepan with a tight-fitting lid. Stir in the rice and 1/4 tsp salt and bring to the boil. Once boiling, turn the heat down to medium and cover with the lid. Leave to cook for 10 mins, then remove the pan from the heat (still covered) and leave to the side for another 10 mins or until ready to serve (the rice will continue to cook in its own steam)."},
+      {"n": 4, "title": "Add the Flavour", "text": "Once the mince is browned, drain and discard any excess fat. Lower the heat, then add the onion and pepper to the pan. Cook until softened, 6-8 mins, stirring occasionally. Stir in the ginger, Thai style spice blend (careful, it's hot - add less if you'd prefer things milder) and chicken stock paste, then add the water for the beef (see pantry for amount) and mangetout. Simmer until the liquid has reduced by half and the mangetout are tender, 4-5 mins. IMPORTANT: The mince is cooked when no longer pink in the middle."},
+      {"n": 5, "title": "Combine and Stir", "text": "While everything cooks, zest and halve the lime. Once the beef is ready, stir through the ketjap manis and a squeeze of lime juice. Remove from the heat, then taste and add salt and pepper if needed. Fluff up the rice with a fork and stir through the lime zest."},
+      {"n": 6, "title": "Serve", "text": "Share the zesty rice between your bowls and top with the beef stir-fry. Cut the remaining lime into wedges and serve alongside for squeezing over. Enjoy!"}
+    ],
+    "nutrition": {"kcal": 648, "kj": 2710, "fat_g": 19.3, "sat_fat_g": 8.4, "carbs_g": 84.6, "sugars_g": 18.0, "protein_g": 34.5, "salt_g": 1.97},
+    "highProtein": true,
+    "pdf": {"file": "beef.pdf", "page": 17}
+  },
+  {
+    "id": "hf-beef-18",
+    "title": "BBQ Beef Pasta",
+    "source": "hellofresh",
+    "protein": "beef",
+    "cookTimeMin": null,
+    "servings": 2,
+    "tags": ["pasta", "bbq"],
+    "allergens": ["gluten", "milk"],
+    "ingredients": [
+      {"name": "Penne Pasta", "qty2": "180g", "qty3": "270g", "qty4": "360g"},
+      {"name": "Green Pepper", "qty2": "1", "qty3": "1", "qty4": "2"},
+      {"name": "Red Onion", "qty2": "1", "qty3": "1", "qty4": "2"},
+      {"name": "Garlic Clove", "qty2": "1", "qty3": "2", "qty4": "2"},
+      {"name": "Red Chilli", "qty2": "1", "qty3": "1", "qty4": "1"},
+      {"name": "Mature Cheddar Cheese", "qty2": "45g", "qty3": "90g", "qty4": "90g"},
+      {"name": "Beef Mince", "qty2": "240g", "qty3": "360g", "qty4": "480g"},
+      {"name": "Worcester Sauce", "qty2": "1 sachet", "qty3": "1 sachet", "qty4": "2 sachets"},
+      {"name": "Tomato Passata", "qty2": "1 carton", "qty3": "1 1/2 cartons", "qty4": "2 cartons"},
+      {"name": "Beef Stock Paste", "qty2": "10g", "qty3": "15g", "qty4": "20g"},
+      {"name": "BBQ Sauce", "qty2": "32g", "qty3": "64g", "qty4": "64g"}
+    ],
+    "pantry": [
+      {"name": "Water for the Beef", "qty2": "100ml", "qty3": "150ml", "qty4": "200ml", "pantry": true}
+    ],
+    "tools": ["saucepan", "colander", "garlic press", "grater", "frying pan"],
+    "steps": [
+      {"n": 1, "title": "Cook the Pasta", "text": "a) Bring a large saucepan of water to the boil with 1/2 tsp salt for the penne. b) When boiling, add the pasta to the water and bring back to the boil. Cook until tender, 12 mins. c) Once cooked, drain in a colander and pop back into the pan. Drizzle with oil and stir through to stop it sticking together."},
+      {"n": 2, "title": "Get Prepped", "text": "a) Meanwhile, halve the pepper and discard the core and seeds. Chop into 1cm chunks or as small as you can. b) Halve, peel and chop the red onion into small pieces. Peel and grate the garlic (or use a garlic press). c) Halve the chilli lengthways, deseed and finely chop. Set aside for garnishing later. d) Grate the cheese."},
+      {"n": 3, "title": "Fry the Beef", "text": "a) Heat a drizzle of oil in a frying pan on high heat. b) When the oil is hot, add the beef mince, pepper and chopped onion. Cook until the beef is browned and the veggies are tender, 5-6 mins. Use a spoon to break up the mince as it cooks, then drain and discard any excess fat. IMPORTANT: Wash your hands and equipment after handling raw mince. The mince is cooked when no longer pink in the middle. c) When cooked, add the garlic and Worcester sauce. Cook, stirring frequently, 1 min."},
+      {"n": 4, "title": "Make the Sauce", "text": "a) Once the garlic has cooked, add the tomato passata, beef stock paste and water for the beef (see pantry for amount). b) Bring to a boil and reduce the heat to a simmer. c) Cook until thickened, 8-10 mins."},
+      {"n": 5, "title": "Finish Up", "text": "a) Once thickened, add the BBQ sauce to the ragu and bring to the boil. Season to taste with salt and pepper. b) Add the cooked pasta to the pan, mix well to combine, then remove from the heat."},
+      {"n": 6, "title": "Time to Serve", "text": "a) Share the BBQ beef pasta between your bowls. b) Top with the grated cheese. c) Sprinkle over the red chilli (careful - it's hot!) for those who'd like some heat! Enjoy!"}
+    ],
+    "nutrition": {"kcal": 806, "kj": 3373, "fat_g": 30, "sat_fat_g": 14, "carbs_g": 87, "sugars_g": 16, "protein_g": 45, "salt_g": 2.39},
+    "highProtein": true,
+    "pdf": {"file": "beef.pdf", "page": 18}
+  },
+  {
+    "id": "hf-beef-19",
+    "title": "BBQ Beef Pasta",
+    "source": "hellofresh",
+    "protein": "beef",
+    "cookTimeMin": null,
+    "servings": 2,
+    "tags": ["pasta", "bbq", "ragu"],
+    "allergens": ["gluten", "milk", "celery", "sulphites"],
+    "ingredients": [
+      {"name": "Rigatoni Pasta", "qty2": "180g", "qty3": "270g", "qty4": "360g"},
+      {"name": "Onion", "qty2": "1", "qty3": "1", "qty4": "2"},
+      {"name": "Garlic Clove", "qty2": "1", "qty3": "2", "qty4": "2"},
+      {"name": "Green Chilli", "qty2": "1", "qty3": "1", "qty4": "1"},
+      {"name": "Mature Cheddar Cheese", "qty2": "40g", "qty3": "80g", "qty4": "80g"},
+      {"name": "Beef Mince", "qty2": "240g", "qty3": "360g", "qty4": "480g"},
+      {"name": "Sliced Mushrooms", "qty2": "80g", "qty3": "120g", "qty4": "180g"},
+      {"name": "Finely Chopped Tomatoes with Onion and Garlic", "qty2": "1/2 carton", "qty3": "3/4 carton", "qty4": "1 carton"},
+      {"name": "Red Wine Jus Paste", "qty2": "15g", "qty3": "22g", "qty4": "30g"},
+      {"name": "BBQ Sauce", "qty2": "32g", "qty3": "48g", "qty4": "64g"}
+    ],
+    "pantry": [
+      {"name": "Water for the Beef", "qty2": "100ml", "qty3": "150ml", "qty4": "200ml", "pantry": true}
+    ],
+    "tools": ["saucepan", "colander", "garlic press", "grater", "frying pan"],
+    "steps": [
+      {"n": 1, "title": "Cook the Pasta", "text": "a) Bring a large saucepan of water to the boil with 1/2 tsp salt. b) When boiling, add the pasta to the water and bring back to the boil. Cook until tender, 12 mins. c) Once cooked, drain in a colander and pop back into the pan. Drizzle with oil and stir through to stop it sticking together."},
+      {"n": 2, "title": "Get Prepped", "text": "a) Halve, peel and chop the onion into small pieces. Peel and grate the garlic (or use a garlic press). b) Halve the chilli lengthways, deseed, then finely chop. Set aside for garnishing later. c) Grate the cheese."},
+      {"n": 3, "title": "Fry the Beef", "text": "a) Heat a drizzle of oil in a frying pan on high heat. b) Once hot, add the beef mince, mushrooms and onion. Fry until the beef is browned and the veg is tender, 5-6 mins. c) Use a spoon to break up the mince as it cooks, then drain and discard any excess fat. IMPORTANT: Wash your hands after handling raw mince. The mince is cooked when no longer pink in the middle. d) Stir in the garlic and cook for 1 min more."},
+      {"n": 4, "title": "Make your Ragu Sauce", "text": "a) Add the chopped tomatoes (see ingredients for amount), red wine jus paste and water for the beef (see pantry for amount) to the pan and stir to combine. b) Bring to the boil, then reduce the heat and simmer until thickened, 8-10 mins."},
+      {"n": 5, "title": "Combine and Stir", "text": "a) Once thickened, stir in the BBQ sauce. Season to taste with salt and pepper if needed. b) Add the cooked pasta to the pan, mix well to combine, then remove from the heat."},
+      {"n": 6, "title": "Serve", "text": "a) Share the BBQ beef pasta between your bowls. b) Top with the grated cheese. c) Sprinkle over the green chilli (add less if you'd prefer things milder). Enjoy!"}
+    ],
+    "nutrition": {"kcal": 807, "kj": 3376, "fat_g": 29.4, "sat_fat_g": 13.6, "carbs_g": 87.3, "sugars_g": 18.2, "protein_g": 48.5, "salt_g": 2.82},
+    "highProtein": true,
+    "pdf": {"file": "beef.pdf", "page": 19}
+  },
+  {
+    "id": "hf-beef-20",
+    "title": "Beef Keema",
+    "source": "hellofresh",
+    "protein": "beef",
+    "cookTimeMin": null,
+    "servings": 2,
+    "tags": ["indian", "keema", "naan"],
+    "allergens": ["gluten", "milk", "soy", "sulphites"],
+    "ingredients": [
+      {"name": "Baking Potato", "qty2": "1", "qty3": "2", "qty4": "2"},
+      {"name": "Garlic Clove", "qty2": "2", "qty3": "3", "qty4": "4"},
+      {"name": "Baby Gem Lettuce", "qty2": "1", "qty3": "2", "qty4": "2"},
+      {"name": "Red Wine Vinegar", "qty2": "1 sachet", "qty3": "2 sachets", "qty4": "2 sachets"},
+      {"name": "Beef Mince", "qty2": "240g", "qty3": "360g", "qty4": "480g"},
+      {"name": "Tomato Puree", "qty2": "1 sachet", "qty3": "2 sachets", "qty4": "2 sachets"},
+      {"name": "North Indian Style Spice Mix", "qty2": "2 sachets", "qty3": "2 sachets", "qty4": "4 sachets"},
+      {"name": "Beef Stock Paste", "qty2": "10g", "qty3": "15g", "qty4": "20g"},
+      {"name": "Mango Chutney", "qty2": "1 sachet", "qty3": "2 sachets", "qty4": "2 sachets"},
+      {"name": "Plain Naan", "qty2": "2", "qty3": "4", "qty4": "4"},
+      {"name": "Low Fat Natural Yoghurt", "qty2": "75g", "qty3": "100g", "qty4": "150g"}
+    ],
+    "pantry": [
+      {"name": "Olive Oil for the Dressing", "qty2": "1 tbsp", "qty3": "1 1/2 tbsp", "qty4": "2 tbsp", "pantry": true},
+      {"name": "Water for the Sauce", "qty2": "100ml", "qty3": "150ml", "qty4": "200ml", "pantry": true}
+    ],
+    "tools": ["saucepan", "garlic press", "bowl", "frying pan", "colander", "baking tray"],
+    "steps": [
+      {"n": 1, "title": "Cook the Potato", "text": "a) Bring a large saucepan of water to the boil with 1/2 tsp salt. b) Peel and chop the potato into 1cm chunks. c) When boiling, add the potatoes to the water and cook until you can easily slip a knife through, 10-15 mins."},
+      {"n": 2, "title": "Get Prepped", "text": "a) Meanwhile, peel and grate the garlic (or use a garlic press). b) Trim the baby gem, halve lengthways, then thinly slice widthways. c) In a medium bowl, mix together the red wine vinegar and olive oil for the dressing (see pantry for amount). Season with salt, pepper and a pinch of sugar (if you have any), then set aside."},
+      {"n": 3, "title": "Fry the Beef", "text": "a) Heat a large frying pan on medium-high heat (no oil). b) Once hot, add the beef mince and fry until browned, 5-6 mins. Use a spoon to break it up as it cooks, then drain and discard any excess fat. IMPORTANT: Wash your hands and equipment after handling raw mince. The mince is cooked when no longer pink in the middle. c) Meanwhile, preheat your oven to 220°C/200°C fan/gas mark 7."},
+      {"n": 4, "title": "Make the Keema", "text": "a) When the mince is browned, stir in the garlic, tomato puree and North Indian style spice mix. Cook for 1 min. b) Stir in the beef stock paste and water for the sauce (see pantry for amount). Bring to the boil, then simmer until thickened, 3-4 mins. TIP: Add a splash of water if needed, but you don't want the mixture too wet or the naan will become soggy. c) When the potatoes are cooked, drain in a colander, then carefully add to the beef. Stir in the mango chutney. Season to taste."},
+      {"n": 5, "title": "Finishing Touches", "text": "a) Meanwhile, put the naans onto a baking tray. b) Sprinkle with a little water and pop them into the oven to warm through, 2-3 mins. c) Add the baby gem to the bowl of dressing and toss to coat."},
+      {"n": 6, "title": "Serve", "text": "a) Share the naans between your plates. b) Top with the beef keema and a handful of salad. c) Finish with a dollop of yoghurt. Enjoy!"}
+    ],
+    "nutrition": {"kcal": 945, "kj": 3953, "fat_g": 32.5, "sat_fat_g": 10.8, "carbs_g": 127.0, "sugars_g": 23.5, "protein_g": 45.9, "salt_g": 3.11},
+    "highProtein": true,
+    "pdf": {"file": "beef.pdf", "page": 20}
+  },
+  {
+    "id": "hf-beef-21",
+    "title": "Beef Burgers with Potato Wedges and Chimichurri Tomato Salad",
+    "source": "hellofresh",
+    "protein": "beef",
+    "cookTimeMin": null,
+    "servings": 2,
+    "tags": ["burger", "salad"],
+    "allergens": ["gluten", "egg", "soy", "sulphites"],
+    "ingredients": [
+      {"name": "Potatoes", "qty2": "450g", "qty3": "700g", "qty4": "900g"},
+      {"name": "Flat Leaf Parsley", "qty2": "1 bunch", "qty3": "1 bunch", "qty4": "1 bunch"},
+      {"name": "Red Chilli", "qty2": "1", "qty3": "1", "qty4": "2"},
+      {"name": "Garlic Clove", "qty2": "1", "qty3": "1", "qty4": "2"},
+      {"name": "Dried Oregano", "qty2": "1 sachet", "qty3": "1 sachet", "qty4": "2 sachets"},
+      {"name": "Panko Breadcrumbs", "qty2": "10g", "qty3": "25g", "qty4": "25g"},
+      {"name": "Beef Mince", "qty2": "240g", "qty3": "360g", "qty4": "480g"},
+      {"name": "Baby Plum Tomatoes", "qty2": "125g", "qty3": "190g", "qty4": "250g"},
+      {"name": "Red Wine Vinegar", "qty2": "1 sachet", "qty3": "1 sachet", "qty4": "2 sachets"},
+      {"name": "Glazed Burger Bun", "qty2": "2", "qty3": "3", "qty4": "4"}
+    ],
+    "pantry": [
+      {"name": "Water for the Breadcrumbs", "qty2": "2 tbsp", "qty3": "3 tbsp", "qty4": "4 tbsp", "pantry": true},
+      {"name": "Salt for the Burgers", "qty2": "1/4 tsp", "qty3": "1/2 tsp", "qty4": "1/2 tsp", "pantry": true},
+      {"name": "Olive Oil for the Dressing", "qty2": "2 tbsp", "qty3": "3 tbsp", "qty4": "4 tbsp", "pantry": true},
+      {"name": "Mayonnaise", "qty2": "2 tbsp", "qty3": "3 tbsp", "qty4": "4 tbsp", "pantry": true}
+    ],
+    "tools": ["baking tray", "garlic press", "bowl", "frying pan"],
+    "steps": [
+      {"n": 1, "title": "Roast the Wedges", "text": "Preheat your oven to 220°C/200°C fan/gas mark 7. Chop the potatoes into 2cm wide wedges (no need to peel). Pop the wedges onto a large baking tray. Drizzle with oil, season with salt and pepper, then toss to coat. Spread out in a single layer. TIP: Use two baking trays if necessary. When the oven is hot, roast on the top shelf until golden, 25-35 mins. Turn halfway through."},
+      {"n": 2, "title": "Get Prepped", "text": "Meanwhile, finely chop the parsley (stalks and all). Halve the chilli lengthways, deseed and finely chop. Peel and grate the garlic (or use a garlic press)."},
+      {"n": 3, "title": "Make the Burgers", "text": "Put the garlic, oregano, half the parsley and half the chilli into a large bowl. Add the breadcrumbs and water for the breadcrumbs (see pantry for amount). Season with pepper and the salt for the burgers (see pantry for amount), mix, then add the beef mince. Mix with your hands until combined, then shape into 2cm thick burgers (1 per person). TIP: The burgers will shrink a little during cooking. IMPORTANT: Wash your hands and equipment after handling raw mince."},
+      {"n": 4, "title": "Fry Time", "text": "Heat a drizzle of oil in a frying pan on medium-high heat. Once hot, add the burgers and fry until browned on the outside and cooked through, 12-14 mins total. Carefully turn them every 4 mins and lower the heat if needed. IMPORTANT: The burgers are cooked when no longer pink in the middle."},
+      {"n": 5, "title": "Mix the Chimichurri Salad", "text": "While the burgers cook, halve the tomatoes and pop them into a bowl. Add the remaining parsley and chilli along with the red wine vinegar and olive oil for the dressing (see pantry for amount). Season with salt and pepper and mix together. Halve the burger buns. Just before the wedges are cooked, pop the buns onto a baking tray and into your oven to warm through, 2-3 mins."},
+      {"n": 6, "title": "Finish and Serve", "text": "When everything is ready, spread some mayonnaise (see pantry for amount) on the base of each bun. Add the burger, then top with the bun lid. Serve with the potato wedges and chimichurri tomato salad alongside. Enjoy!"}
+    ],
+    "nutrition": {"kcal": 804, "kj": 3364, "fat_g": 38.5, "sat_fat_g": 10.3, "carbs_g": 78.0, "sugars_g": 9.3, "protein_g": 37.5, "salt_g": 1.75},
+    "highProtein": true,
+    "pdf": {"file": "beef.pdf", "page": 21}
+  },
+  {
+    "id": "hf-beef-22",
+    "title": "Penne Ragu",
+    "source": "hellofresh",
+    "protein": "beef",
+    "cookTimeMin": null,
+    "servings": 2,
+    "tags": ["pasta", "ragu", "italian"],
+    "allergens": ["gluten", "milk", "egg", "celery", "sulphites"],
+    "ingredients": [
+      {"name": "Beef Mince", "qty2": "240g", "qty3": "360g", "qty4": "480g"},
+      {"name": "Penne Pasta", "qty2": "180g", "qty3": "270g", "qty4": "360g"},
+      {"name": "Italian Style Herbs", "qty2": "1 sachet", "qty3": "1 sachet", "qty4": "2 sachets"},
+      {"name": "Sliced Mushrooms", "qty2": "120g", "qty3": "180g", "qty4": "240g"},
+      {"name": "Worcester Sauce", "qty2": "1 sachet", "qty3": "1 sachet", "qty4": "2 sachets"},
+      {"name": "Tomato Passata", "qty2": "1 carton", "qty3": "1 1/2 cartons", "qty4": "2 cartons"},
+      {"name": "Sun-Dried Tomato Paste", "qty2": "1 sachet", "qty3": "1 1/2 sachets", "qty4": "2 sachets"},
+      {"name": "Red Wine Jus Paste", "qty2": "15g", "qty3": "22g", "qty4": "30g"},
+      {"name": "Baby Spinach", "qty2": "40g", "qty3": "80g", "qty4": "80g"},
+      {"name": "Grated Hard Italian Style Cheese", "qty2": "40g", "qty3": "65g", "qty4": "80g"}
+    ],
+    "pantry": [
+      {"name": "Sugar for the Sauce", "qty2": "1 tsp", "qty3": "1 1/2 tsp", "qty4": "2 tsp", "pantry": true}
+    ],
+    "tools": ["saucepan", "frying pan", "colander"],
+    "steps": [
+      {"n": 1, "title": "Brown the Mince", "text": "a) Bring a large saucepan of water to the boil with 1/2 tsp salt for the pasta. b) Heat a drizzle of oil in a large frying pan on medium-high heat. c) When the oil is hot, add the beef mince and cook until browned, 5-6 mins. Use a spoon to break it up as it cooks. IMPORTANT: Wash your hands and equipment after handling raw mince. The mince is cooked when no longer pink in the middle."},
+      {"n": 2, "title": "Cook the Pasta", "text": "a) Meanwhile, add the penne to your pan of boiling water and bring back to the boil. b) Cook until tender, 12 mins."},
+      {"n": 3, "title": "Mushroom Time", "text": "a) Once the beef is browned, drain and discard any excess fat. b) Stir in the Italian style herbs and mushrooms and cook for another 2 mins."},
+      {"n": 4, "title": "Simmer the Ragu", "text": "a) Stir in the Worcester sauce and cook until evaporated, 30 secs. b) Stir in the passata, sun-dried tomato paste, sugar for the sauce (see pantry for amount) and red wine jus paste. c) Bring to the boil, then simmer until thickened, 4-5 mins, stirring occasionally."},
+      {"n": 5, "title": "Add the Spinach", "text": "a) Stir the spinach through the sauce a handful at a time until wilted and piping hot, 1-2 mins. b) When the pasta is cooked, drain in a colander, then add to the sauce. c) Stir through three quarters of the cheese until combined. TIP: Add a splash of water if your sauce needs loosening."},
+      {"n": 6, "title": "Serve", "text": "a) Season the penne ragu to taste with salt and pepper, then serve in bowls. b) Sprinkle with the remaining cheese. Enjoy!"}
+    ],
+    "nutrition": {"kcal": 765, "kj": 3200, "fat_g": 28.3, "sat_fat_g": 12.6, "carbs_g": 79.2, "sugars_g": 12.0, "protein_g": 46.2, "salt_g": 2.20},
+    "highProtein": true,
+    "pdf": {"file": "beef.pdf", "page": 22}
+  },
+  {
+    "id": "hf-beef-23",
+    "title": "Beef Keema with Garlic Yoghurt",
+    "source": "hellofresh",
+    "protein": "beef",
+    "cookTimeMin": null,
+    "servings": 2,
+    "tags": ["indian", "keema", "naan"],
+    "allergens": ["gluten", "milk", "soy", "sulphites"],
+    "ingredients": [
+      {"name": "Baking Potato", "qty2": "1", "qty3": "2", "qty4": "2"},
+      {"name": "Garlic Clove", "qty2": "2", "qty3": "3", "qty4": "4"},
+      {"name": "Baby Gem Lettuce", "qty2": "1", "qty3": "2", "qty4": "2"},
+      {"name": "Cider Vinegar", "qty2": "1 sachet", "qty3": "2 sachets", "qty4": "2 sachets"},
+      {"name": "Beef Mince", "qty2": "240g", "qty3": "360g", "qty4": "480g"},
+      {"name": "Tomato Puree", "qty2": "1 sachet", "qty3": "2 sachets", "qty4": "2 sachets"},
+      {"name": "North Indian Style Spice Mix", "qty2": "2 sachets", "qty3": "2 sachets", "qty4": "4 sachets"},
+      {"name": "Beef Stock Paste", "qty2": "10g", "qty3": "15g", "qty4": "20g"},
+      {"name": "Mango Chutney", "qty2": "1 sachet", "qty3": "2 sachets", "qty4": "2 sachets"},
+      {"name": "Plain Naan", "qty2": "2", "qty3": "4", "qty4": "4"},
+      {"name": "Low Fat Natural Yoghurt", "qty2": "75g", "qty3": "100g", "qty4": "150g"}
+    ],
+    "pantry": [
+      {"name": "Olive Oil for the Dressing", "qty2": "1 tbsp", "qty3": "1 1/2 tbsp", "qty4": "2 tbsp", "pantry": true},
+      {"name": "Water for the Sauce", "qty2": "100ml", "qty3": "150ml", "qty4": "200ml", "pantry": true}
+    ],
+    "tools": ["saucepan", "garlic press", "bowl", "frying pan", "colander"],
+    "steps": [
+      {"n": 1, "title": "Cook the Potatoes", "text": "a) Preheat your oven to 220°C/200°C fan/gas mark 7. b) Bring a large saucepan of water to the boil with 1/2 tsp salt. c) Peel and chop the potato into 1cm chunks. When boiling, add the potatoes to the water and cook until you can easily slip a knife through, 10-15 mins."},
+      {"n": 2, "title": "Prep the Veg", "text": "a) Pop 1 garlic clove (unpeeled) into a small piece of foil with a drizzle of oil and scrunch to enclose it. Roast in the oven until soft, 10-12 mins. b) Peel and grate the remaining garlic (or use a garlic press). c) Trim the baby gem, halve lengthways, then thinly slice widthways. d) In a medium bowl, mix together the cider vinegar, a pinch of sugar and the olive oil for the dressing (see pantry for amount). Season with salt and pepper, then set aside."},
+      {"n": 3, "title": "Fry the Beef", "text": "a) Heat a drizzle of oil in a large frying pan on medium-high heat. b) When the oil is hot, add the beef mince and cook until browned, 5-6 mins. Use a spoon to break it up as it cooks, then drain and discard any excess fat. IMPORTANT: Wash your hands and equipment after handling raw mince. The mince is cooked when no longer pink in the middle. c) Once the garlic has roasted and cooled, cut the end with scissors, squeeze it out of the skin and mash with a fork."},
+      {"n": 4, "title": "Make the Keema", "text": "a) When the mince is browned, add the grated garlic, tomato puree and North Indian style spice mix. Cook, stirring frequently, for 1 min. b) Stir in the beef stock paste and the water for the sauce (see pantry for amount). Bring to the boil, then simmer until thickened, 3-4 mins. TIP: Add a splash of water if needed, but you don't want the mixture too wet or the naan will become soggy. c) When cooked, drain the potatoes in a colander, then carefully add to the beef. Stir in the mango chutney, then season to taste with salt and pepper."},
+      {"n": 5, "title": "Naan Time", "text": "a) Meanwhile, pop the naans into the oven and bake until toasted and golden, 2-3 mins. b) Add the yoghurt to a small bowl and stir in the roasted garlic. Season with salt and pepper, then set aside. c) Add the baby gem to the bowl of dressing and toss to coat."},
+      {"n": 6, "title": "Finish and Serve", "text": "a) Share the naans between your plates. b) Top the naan with the beef keema and a handful of salad. c) Finish with a dollop of garlic yoghurt. Enjoy!"}
+    ],
+    "nutrition": {"kcal": 833, "kj": 3485, "fat_g": 29, "sat_fat_g": 10, "carbs_g": 104, "sugars_g": 20, "protein_g": 39, "salt_g": 2.28},
+    "highProtein": true,
+    "pdf": {"file": "beef.pdf", "page": 23}
+  },
+  {
+    "id": "hf-beef-24",
+    "title": "Beef Keema",
+    "source": "hellofresh",
+    "protein": "beef",
+    "cookTimeMin": null,
+    "servings": 2,
+    "tags": ["indian", "keema", "naan"],
+    "allergens": ["gluten", "milk", "sulphites"],
+    "ingredients": [
+      {"name": "Baking Potato", "qty2": "1", "qty3": "2", "qty4": "2"},
+      {"name": "Garlic Clove", "qty2": "2", "qty3": "3", "qty4": "4"},
+      {"name": "Baby Gem Lettuce", "qty2": "1", "qty3": "2", "qty4": "2"},
+      {"name": "Red Wine Vinegar", "qty2": "1 sachet", "qty3": "2 sachets", "qty4": "2 sachets"},
+      {"name": "Beef Mince", "qty2": "240g", "qty3": "360g", "qty4": "480g"},
+      {"name": "Tomato Puree", "qty2": "1 sachet", "qty3": "2 sachets", "qty4": "2 sachets"},
+      {"name": "North Indian Style Spice Mix", "qty2": "1 pot", "qty3": "2 pots", "qty4": "2 pots"},
+      {"name": "Beef Stock Paste", "qty2": "10g", "qty3": "15g", "qty4": "20g"},
+      {"name": "Mango Chutney", "qty2": "1 sachet", "qty3": "2 sachets", "qty4": "2 sachets"},
+      {"name": "Plain Naan", "qty2": "2", "qty3": "4", "qty4": "4"},
+      {"name": "Low Fat Natural Yoghurt", "qty2": "75g", "qty3": "100g", "qty4": "150g"}
+    ],
+    "pantry": [
+      {"name": "Olive Oil for the Dressing", "qty2": "1 tbsp", "qty3": "1 1/2 tbsp", "qty4": "2 tbsp", "pantry": true},
+      {"name": "Water for the Sauce", "qty2": "100ml", "qty3": "150ml", "qty4": "200ml", "pantry": true}
+    ],
+    "tools": ["toaster", "saucepan", "garlic press", "frying pan", "baking tray"],
+    "steps": [
+      {"n": 1, "title": "Cook the Potato", "text": "a) If you don't have a toaster, heat your oven to 220°C/200°C fan/gas mark 7 for the naans. b) Bring a large saucepan of water to the boil with 1/2 tsp salt. c) Peel and chop the potato into 1cm chunks. d) When boiling, add the potato chunks to the water and cook until you can easily slip a knife through, 12-15 mins."},
+      {"n": 2, "title": "Get Prepped", "text": "a) Peel and grate the garlic (or use a garlic press). b) Trim the baby gem, halve lengthways, then thinly slice widthways. c) In a medium bowl, mix together the red wine vinegar and olive oil for the dressing (see pantry for amount). Season with salt, pepper and a pinch of sugar (if you have any), then set aside."},
+      {"n": 3, "title": "Fry the Beef", "text": "a) Heat a large frying pan on medium-high heat (no oil). b) Once hot, add the beef mince and fry until browned, 5-6 mins. Use a spoon to break it up as it cooks, then drain and discard any excess fat. IMPORTANT: Wash your hands and equipment after handling raw mince. The mince is cooked when no longer pink in the middle."},
+      {"n": 4, "title": "Make the Keema", "text": "a) When the mince is browned, stir in the garlic, tomato puree and North Indian style spice mix. Cook for 1 min. b) Stir in the beef stock paste and water for the sauce (see pantry for amount). Bring to the boil, then simmer until thickened, 3-4 mins. TIP: Add a splash of water if needed, but you don't want the mixture too wet or the naan will become soggy. c) When the potatoes are cooked, drain in a colander, then carefully add to the beef. Stir in the mango chutney. Season to taste."},
+      {"n": 5, "title": "Finishing Touches", "text": "a) Toast the naans in your toaster until golden. b) If you're using the oven, put the naans onto a baking tray. Sprinkle with a little water and pop them into the oven to warm through, 2-3 mins. c) Add the baby gem to the bowl of dressing and toss to coat."},
+      {"n": 6, "title": "Serve", "text": "a) Share the naans between your plates. b) Top with the beef keema and a handful of salad. c) Finish with a dollop of yoghurt. Enjoy!"}
+    ],
+    "nutrition": {"kcal": 803, "kj": 3361, "fat_g": 27.0, "sat_fat_g": 9.6, "carbs_g": 95.2, "sugars_g": 19.4, "protein_g": 41.6, "salt_g": 2.25},
+    "highProtein": true,
+    "pdf": {"file": "beef.pdf", "page": 24}
+  }
+]

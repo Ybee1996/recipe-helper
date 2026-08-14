@@ -1,0 +1,156 @@
+[
+  {
+    "id": "hf-beef-01",
+    "title": "Chermoula Beef Tabbouleh",
+    "source": "hellofresh",
+    "protein": "beef",
+    "cookTimeMin": null,
+    "servings": 2,
+    "tags": ["tabbouleh", "middle-eastern", "bulgur"],
+    "allergens": ["gluten", "milk"],
+    "ingredients": [
+      {"name": "Chicken Stock Paste", "qty2": "10g", "qty3": "15g", "qty4": "20g"},
+      {"name": "Bulgur Wheat", "qty2": "120g", "qty3": "180g", "qty4": "240g"},
+      {"name": "Beef Mince", "qty2": "240g", "qty3": "360g", "qty4": "480g"},
+      {"name": "Medium Tomato", "qty2": "2", "qty3": "3", "qty4": "4"},
+      {"name": "Mint", "qty2": "1 bunch", "qty3": "1 bunch", "qty4": "1 bunch"},
+      {"name": "Garlic Clove", "qty2": "1", "qty3": "2", "qty4": "2"},
+      {"name": "Tomato Puree", "qty2": "1 sachet", "qty3": "2 sachets", "qty4": "2 sachets"},
+      {"name": "Chermoula Spice Mix", "qty2": "1 sachet", "qty3": "1 sachet", "qty4": "2 sachets"},
+      {"name": "Pomegranate Molasses", "qty2": "1 sachet", "qty3": "2 sachets", "qty4": "2 sachets"},
+      {"name": "Low Fat Natural Yoghurt", "qty2": "75g", "qty3": "120g", "qty4": "150g"},
+      {"name": "Rocket", "qty2": "40g", "qty3": "60g", "qty4": "80g"}
+    ],
+    "pantry": [
+      {"name": "Water for the Bulgur", "qty2": "220ml", "qty3": "330ml", "qty4": "440ml", "pantry": true},
+      {"name": "Sugar for the Sauce", "qty2": "1 tsp", "qty3": "1.5 tsp", "qty4": "2 tsp", "pantry": true},
+      {"name": "Water for the Sauce", "qty2": "50ml", "qty3": "75ml", "qty4": "100ml", "pantry": true},
+      {"name": "Olive Oil for the Rocket", "qty2": "1 tbsp", "qty3": "1.5 tbsp", "qty4": "2 tbsp", "pantry": true}
+    ],
+    "tools": ["saucepan", "lid", "frying pan", "garlic press", "bowl"],
+    "steps": [
+      {"n": 1, "title": "Cook the Bulgur", "text": "Pour the water for the bulgur into a saucepan with the chicken stock paste and bring to the boil. Stir in the bulgur, bring back to the boil, then simmer for 1 min. Pop a lid on the pan and remove from the heat. Leave to the side for 12-15 mins or until ready to serve."},
+      {"n": 2, "title": "Fry the Beef", "text": "Heat a drizzle of oil in a frying pan on medium-high heat. Once hot, add the beef mince and fry until browned, 5-6 mins. Break it up as it cooks, then drain excess fat. Season with salt and pepper."},
+      {"n": 3, "title": "Get Prepped", "text": "While the beef cooks, chop the tomatoes into 1cm pieces. Pick the mint leaves from their stalks and roughly chop (discard the stalks). Peel and grate the garlic (or use a garlic press)."},
+      {"n": 4, "title": "Simmer the Sauce", "text": "Add the garlic, chermoula spice mix and tomato puree to the beef. Cook for 1 min. Stir in the pomegranate molasses, remaining stock paste if using, sugar and water for the sauce. Simmer until reduced and sticky."},
+      {"n": 5, "title": "Mix the Mint Yoghurt", "text": "In a small bowl, combine the yoghurt with half the mint. Season with salt and pepper."},
+      {"n": 6, "title": "Finish and Serve", "text": "Fluff up the bulgur with a fork and stir through the tomatoes and remaining mint. Share the tabbouleh between bowls, top with the chermoula beef, a dollop of mint yoghurt, and a handful of rocket drizzled with olive oil. Enjoy!"}
+    ],
+    "nutrition": {"kcal": 601, "kj": 2515, "fat_g": 23.5, "sat_fat_g": 9.6, "carbs_g": 63.1, "sugars_g": 13.9, "protein_g": 39.5, "salt_g": 2.53},
+    "highProtein": true,
+    "pdf": {"file": "beef.pdf", "page": 1}
+  },
+  {
+    "id": "hf-beef-02",
+    "title": "Harissa Beef Pilaf",
+    "source": "hellofresh",
+    "protein": "beef",
+    "cookTimeMin": null,
+    "servings": 2,
+    "tags": ["pilaf", "harissa", "rice"],
+    "allergens": ["tree_nut", "milk"],
+    "ingredients": [
+      {"name": "Red Onion", "qty2": "1", "qty3": "1", "qty4": "2"},
+      {"name": "Garlic Clove", "qty2": "1", "qty3": "2", "qty4": "2"},
+      {"name": "Basmati Rice", "qty2": "150g", "qty3": "225g", "qty4": "300g"},
+      {"name": "Flaked Almonds", "qty2": "15g", "qty3": "25g", "qty4": "25g"},
+      {"name": "Beef Mince", "qty2": "240g", "qty3": "360g", "qty4": "480g"},
+      {"name": "Coriander", "qty2": "1 bunch", "qty3": "1 bunch", "qty4": "1 bunch"},
+      {"name": "Harissa Paste", "qty2": "1 sachet", "qty3": "1.5 sachets", "qty4": "2 sachets"},
+      {"name": "Ground Turmeric", "qty2": "1 sachet", "qty3": "1 sachet", "qty4": "2 sachets"},
+      {"name": "Beef Stock Paste", "qty2": "10g", "qty3": "15g", "qty4": "20g"},
+      {"name": "Baby Spinach", "qty2": "40g", "qty3": "80g", "qty4": "100g"},
+      {"name": "Greek Style Natural Yoghurt", "qty2": "75g", "qty3": "120g", "qty4": "150g"}
+    ],
+    "pantry": [
+      {"name": "Water for the Rice", "qty2": "300ml", "qty3": "450ml", "qty4": "600ml", "pantry": true},
+      {"name": "Water for the Beef", "qty2": "50ml", "qty3": "75ml", "qty4": "100ml", "pantry": true}
+    ],
+    "tools": ["kettle", "garlic press", "saucepan", "lid", "sieve", "frying pan", "bowl"],
+    "steps": [
+      {"n": 1, "title": "Cook the Rice", "text": "Boil a kettle. Halve, peel and chop the onion. Peel and grate the garlic. Cook the rice in boiling salted water for 10-12 mins, then drain, return to the pan and cover."},
+      {"n": 2, "title": "Toasting Time", "text": "Heat a large frying pan on medium heat (no oil). Toast the flaked almonds until golden, 2-3 mins, then tip into a bowl."},
+      {"n": 3, "title": "Cook the Mince", "text": "Return the pan to medium-high heat with a drizzle of oil. Fry the beef mince until browned, 4-5 mins. Drain excess fat and season. Roughly chop the coriander."},
+      {"n": 4, "title": "Add the Flavour", "text": "Add the onion and garlic to the mince and cook until softened. Stir in the harissa paste, turmeric, beef stock paste and water for the beef. Simmer, then add the spinach until wilted."},
+      {"n": 5, "title": "Mix the Coriander Yoghurt", "text": "Combine the yoghurt with half the coriander. Season with salt and pepper."},
+      {"n": 6, "title": "Serve", "text": "Share the beef pilaf between bowls. Top with coriander yoghurt, remaining coriander, and toasted almonds. Enjoy!"}
+    ],
+    "nutrition": {"kcal": 759, "kj": 3178, "fat_g": 34.8, "sat_fat_g": 11.8, "carbs_g": 72.9, "sugars_g": 11.1, "protein_g": 37.8, "salt_g": 1.68},
+    "highProtein": true,
+    "pdf": {"file": "beef.pdf", "page": 2}
+  },
+  {
+    "id": "hf-beef-03",
+    "title": "Beef and Pea Keema Curry with Garlicky Naans",
+    "source": "hellofresh",
+    "protein": "beef",
+    "cookTimeMin": null,
+    "servings": 2,
+    "tags": ["keema", "curry", "indian", "naan"],
+    "allergens": ["tree_nut", "soy", "gluten"],
+    "ingredients": [
+      {"name": "Red Onion", "qty2": "1", "qty3": "1", "qty4": "2"},
+      {"name": "Beef Mince", "qty2": "240g", "qty3": "360g", "qty4": "480g"},
+      {"name": "Coriander", "qty2": "1 bunch", "qty3": "1 bunch", "qty4": "2 bunches"},
+      {"name": "Garlic Clove", "qty2": "2", "qty3": "3", "qty4": "3"},
+      {"name": "North Indian Style Spice Mix", "qty2": "1 sachet", "qty3": "1 sachet", "qty4": "2 sachets"},
+      {"name": "Tomato Passata", "qty2": "1 carton", "qty3": "1.5 cartons", "qty4": "2 cartons"},
+      {"name": "Beef Stock Paste", "qty2": "10g", "qty3": "15g", "qty4": "20g"},
+      {"name": "Cashew Nuts", "qty2": "25g", "qty3": "40g", "qty4": "40g"},
+      {"name": "Plain Naan", "qty2": "2", "qty3": "3", "qty4": "4"},
+      {"name": "Peas", "qty2": "120g", "qty3": "180g", "qty4": "240g"}
+    ],
+    "pantry": [
+      {"name": "Water for the Sauce", "qty2": "150ml", "qty3": "225ml", "qty4": "300ml", "pantry": true},
+      {"name": "Oil for the Bread", "qty2": "2 tbsp", "qty3": "2 tbsp", "qty4": "3 tbsp", "pantry": true}
+    ],
+    "tools": ["frying pan", "garlic press", "small bowl", "baking tray"],
+    "steps": [
+      {"n": 1, "title": "Fry Time", "text": "Preheat the oven to 200°C. Chop the red onion. Fry the beef mince until browned. Season with salt and pepper."},
+      {"n": 2, "title": "Get Prepped", "text": "Add the chopped onion to the mince and cook 4-5 mins. Chop the coriander and grate the garlic."},
+      {"n": 3, "title": "Simmer and Spice", "text": "Lower the heat, add the spice mix and half the garlic. Add passata, stock paste and water. Simmer 5-6 mins until thickened."},
+      {"n": 4, "title": "Toast the Cashews", "text": "Dry-fry the cashew nuts 1-2 mins until toasted."},
+      {"n": 5, "title": "Finish Up", "text": "Mix remaining garlic with oil, brush onto naans, and bake 3-4 mins. Add peas and half the coriander to the curry and simmer 1-2 mins."},
+      {"n": 6, "title": "Serve", "text": "Divide the beef and pea keema curry into bowls. Top with toasted cashews and remaining coriander. Serve with halved garlic naans. Enjoy!"}
+    ],
+    "nutrition": {"kcal": 832, "kj": 3482, "fat_g": 39, "sat_fat_g": 11, "carbs_g": 83, "sugars_g": 13, "protein_g": 40, "salt_g": 2.4},
+    "highProtein": true,
+    "pdf": {"file": "beef.pdf", "page": 3}
+  },
+  {
+    "id": "hf-beef-04",
+    "title": "Bulgogi Beef Tacos",
+    "source": "hellofresh",
+    "protein": "beef",
+    "cookTimeMin": null,
+    "servings": 2,
+    "tags": ["tacos", "bulgogi", "korean"],
+    "allergens": ["egg", "mustard", "soy", "gluten", "sulphites"],
+    "ingredients": [
+      {"name": "Echalion Shallot", "qty2": "1", "qty3": "2", "qty4": "2"},
+      {"name": "Cider Vinegar", "qty2": "1 sachet", "qty3": "2 sachets", "qty4": "2 sachets"},
+      {"name": "Green Pepper", "qty2": "1", "qty3": "2", "qty4": "2"},
+      {"name": "Garlic Clove", "qty2": "1", "qty3": "2", "qty4": "2"},
+      {"name": "Beef Mince", "qty2": "240g", "qty3": "360g", "qty4": "480g"},
+      {"name": "Sambal", "qty2": "15g", "qty3": "22g", "qty4": "30g"},
+      {"name": "Bulgogi Sauce", "qty2": "2 sachets", "qty3": "3 sachets", "qty4": "4 sachets"},
+      {"name": "Plain Taco Tortilla", "qty2": "6", "qty3": "9", "qty4": "12"}
+    ],
+    "pantry": [
+      {"name": "Sugar for the Pickle", "qty2": "1 tsp", "qty3": "1.5 tsp", "qty4": "2 tsp", "pantry": true},
+      {"name": "Mayonnaise", "qty2": "2 tbsp", "qty3": "3 tbsp", "qty4": "4 tbsp", "pantry": true}
+    ],
+    "tools": ["bowl", "garlic press", "frying pan", "baking tray"],
+    "steps": [
+      {"n": 1, "title": "Make the Pickled Shallot", "text": "Preheat oven to 220°C. Thinly slice the shallot. Mix cider vinegar, sugar, salt and pepper in a small bowl; add half the shallot and set aside."},
+      {"n": 2, "title": "Get Prepped", "text": "Slice the green pepper into thin strips. Peel and grate the garlic."},
+      {"n": 3, "title": "Brown the Mince", "text": "Heat oil in a large frying pan. Fry the beef mince and green pepper 5-6 mins. Season with salt and pepper."},
+      {"n": 4, "title": "Sambal Mayo Time", "text": "Mix half the sambal with mayonnaise in a small bowl."},
+      {"n": 5, "title": "Bring on the Spicy Sauce", "text": "Add garlic to the pan with the beef for 1 min. Stir in bulgogi sauce and remaining sambal. Simmer 1 min. Warm tortillas in the oven 1-2 mins."},
+      {"n": 6, "title": "Assemble your Tacos", "text": "Spread sambal mayo on warmed tortillas. Top with the beef filling and pickled shallots. Enjoy!"}
+    ],
+    "nutrition": {"kcal": 758, "kj": 3172, "fat_g": 35.1, "sat_fat_g": 11.4, "carbs_g": 72.7, "sugars_g": 24.5, "protein_g": 34.9, "salt_g": 2.65},
+    "highProtein": true,
+    "pdf": {"file": "beef.pdf", "page": 4}
+  }
+]

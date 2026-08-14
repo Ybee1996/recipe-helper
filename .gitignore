@@ -1,0 +1,12 @@
+node_modules
+.next
+out
+.env
+.env.local
+*.log
+*.tsbuildinfo
+data/pages/
+data/pdfs/
+data/embeddings.json
+__pycache__/
+.venv/
