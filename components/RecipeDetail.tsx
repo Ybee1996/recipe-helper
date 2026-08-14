@@ -1,38 +1,99 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { qtyForServings } from "@/lib/filters";
-import type { Recipe } from "@/lib/types";
+import { useRouter } from "next/navigation";
+import {
+  EditableIngredients,
+  splitPantry,
+  type ListedIngredient,
+} from "@/components/EditableIngredients";
+import { EditableSteps } from "@/components/EditableSteps";
+import { RecipeNote } from "@/components/RecipeNote";
+import { StarRating } from "@/components/StarRating";
+import { saveOverlay } from "@/lib/save-overlay";
+import type { Recipe, Step } from "@/lib/types";
 import { ALLERGEN_LABELS, PROTEIN_LABELS } from "@/lib/types";
 
+function listedFrom(recipe: Recipe): ListedIngredient[] {
+  return [
+    ...recipe.ingredients.map((i) => ({ ...i, pantry: false as const })),
+    ...recipe.pantry.map((i) => ({ ...i, pantry: true as const })),
+  ];
+}
+
 export function RecipeDetail({ recipe }: { recipe: Recipe }) {
+  const router = useRouter();
   const [servings, setServings] = useState<2 | 3 | 4>(2);
   const [checked, setChecked] = useState<Set<string>>(new Set());
+  const [rating, setRating] = useState<number | null>(recipe.rating ?? null);
+  const [note, setNote] = useState<string | null>(recipe.note ?? null);
+  const [items, setItems] = useState<ListedIngredient[]>(() => listedFrom(recipe));
+  const [steps, setSteps] = useState<Step[]>(recipe.steps);
+  const [editingIngredients, setEditingIngredients] = useState(false);
+  const [editingSteps, setEditingSteps] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  const items = useMemo(
-    () => [
-      ...recipe.ingredients.map((i) => ({ ...i, pantry: false })),
-      ...recipe.pantry.map((i) => ({ ...i, pantry: true })),
-    ],
-    [recipe],
-  );
+  const skipIngredientSave = useRef(true);
+  const skipStepSave = useRef(true);
 
-  function toggle(name: string) {
-    setChecked((prev) => {
-      const next = new Set(prev);
-      if (next.has(name)) next.delete(name);
-      else next.add(name);
-      return next;
-    });
+  useEffect(() => {
+    setRating(recipe.rating ?? null);
+    setNote(recipe.note ?? null);
+    setItems(listedFrom(recipe));
+    setSteps(recipe.steps);
+    setEditingIngredients(false);
+    setEditingSteps(false);
+    skipIngredientSave.current = true;
+    skipStepSave.current = true;
+    setChecked(new Set());
+  }, [recipe.id]);
+
+  async function persist(
+    payload: Parameters<typeof saveOverlay>[1],
+    refresh = true,
+  ) {
+    setError(null);
+    try {
+      await saveOverlay(recipe.id, payload);
+      if (refresh) router.refresh();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Could not save");
+    }
   }
+
+  useEffect(() => {
+    if (skipIngredientSave.current) {
+      skipIngredientSave.current = false;
+      return;
+    }
+    if (!editingIngredients) return;
+    const handle = setTimeout(() => {
+      const { ingredients, pantry } = splitPantry(items);
+      void persist({ ingredients, pantry }, false);
+    }, 450);
+    return () => clearTimeout(handle);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [items, editingIngredients]);
+
+  useEffect(() => {
+    if (skipStepSave.current) {
+      skipStepSave.current = false;
+      return;
+    }
+    if (!editingSteps) return;
+    const handle = setTimeout(() => {
+      void persist({
+        steps: steps.map((s, i) => ({ ...s, n: i + 1 })),
+      }, false);
+    }, 450);
+    return () => clearTimeout(handle);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [steps, editingSteps]);
 
   return (
     <article className="px-4 pb-8 pt-4">
-      <Link
-        href="/"
-        className="text-sm font-semibold text-[var(--accent)]"
-      >
+      <Link href="/" className="text-sm font-semibold text-[var(--accent)]">
         ← Recipes
       </Link>
 
@@ -61,66 +122,59 @@ export function RecipeDetail({ recipe }: { recipe: Recipe }) {
 
       {recipe.allergens.length > 0 && (
         <p className="mt-3 text-sm text-[var(--muted)]">
-          Contains{" "}
-          {recipe.allergens.map((a) => ALLERGEN_LABELS[a]).join(", ")}
+          Contains {recipe.allergens.map((a) => ALLERGEN_LABELS[a]).join(", ")}
         </p>
       )}
 
-      <section className="mt-6">
-        <div className="flex items-center justify-between">
-          <h2 className="text-lg font-semibold">Ingredients</h2>
-          <div className="flex overflow-hidden rounded-full border border-[var(--line)] bg-[var(--card)] text-sm font-semibold">
-            {([2, 3, 4] as const).map((n) => (
-              <button
-                key={n}
-                type="button"
-                onClick={() => setServings(n)}
-                className={`px-3 py-1.5 ${
-                  servings === n
-                    ? "bg-[var(--ink)] text-[var(--paper)]"
-                    : "text-[var(--muted)]"
-                }`}
-              >
-                {n}p
-              </button>
-            ))}
-          </div>
-        </div>
+      <div className="mt-5">
+        <StarRating
+          value={rating}
+          onChange={(next) => {
+            setRating(next);
+            void persist({ rating: next });
+          }}
+        />
+      </div>
 
-        <ul className="mt-3 divide-y divide-[var(--line)]">
-          {items.map((item) => {
-            const on = checked.has(item.name);
-            return (
-              <li key={item.name}>
-                <button
-                  type="button"
-                  onClick={() => toggle(item.name)}
-                  className="flex w-full items-start gap-3 py-3 text-left"
-                >
-                  <span
-                    className={`mt-0.5 grid h-5 w-5 shrink-0 place-items-center rounded-md border ${
-                      on
-                        ? "border-[var(--sage)] bg-[var(--sage)] text-white"
-                        : "border-[var(--line)] bg-[var(--card)]"
-                    }`}
-                  >
-                    {on ? "✓" : ""}
-                  </span>
-                  <span className={on ? "text-[var(--muted)] line-through" : ""}>
-                    <span className="font-semibold">
-                      {qtyForServings(item, servings)}
-                    </span>{" "}
-                    {item.name}
-                    {item.pantry ? (
-                      <span className="text-[var(--muted)]"> · pantry</span>
-                    ) : null}
-                  </span>
-                </button>
-              </li>
-            );
-          })}
-        </ul>
-      </section>
+      <RecipeNote
+        note={note}
+        onSave={async (text) => {
+          setNote(text);
+          await persist({ note: text });
+        }}
+        onDelete={async () => {
+          setNote(null);
+          await persist({ note: null });
+        }}
+      />
+
+      {error && <p className="mt-3 text-sm text-[var(--accent)]">{error}</p>}
+
+      <EditableIngredients
+        items={items}
+        servings={servings}
+        checked={checked}
+        editing={editingIngredients}
+        onToggleEdit={() => {
+          if (editingIngredients) {
+            const { ingredients, pantry } = splitPantry(items);
+            void persist({ ingredients, pantry });
+          } else {
+            skipIngredientSave.current = true;
+          }
+          setEditingIngredients((v) => !v);
+        }}
+        onServings={setServings}
+        onChange={setItems}
+        onToggleChecked={(key) => {
+          setChecked((prev) => {
+            const next = new Set(prev);
+            if (next.has(key)) next.delete(key);
+            else next.add(key);
+            return next;
+          });
+        }}
+      />
 
       {recipe.tools.length > 0 && (
         <p className="mt-2 text-sm text-[var(--muted)]">
@@ -128,24 +182,21 @@ export function RecipeDetail({ recipe }: { recipe: Recipe }) {
         </p>
       )}
 
-      <section className="mt-8">
-        <h2 className="text-lg font-semibold">Steps</h2>
-        <ol className="mt-3 space-y-5">
-          {recipe.steps.map((step) => (
-            <li key={step.n} className="flex gap-3">
-              <span className="grid h-7 w-7 shrink-0 place-items-center rounded-full bg-[var(--accent)] text-sm font-bold text-white">
-                {step.n}
-              </span>
-              <div>
-                <h3 className="font-semibold">{step.title}</h3>
-                <p className="mt-1 text-[0.95rem] leading-relaxed text-[var(--ink)]/90">
-                  {step.text}
-                </p>
-              </div>
-            </li>
-          ))}
-        </ol>
-      </section>
+      <EditableSteps
+        steps={steps}
+        editing={editingSteps}
+        onToggleEdit={() => {
+          if (editingSteps) {
+            void persist({
+              steps: steps.map((s, i) => ({ ...s, n: i + 1 })),
+            });
+          } else {
+            skipStepSave.current = true;
+          }
+          setEditingSteps((v) => !v);
+        }}
+        onChange={setSteps}
+      />
     </article>
   );
 }

@@ -15,9 +15,16 @@ export function RecipeCard({ recipe }: { recipe: Recipe }) {
         >
           {recipe.title}
         </h2>
-        <span className="shrink-0 rounded-full bg-[var(--chip)] px-2.5 py-1 text-xs font-semibold uppercase tracking-wide text-[var(--sage)]">
-          {PROTEIN_LABELS[recipe.protein]}
-        </span>
+        <div className="flex shrink-0 flex-col items-end gap-1">
+          <span className="rounded-full bg-[var(--chip)] px-2.5 py-1 text-xs font-semibold uppercase tracking-wide text-[var(--sage)]">
+            {PROTEIN_LABELS[recipe.protein]}
+          </span>
+          {recipe.rating ? (
+            <span className="text-xs font-semibold text-[var(--accent)]">
+              ★ {recipe.rating}/10
+            </span>
+          ) : null}
+        </div>
       </div>
       <p className="mt-2 text-sm text-[var(--muted)]">
         {recipe.nutrition

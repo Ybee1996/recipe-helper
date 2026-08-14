@@ -8,5 +8,7 @@ out
 data/pages/
 data/pdfs/
 data/embeddings.json
+data/user.json
+data/user.json.tmp
 __pycache__/
 .venv/

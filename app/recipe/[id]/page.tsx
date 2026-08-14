@@ -1,10 +1,9 @@
 import { notFound } from "next/navigation";
 import { RecipeDetail } from "@/components/RecipeDetail";
-import { getRecipe, loadRecipes } from "@/lib/recipes";
+import { getRecipe } from "@/lib/recipes";
 
-export function generateStaticParams() {
-  return loadRecipes().map((r) => ({ id: r.id }));
-}
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
 
 export default async function RecipePage({
   params,

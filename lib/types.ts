@@ -69,6 +69,18 @@ export interface Recipe {
   nutrition?: Nutrition;
   highProtein: boolean;
   pdf?: { file: string; page: number };
+  rating?: number | null;
+  note?: string | null;
+}
+
+/** Personal edits stored separately so PDF ingest never overwrites them. */
+export interface UserRecipeOverlay {
+  rating?: number | null;
+  note?: string | null;
+  ingredients?: Ingredient[];
+  pantry?: Ingredient[];
+  steps?: Step[];
+  updatedAt?: string;
 }
 
 export interface SearchFilters {

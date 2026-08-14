@@ -1,4 +1,4 @@
-import type { DietaryFilter, Recipe, SearchFilters } from "./types";
+import type { DietaryFilter, Ingredient, Recipe, SearchFilters } from "./types";
 
 export function matchesDietary(recipe: Recipe, dietary: DietaryFilter): boolean {
   switch (dietary) {
@@ -37,4 +37,14 @@ export function qtyForServings(
   if (servings === 3) return ingredient.qty3 ?? ingredient.qty2;
   if (servings === 4) return ingredient.qty4 ?? ingredient.qty2;
   return ingredient.qty2;
+}
+
+export function setQtyForServings(
+  ingredient: Ingredient,
+  servings: 2 | 3 | 4,
+  value: string,
+): Ingredient {
+  if (servings === 2) return { ...ingredient, qty2: value };
+  if (servings === 3) return { ...ingredient, qty3: value };
+  return { ...ingredient, qty4: value };
 }

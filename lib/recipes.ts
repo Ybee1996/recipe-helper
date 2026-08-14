@@ -1,10 +1,11 @@
 import { readdirSync, readFileSync } from "node:fs";
 import path from "node:path";
-import type { Recipe } from "./types";
+import type { Recipe, UserRecipeOverlay } from "./types";
+import { loadOverlays } from "./user-store";
 
 const RECIPES_DIR = path.join(process.cwd(), "data", "recipes");
 
-let cache: Recipe[] | null = null;
+let sourceCache: Recipe[] | null = null;
 
 function isRecipe(value: unknown): value is Recipe {
   if (!value || typeof value !== "object") return false;
@@ -12,8 +13,20 @@ function isRecipe(value: unknown): value is Recipe {
   return typeof r.id === "string" && typeof r.title === "string";
 }
 
-export function loadRecipes(): Recipe[] {
-  if (cache && process.env.NODE_ENV !== "development") return cache;
+function applyOverlay(recipe: Recipe, overlay?: UserRecipeOverlay): Recipe {
+  if (!overlay) return recipe;
+  return {
+    ...recipe,
+    rating: overlay.rating ?? null,
+    note: overlay.note ?? null,
+    ingredients: overlay.ingredients ?? recipe.ingredients,
+    pantry: overlay.pantry ?? recipe.pantry,
+    steps: overlay.steps ?? recipe.steps,
+  };
+}
+
+function loadSourceRecipes(): Recipe[] {
+  if (sourceCache && process.env.NODE_ENV !== "development") return sourceCache;
   const files = readdirSync(RECIPES_DIR).filter((f) => f.endsWith(".json"));
   const recipes: Recipe[] = [];
   const seen = new Set<string>();
@@ -34,8 +47,15 @@ export function loadRecipes(): Recipe[] {
   }
 
   recipes.sort((a, b) => a.title.localeCompare(b.title));
-  cache = recipes;
+  sourceCache = recipes;
   return recipes;
+}
+
+export function loadRecipes(): Recipe[] {
+  const overlays = loadOverlays();
+  return loadSourceRecipes().map((recipe) =>
+    applyOverlay(recipe, overlays[recipe.id]),
+  );
 }
 
 export function getRecipe(id: string): Recipe | undefined {

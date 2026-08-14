@@ -9,6 +9,7 @@ export interface IndexedRecipe {
   tags: string;
   ingredients: string;
   steps: string;
+  note: string;
 }
 
 let index: MiniSearch<IndexedRecipe> | null = null;
@@ -24,18 +25,24 @@ function toDoc(recipe: Recipe): IndexedRecipe {
       .map((i) => i.name)
       .join(" "),
     steps: recipe.steps.map((s) => `${s.title} ${s.text}`).join(" "),
+    note: recipe.note ?? "",
   };
 }
 
 function getIndex(recipes: Recipe[]): MiniSearch<IndexedRecipe> {
-  const key = recipes.map((r) => r.id).join(",");
+  const key = recipes
+    .map(
+      (r) =>
+        `${r.id}:${r.rating ?? ""}:${r.note ?? ""}:${r.ingredients.map((i) => i.name).join(",")}:${r.steps.map((s) => s.title).join(",")}`,
+    )
+    .join("|");
   if (index && indexedIds === key) return index;
 
   const next = new MiniSearch<IndexedRecipe>({
-    fields: ["title", "ingredients", "tags", "protein", "steps"],
+    fields: ["title", "ingredients", "tags", "protein", "steps", "note"],
     storeFields: ["id"],
     searchOptions: {
-      boost: { title: 4, ingredients: 3, tags: 2, protein: 2, steps: 1 },
+      boost: { title: 4, ingredients: 3, tags: 2, protein: 2, steps: 1, note: 2 },
       fuzzy: 0.2,
       prefix: true,
     },
@@ -61,8 +68,10 @@ export function searchRecipes(
       const hay = [
         r.title,
         r.protein,
+        r.note ?? "",
         ...r.tags,
         ...r.ingredients.map((i) => i.name),
+        ...r.pantry.map((i) => i.name),
       ]
         .join(" ")
         .toLowerCase();
