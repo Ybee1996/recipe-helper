@@ -38,9 +38,9 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={`${display.variable} ${sans.variable}`}>
+    <html lang="en" suppressHydrationWarning>
       <body
-        className="font-[family-name:var(--font-sans)] antialiased"
+        className={`${display.variable} ${sans.variable} font-[family-name:var(--font-sans)] antialiased`}
         style={{ fontFamily: "var(--font-sans), system-ui, sans-serif" }}
       >
         <div className="mx-auto min-h-dvh w-full max-w-lg pb-24">{children}</div>
