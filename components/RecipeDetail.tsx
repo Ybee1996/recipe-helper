@@ -24,6 +24,39 @@ function listedFrom(recipe: Recipe): ListedIngredient[] {
   ];
 }
 
+function cloneItems(items: ListedIngredient[]): ListedIngredient[] {
+  return items.map((item) => ({ ...item }));
+}
+
+function cloneSteps(steps: Step[]): Step[] {
+  return steps.map((step) => ({ ...step }));
+}
+
+function EditIcon() {
+  return (
+    <svg
+      width="18"
+      height="18"
+      viewBox="0 0 18 18"
+      fill="none"
+      aria-hidden="true"
+    >
+      <path
+        d="M11.6 3.35a1.4 1.4 0 0 1 2 0l.95.95a1.4 1.4 0 0 1 0 2L7.1 13.75 3.5 14.5l.75-3.6 7.35-7.55Z"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        strokeLinejoin="round"
+      />
+      <path
+        d="M10.4 4.55 13.45 7.6"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+      />
+    </svg>
+  );
+}
+
 export function RecipeDetail({ recipe }: { recipe: Recipe }) {
   const router = useRouter();
   const scalable = recipe.source === "web";
@@ -37,79 +70,133 @@ export function RecipeDetail({ recipe }: { recipe: Recipe }) {
   const [protein, setProtein] = useState<Protein>(recipe.protein);
   const [items, setItems] = useState<ListedIngredient[]>(() => listedFrom(recipe));
   const [steps, setSteps] = useState<Step[]>(recipe.steps);
-  const [editingIngredients, setEditingIngredients] = useState(false);
-  const [editingSteps, setEditingSteps] = useState(false);
+  const [editing, setEditing] = useState(false);
+  const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const skipIngredientSave = useRef(true);
-  const skipStepSave = useRef(true);
+  const snapshot = useRef({
+    protein: recipe.protein,
+    note: recipe.note ?? null,
+    items: listedFrom(recipe),
+    steps: recipe.steps,
+  });
 
   function handleImageChange(url: string | null) {
     setImageUrl(url);
     router.refresh();
   }
 
-  useEffect(() => {
+  function resetFromRecipe() {
     setRating(recipe.rating ?? null);
     setNote(recipe.note ?? null);
     setImageUrl(recipe.imageUrl ?? null);
+    setProtein(recipe.protein);
     setItems(listedFrom(recipe));
     setSteps(recipe.steps);
-    setEditingIngredients(false);
-    setEditingSteps(false);
-    skipIngredientSave.current = true;
-    skipStepSave.current = true;
+    setEditing(false);
+    setSaving(false);
     setChecked(new Set());
     setServings(scalable ? recipe.servings || 2 : 2);
+  }
+
+  useEffect(() => {
+    resetFromRecipe();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [recipe.id, recipe.servings, scalable]);
 
   async function persist(
     payload: Parameters<typeof saveOverlay>[1],
     refresh = true,
-  ) {
+  ): Promise<boolean> {
     setError(null);
     try {
       await saveOverlay(recipe.id, payload);
       if (refresh) router.refresh();
+      return true;
     } catch (err) {
       setError(err instanceof Error ? err.message : "Could not save");
+      return false;
     }
   }
 
-  useEffect(() => {
-    if (skipIngredientSave.current) {
-      skipIngredientSave.current = false;
-      return;
-    }
-    if (!editingIngredients) return;
-    const handle = setTimeout(() => {
-      const { ingredients, pantry } = splitPantry(items);
-      void persist({ ingredients, pantry }, false);
-    }, 450);
-    return () => clearTimeout(handle);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [items, editingIngredients]);
+  function startEditing() {
+    snapshot.current = {
+      protein,
+      note,
+      items: cloneItems(items),
+      steps: cloneSteps(steps),
+    };
+    setError(null);
+    setEditing(true);
+  }
 
-  useEffect(() => {
-    if (skipStepSave.current) {
-      skipStepSave.current = false;
-      return;
-    }
-    if (!editingSteps) return;
-    const handle = setTimeout(() => {
-      void persist({
+  function cancelEditing() {
+    setProtein(snapshot.current.protein);
+    setNote(snapshot.current.note);
+    setItems(cloneItems(snapshot.current.items));
+    setSteps(cloneSteps(snapshot.current.steps));
+    setError(null);
+    setEditing(false);
+  }
+
+  async function saveEditing() {
+    if (saving) return;
+    setSaving(true);
+    setError(null);
+    try {
+      const { ingredients, pantry } = splitPantry(items);
+      const ok = await persist({
+        protein,
+        note: (note ?? "").trim() || null,
+        ingredients,
+        pantry,
         steps: steps.map((s, i) => ({ ...s, n: i + 1 })),
-      }, false);
-    }, 450);
-    return () => clearTimeout(handle);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [steps, editingSteps]);
+      });
+      if (!ok) return;
+      setNote((note ?? "").trim() || null);
+      setEditing(false);
+    } finally {
+      setSaving(false);
+    }
+  }
 
   return (
     <article className="px-4 pb-8 pt-4">
-      <Link href="/" className="text-sm font-semibold text-[var(--accent)]">
-        ← Recipes
-      </Link>
+      <div className="flex items-center justify-between gap-3">
+        <Link href="/" className="text-sm font-semibold text-[var(--accent)]">
+          ← Recipes
+        </Link>
+        {editing ? (
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              disabled={saving}
+              onClick={cancelEditing}
+              className="rounded-full bg-[var(--chip)] px-3.5 py-1.5 text-sm font-semibold disabled:opacity-50"
+            >
+              Cancel
+            </button>
+            <button
+              type="button"
+              disabled={saving}
+              onClick={() => void saveEditing()}
+              className="rounded-full bg-[var(--ink)] px-3.5 py-1.5 text-sm font-semibold text-[var(--paper)] disabled:opacity-50"
+            >
+              {saving ? "Saving…" : "Save"}
+            </button>
+          </div>
+        ) : (
+          <button
+            type="button"
+            onClick={startEditing}
+            aria-label="Edit recipe"
+            title="Edit recipe"
+            className="inline-flex shrink-0 items-center justify-center rounded-full p-1.5 text-[var(--muted)] transition-colors hover:bg-[var(--chip)] hover:text-[var(--accent)]"
+          >
+            <EditIcon />
+          </button>
+        )}
+      </div>
 
       <div className="mt-3 flex items-start justify-between gap-3">
         <h1
@@ -118,65 +205,57 @@ export function RecipeDetail({ recipe }: { recipe: Recipe }) {
         >
           {recipe.title}
         </h1>
-        <div className="mt-1 flex shrink-0 items-center">
-          {!imageUrl ? (
-            <RecipeImage
-              recipeId={recipe.id}
-              imageUrl={imageUrl}
-              onChange={handleImageChange}
-              onError={setError}
-            />
-          ) : null}
-          {recipe.sourceUrl ? <SourceRecipeLink url={recipe.sourceUrl} /> : null}
-        </div>
+        {recipe.sourceUrl ? <SourceRecipeLink url={recipe.sourceUrl} /> : null}
       </div>
 
-      {imageUrl ? (
-        <RecipeImage
-          recipeId={recipe.id}
-          imageUrl={imageUrl}
-          onChange={handleImageChange}
-          onError={setError}
-        />
-      ) : null}
+      <RecipeImage
+        recipeId={recipe.id}
+        imageUrl={imageUrl}
+        editing={editing}
+        onChange={handleImageChange}
+        onError={setError}
+      />
 
-      <fieldset className="mt-3">
-        <legend className="sr-only">Protein category</legend>
-        <div className="flex flex-wrap gap-2">
-          {PROTEINS.map((p) => {
-            const on = protein === p;
-            return (
-              <button
-                key={p}
-                type="button"
-                onClick={() => {
-                  if (p === protein) return;
-                  setProtein(p);
-                  void persist({ protein: p });
-                }}
-                className={`rounded-full px-3 py-1 text-xs font-semibold uppercase tracking-wide ${
-                  on
-                    ? "bg-[var(--ink)] text-[var(--paper)]"
-                    : "bg-[var(--chip)] text-[var(--ink)]"
-                }`}
-              >
-                {PROTEIN_LABELS[p]}
-              </button>
-            );
-          })}
-        </div>
-      </fieldset>
-
-      <div className="mt-2 flex flex-wrap gap-2">
-        {recipe.highProtein && (
-          <span className="rounded-full bg-[var(--sage)] px-3 py-1 text-xs font-semibold uppercase tracking-wide text-white">
-            High protein
-          </span>
-        )}
-        {recipe.nutrition && (
-          <span className="rounded-full bg-[var(--chip)] px-3 py-1 text-xs font-semibold">
-            {recipe.nutrition.kcal} kcal · {recipe.nutrition.protein_g}g protein
-          </span>
+      <div className="mt-3">
+        {editing ? (
+          <fieldset>
+            <legend className="mb-2 text-sm font-semibold">Category</legend>
+            <div className="flex flex-wrap gap-2">
+              {PROTEINS.map((p) => {
+                const on = protein === p;
+                return (
+                  <button
+                    key={p}
+                    type="button"
+                    onClick={() => setProtein(p)}
+                    className={`rounded-full px-3 py-1 text-xs font-semibold uppercase tracking-wide ${
+                      on
+                        ? "bg-[var(--ink)] text-[var(--paper)]"
+                        : "bg-[var(--chip)] text-[var(--ink)]"
+                    }`}
+                  >
+                    {PROTEIN_LABELS[p]}
+                  </button>
+                );
+              })}
+            </div>
+          </fieldset>
+        ) : (
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="rounded-full bg-[var(--chip)] px-3 py-1 text-xs font-semibold uppercase tracking-wide">
+              {PROTEIN_LABELS[protein]}
+            </span>
+            {recipe.highProtein && (
+              <span className="rounded-full bg-[var(--sage)] px-3 py-1 text-xs font-semibold uppercase tracking-wide text-white">
+                High protein
+              </span>
+            )}
+            {recipe.nutrition && (
+              <span className="rounded-full bg-[var(--chip)] px-3 py-1 text-xs font-semibold">
+                {recipe.nutrition.kcal} kcal · {recipe.nutrition.protein_g}g protein
+              </span>
+            )}
+          </div>
         )}
       </div>
 
@@ -198,14 +277,8 @@ export function RecipeDetail({ recipe }: { recipe: Recipe }) {
 
       <RecipeNote
         note={note}
-        onSave={async (text) => {
-          setNote(text);
-          await persist({ note: text });
-        }}
-        onDelete={async () => {
-          setNote(null);
-          await persist({ note: null });
-        }}
+        editing={editing}
+        onChange={(text) => setNote(text)}
       />
 
       {error && <p className="mt-3 text-sm text-[var(--accent)]">{error}</p>}
@@ -215,16 +288,7 @@ export function RecipeDetail({ recipe }: { recipe: Recipe }) {
         servings={servings}
         baseServings={scalable ? recipe.servings || 2 : undefined}
         checked={checked}
-        editing={editingIngredients}
-        onToggleEdit={() => {
-          if (editingIngredients) {
-            const { ingredients, pantry } = splitPantry(items);
-            void persist({ ingredients, pantry });
-          } else {
-            skipIngredientSave.current = true;
-          }
-          setEditingIngredients((v) => !v);
-        }}
+        editing={editing}
         onServings={setServings}
         onChange={setItems}
         onToggleChecked={(key) => {
@@ -243,21 +307,7 @@ export function RecipeDetail({ recipe }: { recipe: Recipe }) {
         </p>
       )}
 
-      <EditableSteps
-        steps={steps}
-        editing={editingSteps}
-        onToggleEdit={() => {
-          if (editingSteps) {
-            void persist({
-              steps: steps.map((s, i) => ({ ...s, n: i + 1 })),
-            });
-          } else {
-            skipStepSave.current = true;
-          }
-          setEditingSteps((v) => !v);
-        }}
-        onChange={setSteps}
-      />
+      <EditableSteps steps={steps} editing={editing} onChange={setSteps} />
     </article>
   );
 }

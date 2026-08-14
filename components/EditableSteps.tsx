@@ -10,7 +10,7 @@ export function EditableSteps({
 }: {
   steps: Step[];
   editing: boolean;
-  onToggleEdit: () => void;
+  onToggleEdit?: () => void;
   onChange: (steps: Step[]) => void;
 }) {
   function update(index: number, next: Step) {
@@ -30,13 +30,15 @@ export function EditableSteps({
     <section className="mt-8">
       <div className="flex items-center justify-between">
         <h2 className="text-lg font-semibold">Steps</h2>
-        <button
-          type="button"
-          onClick={onToggleEdit}
-          className="text-sm font-semibold text-[var(--accent)]"
-        >
-          {editing ? "Done" : "Edit"}
-        </button>
+        {onToggleEdit ? (
+          <button
+            type="button"
+            onClick={onToggleEdit}
+            className="text-sm font-semibold text-[var(--accent)]"
+          >
+            {editing ? "Done" : "Edit"}
+          </button>
+        ) : null}
       </div>
 
       {editing ? (

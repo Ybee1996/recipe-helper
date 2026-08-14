@@ -92,7 +92,7 @@ export function EditableIngredients({
   baseServings?: number;
   checked: Set<string>;
   editing: boolean;
-  onToggleEdit: () => void;
+  onToggleEdit?: () => void;
   onServings: (n: number) => void;
   onChange: (items: ListedIngredient[]) => void;
   onToggleChecked: (key: string) => void;
@@ -111,13 +111,15 @@ export function EditableIngredients({
             baseServings={baseServings}
             onServings={onServings}
           />
-          <button
-            type="button"
-            onClick={onToggleEdit}
-            className="text-sm font-semibold text-[var(--accent)]"
-          >
-            {editing ? "Done" : "Edit"}
-          </button>
+          {onToggleEdit ? (
+            <button
+              type="button"
+              onClick={onToggleEdit}
+              className="text-sm font-semibold text-[var(--accent)]"
+            >
+              {editing ? "Done" : "Edit"}
+            </button>
+          ) : null}
         </div>
       </div>
 

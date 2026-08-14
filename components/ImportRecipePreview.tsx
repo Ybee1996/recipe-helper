@@ -43,8 +43,6 @@ export function ImportRecipePreview({
   const [servings, setServings] = useState(baseServings);
   const [items, setItems] = useState<ListedIngredient[]>(() => listedFrom(recipe));
   const [steps, setSteps] = useState<Step[]>(recipe.steps);
-  const [editingIngredients, setEditingIngredients] = useState(false);
-  const [editingSteps, setEditingSteps] = useState(false);
   const [checked, setChecked] = useState<Set<string>>(new Set());
 
   return (
@@ -105,8 +103,7 @@ export function ImportRecipePreview({
         servings={servings}
         baseServings={baseServings}
         checked={checked}
-        editing={editingIngredients}
-        onToggleEdit={() => setEditingIngredients((v) => !v)}
+        editing
         onServings={setServings}
         onChange={setItems}
         onToggleChecked={(key) => {
@@ -127,8 +124,7 @@ export function ImportRecipePreview({
 
       <EditableSteps
         steps={steps}
-        editing={editingSteps}
-        onToggleEdit={() => setEditingSteps((v) => !v)}
+        editing
         onChange={setSteps}
       />
 
