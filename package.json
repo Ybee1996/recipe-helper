@@ -7,9 +7,12 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "ingest": "python scripts/ingest.py"
+    "ingest": "python scripts/ingest.py",
+    "db:push": "tsx scripts/db-push.ts",
+    "db:seed": "tsx scripts/db-seed.ts"
   },
   "dependencies": {
+    "@neondatabase/serverless": "^1.1.0",
     "minisearch": "^7.2.0",
     "next": "^15.5.23",
     "openai": "^7.4.0",
@@ -24,6 +27,7 @@
     "eslint": "^9.39.5",
     "eslint-config-next": "^16.3.1",
     "tailwindcss": "^4.3.3",
+    "tsx": "^4.23.12",
     "typescript": "^6.0.3"
   }
 }

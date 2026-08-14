@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { getRecipe } from "@/lib/recipes";
 import type { Ingredient, Step, UserRecipeOverlay } from "@/lib/types";
-import { loadOverlays, patchOverlay } from "@/lib/user-store";
+import { getOverlay, patchOverlay } from "@/lib/user-store";
 
 export const dynamic = "force-dynamic";
 
@@ -22,10 +22,10 @@ export async function GET(
   { params }: { params: Promise<{ id: string }> },
 ) {
   const { id } = await params;
-  if (!getRecipe(id)) {
+  if (!(await getRecipe(id))) {
     return NextResponse.json({ error: "Recipe not found" }, { status: 404 });
   }
-  return NextResponse.json(loadOverlays()[id] ?? {});
+  return NextResponse.json(await getOverlay(id));
 }
 
 export async function PATCH(
@@ -33,7 +33,7 @@ export async function PATCH(
   { params }: { params: Promise<{ id: string }> },
 ) {
   const { id } = await params;
-  if (!getRecipe(id)) {
+  if (!(await getRecipe(id))) {
     return NextResponse.json({ error: "Recipe not found" }, { status: 404 });
   }
 
@@ -85,6 +85,6 @@ export async function PATCH(
       .map((s, i) => ({ n: i + 1, title: s.title, text: s.text }));
   }
 
-  const overlay = patchOverlay(id, patch);
+  const overlay = await patchOverlay(id, patch);
   return NextResponse.json(overlay);
 }

@@ -1,8 +1,5 @@
-import { existsSync, mkdirSync, readFileSync, renameSync, writeFileSync } from "node:fs";
-import path from "node:path";
 import type { Ingredient, Step, UserRecipeOverlay } from "./types";
-
-const USER_FILE = path.join(process.cwd(), "data", "user.json");
+import { getSql } from "./db";
 
 export type OverlayMap = Record<string, UserRecipeOverlay>;
 
@@ -22,7 +19,7 @@ function isStep(value: unknown): value is Step {
   );
 }
 
-function parseOverlay(value: unknown): UserRecipeOverlay | null {
+export function parseOverlay(value: unknown): UserRecipeOverlay | null {
   if (!value || typeof value !== "object") return null;
   const raw = value as UserRecipeOverlay;
   const overlay: UserRecipeOverlay = {};
@@ -53,35 +50,51 @@ function parseOverlay(value: unknown): UserRecipeOverlay | null {
   return overlay;
 }
 
-export function loadOverlays(): OverlayMap {
-  if (!existsSync(USER_FILE)) return {};
-  try {
-    const parsed = JSON.parse(readFileSync(USER_FILE, "utf8")) as unknown;
-    if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) return {};
-    const out: OverlayMap = {};
-    for (const [id, value] of Object.entries(parsed as Record<string, unknown>)) {
-      const overlay = parseOverlay(value);
-      if (overlay) out[id] = overlay;
-    }
-    return out;
-  } catch {
-    return {};
+export function overlayIsEmpty(overlay: UserRecipeOverlay): boolean {
+  return (
+    overlay.rating == null &&
+    !overlay.note &&
+    overlay.ingredients === undefined &&
+    overlay.pantry === undefined &&
+    overlay.steps === undefined
+  );
+}
+
+export async function loadOverlays(): Promise<OverlayMap> {
+  const sql = getSql();
+  const rows = (await sql`
+    SELECT id, overlay FROM recipes
+    WHERE overlay <> '{}'::jsonb
+  `) as { id: string; overlay: unknown }[];
+  const out: OverlayMap = {};
+  for (const row of rows) {
+    const overlay = parseOverlay(row.overlay);
+    if (overlay && !overlayIsEmpty(overlay)) out[row.id] = overlay;
   }
+  return out;
 }
 
-export function saveOverlays(map: OverlayMap): void {
-  mkdirSync(path.dirname(USER_FILE), { recursive: true });
-  const tmp = `${USER_FILE}.tmp`;
-  writeFileSync(tmp, JSON.stringify(map, null, 2) + "\n", "utf8");
-  renameSync(tmp, USER_FILE);
+export async function getOverlay(id: string): Promise<UserRecipeOverlay> {
+  const sql = getSql();
+  const rows = (await sql`
+    SELECT overlay FROM recipes WHERE id = ${id}
+  `) as { overlay: unknown }[];
+  return parseOverlay(rows[0]?.overlay) ?? {};
 }
 
-export function patchOverlay(
+export async function patchOverlay(
   id: string,
   patch: UserRecipeOverlay,
-): UserRecipeOverlay {
-  const map = loadOverlays();
-  const current = map[id] ?? {};
+): Promise<UserRecipeOverlay> {
+  const sql = getSql();
+  const rows = (await sql`
+    SELECT overlay FROM recipes WHERE id = ${id}
+  `) as { overlay: unknown }[];
+  if (!rows[0]) {
+    throw new Error("Recipe not found");
+  }
+
+  const current = parseOverlay(rows[0].overlay) ?? {};
   const next: UserRecipeOverlay = { ...current, updatedAt: new Date().toISOString() };
 
   if ("rating" in patch) {
@@ -98,15 +111,11 @@ export function patchOverlay(
     next.steps = (patch.steps ?? []).map((s, i) => ({ ...s, n: i + 1 }));
   }
 
-  const empty =
-    next.rating == null &&
-    !next.note &&
-    next.ingredients === undefined &&
-    next.pantry === undefined &&
-    next.steps === undefined;
-  if (empty) delete map[id];
-  else map[id] = next;
-
-  saveOverlays(map);
-  return next;
+  const stored = overlayIsEmpty(next) ? {} : next;
+  await sql`
+    UPDATE recipes
+    SET overlay = ${JSON.stringify(stored)}::jsonb, updated_at = now()
+    WHERE id = ${id}
+  `;
+  return overlayIsEmpty(next) ? {} : next;
 }

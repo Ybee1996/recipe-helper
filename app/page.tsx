@@ -4,7 +4,7 @@ import { RecipeSearch } from "@/components/RecipeSearch";
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
-export default function HomePage() {
-  const recipes = loadRecipes();
+export default async function HomePage() {
+  const recipes = await loadRecipes();
   return <RecipeSearch recipes={recipes} />;
 }

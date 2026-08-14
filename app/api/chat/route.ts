@@ -34,7 +34,7 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Missing question" }, { status: 400 });
   }
 
-  const recipes = loadRecipes();
+  const recipes = await loadRecipes();
   const retrieved = retrieveRecipes(recipes, lastUser.content, 5);
   const context = retrieved.map(compactRecipe);
 
