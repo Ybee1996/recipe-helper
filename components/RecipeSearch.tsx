@@ -6,7 +6,7 @@ import { searchRecipes } from "@/lib/search";
 import type { DietaryFilter, Protein, Recipe } from "@/lib/types";
 import { PROTEIN_LABELS } from "@/lib/types";
 
-const PROTEIN_CHIPS: Protein[] = ["chicken", "beef", "pork", "veggie"];
+const PROTEIN_CHIPS: Protein[] = ["chicken", "beef", "pork", "fish", "veggie"];
 const DIET_CHIPS: { id: DietaryFilter; label: string }[] = [
   { id: "high_protein", label: "High protein" },
   { id: "dairy_free", label: "Dairy-free" },

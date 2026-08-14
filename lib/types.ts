@@ -1,4 +1,4 @@
-export const PROTEINS = ["chicken", "beef", "pork", "veggie", "other"] as const;
+export const PROTEINS = ["chicken", "beef", "pork", "fish", "veggie", "other"] as const;
 export type Protein = (typeof PROTEINS)[number];
 
 export const ALLERGENS = [
@@ -108,6 +108,7 @@ export const PROTEIN_LABELS: Record<Protein, string> = {
   chicken: "Chicken",
   beef: "Beef",
   pork: "Pork",
+  fish: "Fish",
   veggie: "Veggie",
   other: "Other",
 };

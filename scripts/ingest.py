@@ -29,7 +29,7 @@ Return JSON with this exact shape (one recipe per page):
   "id": "hf-<protein>-<pagepadded>",
   "title": "Title Case dish name",
   "source": "hellofresh",
-  "protein": "chicken|beef|pork|veggie|other",
+  "protein": "chicken|beef|pork|fish|veggie|other",
   "cookTimeMin": null,
   "servings": 2,
   "tags": ["lowercase", "style", "tags"],
@@ -70,7 +70,7 @@ def slug(text: str) -> str:
 
 def protein_from_filename(name: str) -> str:
     stem = Path(name).stem.lower()
-    for p in ("chicken", "beef", "pork", "veggie", "vegetarian", "veg"):
+    for p in ("chicken", "beef", "pork", "fish", "veggie", "vegetarian", "veg"):
         if p in stem:
             return "veggie" if p in {"veggie", "vegetarian", "veg"} else p
     return "other"
