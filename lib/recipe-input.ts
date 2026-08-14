@@ -7,6 +7,7 @@ import type {
   Step,
 } from "./types";
 import { slugId } from "./recipes";
+import { scaledQtyForServings } from "./scale-qty";
 
 function asString(value: unknown, fallback = ""): string {
   return typeof value === "string" ? value.trim() : fallback;
@@ -166,5 +167,41 @@ export function recipeFromManual(input: {
     tools: [],
     steps: parseStepLines(input.stepsText),
     highProtein: false,
+  };
+}
+
+export function recipeFromClient(raw: Record<string, unknown>): Recipe | null {
+  const title = asString(raw.title);
+  if (!title) return null;
+  const nutrition = asNutrition(raw.nutrition);
+  const proteinG = nutrition?.protein_g ?? 0;
+  const sourceUrl = asString(raw.sourceUrl) || undefined;
+  const baseServings = asNumber(raw.servings) || 2;
+  const currentServings = asNumber(raw.currentServings) ?? baseServings;
+
+  function normalizeIngredients(list: Ingredient[]): Ingredient[] {
+    if (currentServings === baseServings) return list;
+    return list.map((ing) => ({
+      ...ing,
+      qty2: scaledQtyForServings(ing.qty2, baseServings, currentServings),
+    }));
+  }
+
+  return {
+    id: slugId(title),
+    title,
+    source: "web",
+    sourceUrl,
+    protein: asProtein(raw.protein),
+    cookTimeMin: asNumber(raw.cookTimeMin) ?? null,
+    servings: currentServings,
+    tags: asStringList(raw.tags),
+    allergens: asAllergens(raw.allergens),
+    ingredients: normalizeIngredients(asIngredients(raw.ingredients)),
+    pantry: normalizeIngredients(asIngredients(raw.pantry)),
+    tools: asStringList(raw.tools),
+    steps: asSteps(raw.steps),
+    nutrition,
+    highProtein: Boolean(raw.highProtein) || proteinG >= 30,
   };
 }

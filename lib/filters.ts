@@ -1,4 +1,5 @@
 import type { DietaryFilter, Ingredient, Recipe, SearchFilters } from "./types";
+import { qtyToBaseServings, scaledQtyForServings } from "./scale-qty";
 
 export function matchesDietary(recipe: Recipe, dietary: DietaryFilter): boolean {
   switch (dietary) {
@@ -47,4 +48,30 @@ export function setQtyForServings(
   if (servings === 2) return { ...ingredient, qty2: value };
   if (servings === 3) return { ...ingredient, qty3: value };
   return { ...ingredient, qty4: value };
+}
+
+export function displayQty(
+  ingredient: Ingredient,
+  servings: number,
+  baseServings?: number,
+): string {
+  if (baseServings != null) {
+    return scaledQtyForServings(ingredient.qty2, baseServings, servings);
+  }
+  return qtyForServings(ingredient, servings as 2 | 3 | 4);
+}
+
+export function setDisplayQty(
+  ingredient: Ingredient,
+  servings: number,
+  value: string,
+  baseServings?: number,
+): Ingredient {
+  if (baseServings != null) {
+    return {
+      ...ingredient,
+      qty2: qtyToBaseServings(value, baseServings, servings),
+    };
+  }
+  return setQtyForServings(ingredient, servings as 2 | 3 | 4, value);
 }

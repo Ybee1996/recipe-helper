@@ -10,6 +10,7 @@ import {
 } from "@/components/EditableIngredients";
 import { EditableSteps } from "@/components/EditableSteps";
 import { RecipeNote } from "@/components/RecipeNote";
+import { SourceRecipeLink } from "@/components/SourceRecipeLink";
 import { StarRating } from "@/components/StarRating";
 import { saveOverlay } from "@/lib/save-overlay";
 import type { Recipe, Step } from "@/lib/types";
@@ -24,7 +25,10 @@ function listedFrom(recipe: Recipe): ListedIngredient[] {
 
 export function RecipeDetail({ recipe }: { recipe: Recipe }) {
   const router = useRouter();
-  const [servings, setServings] = useState<2 | 3 | 4>(2);
+  const scalable = recipe.source === "web";
+  const [servings, setServings] = useState<number>(() =>
+    scalable ? recipe.servings || 2 : 2,
+  );
   const [checked, setChecked] = useState<Set<string>>(new Set());
   const [rating, setRating] = useState<number | null>(recipe.rating ?? null);
   const [note, setNote] = useState<string | null>(recipe.note ?? null);
@@ -47,7 +51,8 @@ export function RecipeDetail({ recipe }: { recipe: Recipe }) {
     skipIngredientSave.current = true;
     skipStepSave.current = true;
     setChecked(new Set());
-  }, [recipe.id]);
+    setServings(scalable ? recipe.servings || 2 : 2);
+  }, [recipe.id, recipe.servings, scalable]);
 
   async function persist(
     payload: Parameters<typeof saveOverlay>[1],
@@ -97,12 +102,15 @@ export function RecipeDetail({ recipe }: { recipe: Recipe }) {
         ← Recipes
       </Link>
 
-      <h1
-        className="mt-3 text-[1.75rem] font-medium leading-tight"
-        style={{ fontFamily: "var(--font-display), Georgia, serif" }}
-      >
-        {recipe.title}
-      </h1>
+      <div className="mt-3 flex items-start justify-between gap-3">
+        <h1
+          className="min-w-0 text-[1.75rem] font-medium leading-tight"
+          style={{ fontFamily: "var(--font-display), Georgia, serif" }}
+        >
+          {recipe.title}
+        </h1>
+        {recipe.sourceUrl ? <SourceRecipeLink url={recipe.sourceUrl} /> : null}
+      </div>
 
       <div className="mt-3 flex flex-wrap gap-2">
         <span className="rounded-full bg-[var(--chip)] px-3 py-1 text-xs font-semibold uppercase tracking-wide">
@@ -153,6 +161,7 @@ export function RecipeDetail({ recipe }: { recipe: Recipe }) {
       <EditableIngredients
         items={items}
         servings={servings}
+        baseServings={scalable ? recipe.servings || 2 : undefined}
         checked={checked}
         editing={editingIngredients}
         onToggleEdit={() => {

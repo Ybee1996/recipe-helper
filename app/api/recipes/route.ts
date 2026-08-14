@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { insertRecipe } from "@/lib/recipes";
-import { recipeFromManual } from "@/lib/recipe-input";
+import { recipeFromClient, recipeFromManual } from "@/lib/recipe-input";
 import { PROTEINS, type Protein } from "@/lib/types";
 
 export const dynamic = "force-dynamic";
@@ -12,7 +12,28 @@ export async function POST(req: Request) {
     cookTimeMin?: number | null;
     ingredientsText?: string;
     stepsText?: string;
+    recipe?: Record<string, unknown>;
   };
+
+  if (body.recipe && typeof body.recipe === "object") {
+    const recipe = recipeFromClient(body.recipe);
+    if (!recipe) {
+      return NextResponse.json({ error: "Invalid recipe data" }, { status: 400 });
+    }
+
+    const result = await insertRecipe(recipe);
+    if (result === "conflict") {
+      return NextResponse.json(
+        {
+          error: "A recipe with this title already exists. Try a different title.",
+          id: recipe.id,
+        },
+        { status: 409 },
+      );
+    }
+
+    return NextResponse.json({ id: recipe.id });
+  }
 
   const title = body.title?.trim() ?? "";
   if (!title) {

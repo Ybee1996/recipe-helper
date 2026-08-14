@@ -2,7 +2,9 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { PROTEINS, PROTEIN_LABELS, type Protein } from "@/lib/types";
+import { ImportRecipePreview } from "@/components/ImportRecipePreview";
+import { splitPantry, type ListedIngredient } from "@/components/EditableIngredients";
+import { PROTEINS, PROTEIN_LABELS, type Protein, type Recipe, type Step } from "@/lib/types";
 
 type Mode = "url" | "blank";
 
@@ -19,32 +21,55 @@ export function AddRecipeForm() {
   const [ingredientsText, setIngredientsText] = useState("");
   const [stepsText, setStepsText] = useState("");
   const [pending, setPending] = useState(false);
+  const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [preview, setPreview] = useState<Recipe | null>(null);
 
-  async function submit(e: React.FormEvent) {
+  async function extractFromUrl(e: React.FormEvent) {
     e.preventDefault();
     if (pending) return;
     setError(null);
     setPending(true);
     try {
-      const res =
-        mode === "url"
-          ? await fetch("/api/recipes/from-url", {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({ url: url.trim() }),
-            })
-          : await fetch("/api/recipes", {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({
-                title: title.trim(),
-                protein,
-                cookTimeMin: cookTimeMin.trim() ? Number(cookTimeMin) : null,
-                ingredientsText,
-                stepsText,
-              }),
-            });
+      const res = await fetch("/api/recipes/from-url", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ url: url.trim() }),
+      });
+      const data = (await res.json()) as { recipe?: Recipe; error?: string };
+      if (!res.ok) {
+        setError(data.error || "Could not extract recipe");
+        return;
+      }
+      if (!data.recipe) {
+        setError("Could not extract recipe");
+        return;
+      }
+      setPreview(data.recipe);
+    } catch {
+      setError("Could not extract recipe");
+    } finally {
+      setPending(false);
+    }
+  }
+
+  async function saveManual(e: React.FormEvent) {
+    e.preventDefault();
+    if (pending) return;
+    setError(null);
+    setPending(true);
+    try {
+      const res = await fetch("/api/recipes", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          title: title.trim(),
+          protein,
+          cookTimeMin: cookTimeMin.trim() ? Number(cookTimeMin) : null,
+          ingredientsText,
+          stepsText,
+        }),
+      });
       const data = (await res.json()) as { id?: string; error?: string };
       if (!res.ok) {
         setError(data.error || "Could not save recipe");
@@ -63,8 +88,70 @@ export function AddRecipeForm() {
     }
   }
 
+  async function savePreview(payload: {
+    title: string;
+    items: ListedIngredient[];
+    steps: Step[];
+    servings: number;
+  }) {
+    if (!preview || saving) return;
+    setError(null);
+    setSaving(true);
+    try {
+      const { ingredients, pantry } = splitPantry(payload.items);
+      const res = await fetch("/api/recipes", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          recipe: {
+            ...preview,
+            title: payload.title,
+            ingredients,
+            pantry,
+            steps: payload.steps.map((s, i) => ({ ...s, n: i + 1 })),
+            servings: preview.servings || 2,
+            currentServings: payload.servings,
+          },
+        }),
+      });
+      const data = (await res.json()) as { id?: string; error?: string };
+      if (!res.ok) {
+        setError(data.error || "Could not save recipe");
+        return;
+      }
+      if (!data.id) {
+        setError("Could not save recipe");
+        return;
+      }
+      router.push(`/recipe/${data.id}`);
+      router.refresh();
+    } catch {
+      setError("Could not save recipe");
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  if (preview) {
+    return (
+      <ImportRecipePreview
+        recipe={preview}
+        saving={saving}
+        error={error}
+        onCancel={() => {
+          setPreview(null);
+          setError(null);
+        }}
+        onSave={savePreview}
+      />
+    );
+  }
+
   return (
-    <form onSubmit={submit} className="px-4 pt-5 pb-8">
+    <form
+      onSubmit={mode === "url" ? extractFromUrl : saveManual}
+      className="px-4 pt-5 pb-8"
+    >
       <header className="mb-4">
         <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[var(--accent)]">
           Personal box

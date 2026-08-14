@@ -1,6 +1,5 @@
 import { NextResponse } from "next/server";
 import OpenAI from "openai";
-import { insertRecipe } from "@/lib/recipes";
 import { recipeFromExtract } from "@/lib/recipe-input";
 
 export const runtime = "nodejs";
@@ -110,16 +109,5 @@ export async function POST(req: Request) {
     );
   }
 
-  const result = await insertRecipe(recipe);
-  if (result === "conflict") {
-    return NextResponse.json(
-      {
-        error: "A recipe with this title already exists. Try adding it by hand with a different title.",
-        id: recipe.id,
-      },
-      { status: 409 },
-    );
-  }
-
-  return NextResponse.json({ id: recipe.id });
+  return NextResponse.json({ recipe });
 }

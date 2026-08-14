@@ -1,6 +1,6 @@
 "use client";
 
-import { qtyForServings, setQtyForServings } from "@/lib/filters";
+import { displayQty, setDisplayQty } from "@/lib/filters";
 import type { Ingredient } from "@/lib/types";
 
 export type ListedIngredient = Ingredient & { pantry: boolean };
@@ -20,9 +20,66 @@ export function splitPantry(items: ListedIngredient[]): {
   return { ingredients, pantry };
 }
 
+function ServingsControl({
+  servings,
+  baseServings,
+  onServings,
+}: {
+  servings: number;
+  baseServings?: number;
+  onServings: (n: number) => void;
+}) {
+  if (baseServings != null) {
+    return (
+      <div className="flex items-center gap-1.5 rounded-full border border-[var(--line)] bg-[var(--card)] px-1 py-1 text-sm font-semibold">
+        <button
+          type="button"
+          disabled={servings <= 1}
+          onClick={() => onServings(Math.max(1, servings - 1))}
+          className="grid h-7 w-7 place-items-center rounded-full text-[var(--ink)] disabled:opacity-30"
+          aria-label="Fewer servings"
+        >
+          −
+        </button>
+        <span className="min-w-[5.5rem] text-center text-[var(--ink)]">
+          Serves {servings}
+        </span>
+        <button
+          type="button"
+          onClick={() => onServings(servings + 1)}
+          className="grid h-7 w-7 place-items-center rounded-full text-[var(--ink)]"
+          aria-label="More servings"
+        >
+          +
+        </button>
+      </div>
+    );
+  }
+
+  return (
+    <div className="flex overflow-hidden rounded-full border border-[var(--line)] bg-[var(--card)] text-sm font-semibold">
+      {([2, 3, 4] as const).map((n) => (
+        <button
+          key={n}
+          type="button"
+          onClick={() => onServings(n)}
+          className={`px-3 py-1.5 ${
+            servings === n
+              ? "bg-[var(--ink)] text-[var(--paper)]"
+              : "text-[var(--muted)]"
+          }`}
+        >
+          {n}p
+        </button>
+      ))}
+    </div>
+  );
+}
+
 export function EditableIngredients({
   items,
   servings,
+  baseServings,
   checked,
   editing,
   onToggleEdit,
@@ -31,11 +88,12 @@ export function EditableIngredients({
   onToggleChecked,
 }: {
   items: ListedIngredient[];
-  servings: 2 | 3 | 4;
+  servings: number;
+  baseServings?: number;
   checked: Set<string>;
   editing: boolean;
   onToggleEdit: () => void;
-  onServings: (n: 2 | 3 | 4) => void;
+  onServings: (n: number) => void;
   onChange: (items: ListedIngredient[]) => void;
   onToggleChecked: (key: string) => void;
 }) {
@@ -48,22 +106,11 @@ export function EditableIngredients({
       <div className="flex items-center justify-between gap-2">
         <h2 className="text-lg font-semibold">Ingredients</h2>
         <div className="flex items-center gap-2">
-          <div className="flex overflow-hidden rounded-full border border-[var(--line)] bg-[var(--card)] text-sm font-semibold">
-            {([2, 3, 4] as const).map((n) => (
-              <button
-                key={n}
-                type="button"
-                onClick={() => onServings(n)}
-                className={`px-3 py-1.5 ${
-                  servings === n
-                    ? "bg-[var(--ink)] text-[var(--paper)]"
-                    : "text-[var(--muted)]"
-                }`}
-              >
-                {n}p
-              </button>
-            ))}
-          </div>
+          <ServingsControl
+            servings={servings}
+            baseServings={baseServings}
+            onServings={onServings}
+          />
           <button
             type="button"
             onClick={onToggleEdit}
@@ -83,10 +130,10 @@ export function EditableIngredients({
             >
               <div className="flex gap-2">
                 <input
-                  value={qtyForServings(item, servings)}
+                  value={displayQty(item, servings, baseServings)}
                   onChange={(e) =>
                     update(index, {
-                      ...setQtyForServings(item, servings, e.target.value),
+                      ...setDisplayQty(item, servings, e.target.value, baseServings),
                       pantry: item.pantry,
                     })
                   }
@@ -145,7 +192,7 @@ export function EditableIngredients({
                   </span>
                   <span className={on ? "text-[var(--muted)] line-through" : ""}>
                     <span className="font-semibold">
-                      {qtyForServings(item, servings)}
+                      {displayQty(item, servings, baseServings)}
                     </span>{" "}
                     {item.name}
                     {item.pantry ? (
