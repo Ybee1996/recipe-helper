@@ -26,6 +26,11 @@ export function saveShoppingItems(items: ShoppingItem[]): void {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
 }
 
+export function clearShoppingList(): void {
+  if (typeof window === "undefined") return;
+  localStorage.removeItem(STORAGE_KEY);
+}
+
 function isShoppingItem(value: unknown): value is ShoppingItem {
   if (!value || typeof value !== "object") return false;
   const item = value as ShoppingItem;

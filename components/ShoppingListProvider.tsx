@@ -9,6 +9,7 @@ import {
   useState,
 } from "react";
 import {
+  clearShoppingList,
   loadShoppingItems,
   newShoppingItem,
   saveShoppingItems,
@@ -23,6 +24,7 @@ interface ShoppingListContextValue {
   removeItem: (id: string) => void;
   toggleItem: (id: string) => void;
   clearChecked: () => void;
+  clearAll: () => void;
 }
 
 const ShoppingListContext = createContext<ShoppingListContextValue | null>(null);
@@ -75,6 +77,11 @@ export function ShoppingListProvider({ children }: { children: React.ReactNode }
     setItems((prev) => prev.filter((item) => !item.checked));
   }, []);
 
+  const clearAll = useCallback(() => {
+    clearShoppingList();
+    setItems([]);
+  }, []);
+
   const uncheckedCount = useMemo(
     () => items.filter((item) => !item.checked).length,
     [items],
@@ -89,8 +96,9 @@ export function ShoppingListProvider({ children }: { children: React.ReactNode }
       removeItem,
       toggleItem,
       clearChecked,
+      clearAll,
     }),
-    [items, uncheckedCount, addItem, addItems, removeItem, toggleItem, clearChecked],
+    [items, uncheckedCount, addItem, addItems, removeItem, toggleItem, clearChecked, clearAll],
   );
 
   return (

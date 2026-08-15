@@ -5,7 +5,7 @@ import { useState } from "react";
 import { useShoppingList } from "@/components/ShoppingListProvider";
 
 export function ShoppingListPage() {
-  const { items, addItem, removeItem, toggleItem, clearChecked } = useShoppingList();
+  const { items, addItem, removeItem, toggleItem, clearChecked, clearAll } = useShoppingList();
   const [name, setName] = useState("");
   const [qty, setQty] = useState("");
 
@@ -21,14 +21,35 @@ export function ShoppingListPage() {
     setQty("");
   }
 
+  function handleClearAll() {
+    if (clearAll) {
+      clearAll();
+      return;
+    }
+    for (const item of items) {
+      removeItem(item.id);
+    }
+  }
+
   return (
     <div className="px-4 pb-8 pt-4 lg:mx-auto lg:max-w-lg lg:px-10 lg:pb-16 lg:pt-8">
-      <h1
-        className="text-[1.75rem] font-medium leading-tight lg:text-4xl"
-        style={{ fontFamily: "var(--font-display), Georgia, serif" }}
-      >
-        Shopping list
-      </h1>
+      <div className="flex items-center justify-between gap-2">
+        <h1
+          className="text-[1.75rem] font-medium leading-tight lg:text-4xl"
+          style={{ fontFamily: "var(--font-display), Georgia, serif" }}
+        >
+          Shopping list
+        </h1>
+        {items.length > 0 && (
+          <button
+            type="button"
+            onClick={handleClearAll}
+            className="relative z-10 shrink-0 whitespace-nowrap rounded-lg px-2 py-1 text-sm font-semibold text-[var(--accent)] outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)] lg:hover:bg-[var(--chip)]"
+          >
+            Clear all
+          </button>
+        )}
+      </div>
 
       <form onSubmit={handleAdd} className="mt-5 flex gap-2">
         <input
