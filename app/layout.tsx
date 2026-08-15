@@ -1,7 +1,5 @@
 import type { Metadata, Viewport } from "next";
 import { Fraunces, Nunito_Sans } from "next/font/google";
-import { BottomNav } from "@/components/BottomNav";
-import { SideNav } from "@/components/SideNav";
 import "./globals.css";
 
 const display = Fraunces({
@@ -44,13 +42,7 @@ export default function RootLayout({
         className={`${display.variable} ${sans.variable} font-[family-name:var(--font-sans)] antialiased`}
         style={{ fontFamily: "var(--font-sans), system-ui, sans-serif" }}
       >
-        <div className="lg:flex">
-          <SideNav />
-          <div className="mx-auto min-h-dvh w-full max-w-lg pb-24 lg:mx-0 lg:max-w-none lg:flex-1 lg:pb-0">
-            {children}
-          </div>
-        </div>
-        <BottomNav />
+        {children}
       </body>
     </html>
   );

@@ -40,6 +40,17 @@ export function SideNav() {
           );
         })}
       </ul>
+
+      <button
+        type="button"
+        onClick={async () => {
+          await fetch("/api/auth/logout", { method: "POST" });
+          window.location.assign("/login");
+        }}
+        className="mt-auto rounded-xl px-3 py-2.5 text-left text-sm font-semibold text-[var(--muted)] outline-none transition-colors focus-visible:ring-2 focus-visible:ring-[var(--accent)] lg:hover:bg-[var(--chip)]/60 lg:hover:text-[var(--ink)]"
+      >
+        Sign out
+      </button>
     </nav>
   );
 }

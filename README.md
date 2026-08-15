@@ -14,7 +14,7 @@ npm install
 copy .env.example .env.local
 ```
 
-Set `DATABASE_URL` (required) and `OPENAI_API_KEY` (chat + URL import).
+Set `DATABASE_URL` (required), `OPENAI_API_KEY` (chat + URL import), `AUTH_SECRET`, and `SITE_PASSWORD`. Optionally set `SITE_PASSWORD_2` for a second household password.
 
 3. Create the table and load existing JSON:
 
@@ -43,4 +43,4 @@ Each PDF page is treated as one recipe card.
 
 ## Deploy
 
-On Vercel, set `DATABASE_URL` and `OPENAI_API_KEY`. The live URL is unlisted; anyone who finds it can read and edit the box.
+On Vercel, set `DATABASE_URL`, `OPENAI_API_KEY`, `AUTH_SECRET`, and `SITE_PASSWORD` (plus optional `SITE_PASSWORD_2`). Generate `AUTH_SECRET` with `openssl rand -base64 32`. After deploy, the site asks for the household password; the session stays valid for 24 hours on that browser or Home Screen app.
