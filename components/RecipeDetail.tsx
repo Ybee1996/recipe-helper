@@ -11,7 +11,7 @@ import {
 import { CookTimeDisplay } from "@/components/CookTimeDisplay";
 import { EditableSteps } from "@/components/EditableSteps";
 import { RecipeImage } from "@/components/RecipeImage";
-import { RecipeNote } from "@/components/RecipeNote";
+import { NoteEditButton, RecipeNote } from "@/components/RecipeNote";
 import { useShoppingList } from "@/components/ShoppingListProvider";
 import { SourceRecipeLink } from "@/components/SourceRecipeLink";
 import { StarRating } from "@/components/StarRating";
@@ -80,6 +80,7 @@ export function RecipeDetail({ recipe }: { recipe: Recipe }) {
   const [items, setItems] = useState<ListedIngredient[]>(() => listedFrom(recipe));
   const [steps, setSteps] = useState<Step[]>(recipe.steps);
   const [editing, setEditing] = useState(false);
+  const [noteEditing, setNoteEditing] = useState(false);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -111,6 +112,7 @@ export function RecipeDetail({ recipe }: { recipe: Recipe }) {
     setItems(listedFrom(recipe));
     setSteps(recipe.steps);
     setEditing(false);
+    setNoteEditing(false);
     setSaving(false);
     setYieldServings(storedServings);
     setServings(defaultViewServings);
@@ -148,6 +150,7 @@ export function RecipeDetail({ recipe }: { recipe: Recipe }) {
     };
     if (scalable) setServings(yieldServings);
     setError(null);
+    setNoteEditing(false);
     setEditing(true);
   }
 
@@ -191,6 +194,20 @@ export function RecipeDetail({ recipe }: { recipe: Recipe }) {
 
   const cookTimeMin = combineCookTime(Number(cookHours) || 0, Number(cookMinutes) || 0);
   const baseServings = scalable ? yieldServings : undefined;
+  const hasNote = Boolean((note ?? "").trim());
+  const showNoteButton = !editing && !noteEditing;
+  const showNote = hasNote || noteEditing;
+  const noteAboveImage = noteEditing && !hasNote;
+  const noteSection = showNote ? (
+    <RecipeNote
+      note={note}
+      recipeEditing={editing}
+      editingNote={noteEditing}
+      onEditingNoteChange={setNoteEditing}
+      onChange={setNote}
+      onSave={(text) => persist({ note: text })}
+    />
+  ) : null;
 
   function addIngredientToList(item: ListedIngredient, qty: string) {
     addItem({
@@ -268,12 +285,20 @@ export function RecipeDetail({ recipe }: { recipe: Recipe }) {
       </div>
 
       <div className="mt-3 flex items-start justify-between gap-3">
-        <h1
-          className="min-w-0 text-[1.75rem] font-medium leading-tight lg:text-4xl"
-          style={{ fontFamily: "var(--font-display), Georgia, serif" }}
-        >
-          {recipe.title}
-        </h1>
+        <div className="flex min-w-0 flex-1 items-center gap-2">
+          <h1
+            className="min-w-0 text-[1.75rem] font-medium leading-tight lg:text-4xl"
+            style={{ fontFamily: "var(--font-display), Georgia, serif" }}
+          >
+            {recipe.title}
+          </h1>
+          {showNoteButton ? (
+            <NoteEditButton
+              label={hasNote ? "Edit note" : "Add note"}
+              onClick={() => setNoteEditing(true)}
+            />
+          ) : null}
+        </div>
         {recipe.sourceUrl ? <SourceRecipeLink url={recipe.sourceUrl} /> : null}
       </div>
 
@@ -387,6 +412,8 @@ export function RecipeDetail({ recipe }: { recipe: Recipe }) {
             </div>
           </div>
 
+          {noteAboveImage ? noteSection : null}
+
           <RecipeImage
             recipeId={recipe.id}
             imageUrl={imageUrl}
@@ -395,11 +422,7 @@ export function RecipeDetail({ recipe }: { recipe: Recipe }) {
             onError={setError}
           />
 
-          <RecipeNote
-            note={note}
-            editing={editing}
-            onChange={(text) => setNote(text)}
-          />
+          {!noteAboveImage ? noteSection : null}
 
           {error && <p className="mt-3 text-sm text-[var(--accent)]">{error}</p>}
         </div>
