@@ -253,7 +253,7 @@ export function RecipeImage({
               <img
                 src={imageUrl}
                 alt=""
-                className={`h-full w-full ${
+                className={`h-full w-full [image-orientation:none] ${
                   portraitPhoto ? "object-contain" : "object-cover"
                 }`}
                 onLoad={(e) => {

@@ -147,52 +147,73 @@ async function decodeHtmlImage(file: Blob): Promise<DecodedImage> {
   }
 }
 
+function orientationToApply(
+  decoded: DecodedImage,
+  meta: JpegMeta | null,
+  decoderAppliesExif: boolean,
+): number {
+  if (!meta || meta.orientation <= 1 || decoderAppliesExif) return 1;
+
+  const expected = orientedSize(meta.width, meta.height, meta.orientation);
+  const matchesRaw = sameSize(decoded.width, decoded.height, meta);
+  const matchesOriented = sameSize(decoded.width, decoded.height, expected);
+
+  // Only bake EXIF when the decoder still has stored (unrotated) pixels.
+  // If width/height already match the oriented size, applying again rotates 90°.
+  if (meta.orientation >= 5 && matchesRaw && !matchesOriented) {
+    return meta.orientation;
+  }
+  if (meta.orientation >= 2 && meta.orientation <= 4 && matchesRaw) {
+    return meta.orientation;
+  }
+  return 1;
+}
+
 async function decodeImage(
   file: Blob,
   meta: JpegMeta | null,
 ): Promise<{ decoded: DecodedImage; orientation: number }> {
-  const expected = meta
-    ? orientedSize(meta.width, meta.height, meta.orientation)
-    : null;
-
-  const attempts: Array<() => Promise<DecodedImage>> = [
-    () => decodeBitmap(file, { imageOrientation: "from-image" }),
-    () => decodeBitmap(file, { imageOrientation: "none" }),
-    () => decodeBitmap(file),
-    () => decodeHtmlImage(file),
+  // Prefer raw pixels, then bake EXIF ourselves. `from-image` first can rotate
+  // landscape phone photos 90° on iOS when the bitmap size is not swapped.
+  const attempts: Array<{
+    decode: () => Promise<DecodedImage>;
+    decoderAppliesExif: boolean;
+  }> = [
+    {
+      decode: () => decodeBitmap(file, { imageOrientation: "none" }),
+      decoderAppliesExif: false,
+    },
+    {
+      decode: () => decodeHtmlImage(file),
+      decoderAppliesExif: true,
+    },
+    {
+      decode: () => decodeBitmap(file),
+      decoderAppliesExif: true,
+    },
   ];
 
-  let fallback: DecodedImage | null = null;
+  let lastError: unknown;
 
   for (const attempt of attempts) {
     try {
-      const decoded = await attempt();
-      if (!meta || !expected) {
-        return { decoded, orientation: 1 };
-      }
-
-      const matchesRaw = sameSize(decoded.width, decoded.height, meta);
-      const matchesOriented = sameSize(decoded.width, decoded.height, expected);
-
-      if (matchesOriented && !matchesRaw) {
-        return { decoded, orientation: 1 };
-      }
-      if (matchesRaw) {
-        return { decoded, orientation: meta.orientation };
-      }
-      if (matchesOriented) {
-        return { decoded, orientation: 1 };
-      }
-
-      if (!fallback) fallback = decoded;
-      else decoded.close();
-    } catch {
-      // try the next decoder; browsers disagree on ImageBitmap orientation
+      const decoded = await attempt.decode();
+      return {
+        decoded,
+        orientation: orientationToApply(
+          decoded,
+          meta,
+          attempt.decoderAppliesExif,
+        ),
+      };
+    } catch (err) {
+      lastError = err;
     }
   }
 
-  if (fallback) return { decoded: fallback, orientation: 1 };
-  throw new Error("Could not read that photo. Try a JPEG or PNG.");
+  throw lastError instanceof Error
+    ? lastError
+    : new Error("Could not read that photo. Try a JPEG or PNG.");
 }
 
 function drawNormalized(

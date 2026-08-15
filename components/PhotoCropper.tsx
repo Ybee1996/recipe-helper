@@ -313,7 +313,7 @@ export function PhotoCropper({
           src={previewUrl}
           alt=""
           draggable={false}
-          className="absolute left-0 top-0 max-w-none origin-top-left will-change-transform"
+          className="absolute left-0 top-0 max-w-none origin-top-left [image-orientation:none] will-change-transform"
           style={{
             width: imgW,
             height: imgH,

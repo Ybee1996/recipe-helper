@@ -149,7 +149,7 @@ export function RecipeCard({
             src={thumbUrl}
             alt=""
             draggable={false}
-            className="h-16 w-16 shrink-0 self-center rounded-xl object-cover lg:h-20 lg:w-20"
+            className="h-16 w-16 shrink-0 self-center rounded-xl object-cover [image-orientation:none] lg:h-20 lg:w-20"
           />
         ) : null}
         <div className="min-w-0 flex-1">
