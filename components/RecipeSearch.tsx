@@ -196,7 +196,7 @@ export function RecipeSearch({ recipes }: { recipes: Recipe[] }) {
 
       <ul className="mt-3 space-y-3 lg:grid lg:grid-cols-2 lg:items-stretch lg:gap-4 lg:space-y-0 xl:grid-cols-3">
         {results.map((recipe) => (
-          <li key={recipe.id}>
+          <li key={recipe.id} className="h-full lg:flex">
             <RecipeCard recipe={recipe} onArchived={onArchived} />
           </li>
         ))}

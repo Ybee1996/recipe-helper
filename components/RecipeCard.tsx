@@ -129,7 +129,7 @@ export function RecipeCard({
 
   return (
     <div
-      className="group relative lg:h-full [-webkit-touch-callout:none] select-none"
+      className="group relative h-full w-full [-webkit-touch-callout:none] select-none"
       onPointerDown={onPointerDown}
       onPointerUp={onPointerEnd}
       onPointerCancel={onPointerEnd}
@@ -139,7 +139,7 @@ export function RecipeCard({
     >
       <Link
         href={`/recipe/${recipe.id}`}
-        className="flex gap-3 rounded-2xl border border-[var(--line)] bg-[var(--card)] p-4 active:scale-[0.99] lg:h-full lg:transition-colors lg:hover:border-[var(--accent)]"
+        className="flex h-full gap-3 rounded-2xl border border-[var(--line)] bg-[var(--card)] p-4 active:scale-[0.99] lg:transition-colors lg:hover:border-[var(--accent)]"
       >
         {recipe.imageUrl ? (
           // eslint-disable-next-line @next/next/no-img-element
@@ -147,14 +147,15 @@ export function RecipeCard({
             src={recipe.imageUrl}
             alt=""
             draggable={false}
-            className="h-16 w-16 shrink-0 rounded-xl object-cover lg:h-20 lg:w-20"
+            className="h-16 w-16 shrink-0 self-center rounded-xl object-cover lg:h-20 lg:w-20"
           />
         ) : null}
         <div className="min-w-0 flex-1">
           <div className="flex items-start justify-between gap-3">
             <h2
-              className="text-[1.05rem] font-semibold leading-snug"
+              className="line-clamp-2 min-h-[2.75em] text-[1.05rem] font-semibold leading-snug"
               style={{ fontFamily: "var(--font-display), Georgia, serif" }}
+              title={recipe.title}
             >
               {recipe.title}
             </h2>
@@ -170,14 +171,11 @@ export function RecipeCard({
               ) : null}
             </div>
           </div>
-          <p className="mt-2 text-sm text-[var(--muted)]">
+          <p
+            className="mt-2 line-clamp-1 min-h-[1.25rem] text-sm text-[var(--muted)]"
+            title={metaParts.join(" · ") || undefined}
+          >
             {metaParts.join(" · ")}
-          </p>
-          <p className="mt-1 line-clamp-1 text-sm text-[var(--ink)]/80">
-            {recipe.ingredients
-              .slice(0, 4)
-              .map((i) => i.name)
-              .join(" · ")}
           </p>
         </div>
       </Link>
