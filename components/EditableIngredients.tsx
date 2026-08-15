@@ -114,26 +114,22 @@ export function EditableIngredients({
   items,
   servings,
   baseServings,
-  checked,
   editing,
   className = "",
   onToggleEdit,
   onServings,
   onChange,
-  onToggleChecked,
   onAddToShoppingList,
   onAddAllToShoppingList,
 }: {
   items: ListedIngredient[];
   servings: number;
   baseServings?: number;
-  checked: Set<string>;
   editing: boolean;
   className?: string;
   onToggleEdit?: () => void;
   onServings: (n: number) => void;
   onChange: (items: ListedIngredient[]) => void;
-  onToggleChecked: (key: string) => void;
   onAddToShoppingList?: (item: ListedIngredient, qty: string) => void;
   onAddAllToShoppingList?: () => void;
 }) {
@@ -254,32 +250,16 @@ export function EditableIngredients({
         <ul className="mt-3 divide-y divide-[var(--line)]">
           {items.map((item, index) => {
             const key = `${item.name}-${index}`;
-            const on = checked.has(key);
             const qty = displayQty(item, servings, baseServings);
             const justAdded = addedKeys.has(key);
             return (
               <li key={key} className="flex items-center gap-1">
-                <button
-                  type="button"
-                  onClick={() => onToggleChecked(key)}
-                  className="flex min-w-0 flex-1 items-start gap-3 py-3 text-left outline-none transition-colors focus-visible:ring-2 focus-visible:ring-[var(--accent)] lg:-mx-2 lg:rounded-lg lg:px-2 lg:hover:bg-[var(--chip)]/50"
-                >
-                  <span
-                    className={`mt-0.5 grid h-5 w-5 shrink-0 place-items-center rounded-md border ${
-                      on
-                        ? "border-[var(--sage)] bg-[var(--sage)] text-white"
-                        : "border-[var(--line)] bg-[var(--card)]"
-                    }`}
-                  >
-                    {on ? "✓" : ""}
-                  </span>
-                  <span className={on ? "text-[var(--muted)] line-through" : ""}>
-                    <span className="font-semibold">{qty}</span> {item.name}
-                    {item.pantry ? (
-                      <span className="text-[var(--muted)]"> · pantry</span>
-                    ) : null}
-                  </span>
-                </button>
+                <span className="min-w-0 flex-1 py-3">
+                  <span className="font-semibold">{qty}</span> {item.name}
+                  {item.pantry ? (
+                    <span className="text-[var(--muted)]"> · pantry</span>
+                  ) : null}
+                </span>
                 {onAddToShoppingList ? (
                   <button
                     type="button"

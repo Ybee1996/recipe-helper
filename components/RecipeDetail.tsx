@@ -71,7 +71,6 @@ export function RecipeDetail({ recipe }: { recipe: Recipe }) {
   const [servings, setServings] = useState<number>(() =>
     scalable ? recipe.servings || 2 : 2,
   );
-  const [checked, setChecked] = useState<Set<string>>(new Set());
   const [rating, setRating] = useState<number | null>(recipe.rating ?? null);
   const [note, setNote] = useState<string | null>(recipe.note ?? null);
   const [imageUrl, setImageUrl] = useState<string | null>(recipe.imageUrl ?? null);
@@ -111,7 +110,6 @@ export function RecipeDetail({ recipe }: { recipe: Recipe }) {
     setSteps(recipe.steps);
     setEditing(false);
     setSaving(false);
-    setChecked(new Set());
     setServings(scalable ? recipe.servings || 2 : 2);
   }
 
@@ -273,14 +271,6 @@ export function RecipeDetail({ recipe }: { recipe: Recipe }) {
 
       <div className={gridClass}>
         <div className={overviewClass}>
-          <RecipeImage
-            recipeId={recipe.id}
-            imageUrl={imageUrl}
-            editing={editing}
-            onChange={handleImageChange}
-            onError={setError}
-          />
-
           <div className="mt-3">
             {editing ? (
               <fieldset>
@@ -306,7 +296,7 @@ export function RecipeDetail({ recipe }: { recipe: Recipe }) {
                 </div>
               </fieldset>
             ) : (
-              <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
+              <div className="flex flex-wrap items-center gap-2">
                 <span className="rounded-full bg-[var(--chip)] px-3 py-1 text-xs font-semibold uppercase tracking-wide">
                   {PROTEIN_LABELS[protein]}
                 </span>
@@ -326,61 +316,76 @@ export function RecipeDetail({ recipe }: { recipe: Recipe }) {
           </div>
 
           {recipe.allergens.length > 0 && (
-            <p className="mt-3 text-sm text-[var(--muted)]">
+            <p className="mt-2 text-sm text-[var(--muted)]">
               Contains {recipe.allergens.map((a) => ALLERGEN_LABELS[a]).join(", ")}
             </p>
           )}
 
-          {(editing || cookTimeMin) && (
-            <div className="mt-5">
-              {editing ? (
-                <fieldset>
-                  <legend className="mb-2 text-xs font-semibold uppercase tracking-[0.14em] text-[var(--muted)]">
-                    Cook time
-                  </legend>
-                  <div className="mt-1.5 flex items-center gap-3">
-                    <label className="flex items-center gap-1.5">
-                      <input
-                        type="number"
-                        min={0}
-                        inputMode="numeric"
-                        placeholder="0"
-                        value={cookHours}
-                        onChange={(e) => setCookHours(e.target.value)}
-                        className="w-16 rounded-xl border border-[var(--line)] bg-[var(--paper)] px-3 py-2 text-sm outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]"
-                      />
-                      <span className="text-sm text-[var(--muted)]">hr</span>
-                    </label>
-                    <label className="flex items-center gap-1.5">
-                      <input
-                        type="number"
-                        min={0}
-                        max={59}
-                        inputMode="numeric"
-                        placeholder="0"
-                        value={cookMinutes}
-                        onChange={(e) => setCookMinutes(e.target.value)}
-                        className="w-16 rounded-xl border border-[var(--line)] bg-[var(--paper)] px-3 py-2 text-sm outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]"
-                      />
-                      <span className="text-sm text-[var(--muted)]">min</span>
-                    </label>
-                  </div>
-                </fieldset>
-              ) : (
-                <CookTimeDisplay minutes={cookTimeMin} />
-              )}
+          <div className="mt-3 flex flex-col gap-3 border-y border-[var(--line)] py-3 sm:flex-row sm:flex-wrap sm:items-center sm:gap-x-6 sm:gap-y-2">
+            {(editing || cookTimeMin) && (
+              <>
+              <div className="shrink-0">
+                {editing ? (
+                  <fieldset>
+                    <legend className="mb-1.5 text-xs font-semibold uppercase tracking-[0.14em] text-[var(--muted)]">
+                      Cook time
+                    </legend>
+                    <div className="flex items-center gap-3">
+                      <label className="flex items-center gap-1.5">
+                        <input
+                          type="number"
+                          min={0}
+                          inputMode="numeric"
+                          placeholder="0"
+                          value={cookHours}
+                          onChange={(e) => setCookHours(e.target.value)}
+                          className="w-16 rounded-xl border border-[var(--line)] bg-[var(--paper)] px-3 py-2 text-sm outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]"
+                        />
+                        <span className="text-sm text-[var(--muted)]">hr</span>
+                      </label>
+                      <label className="flex items-center gap-1.5">
+                        <input
+                          type="number"
+                          min={0}
+                          max={59}
+                          inputMode="numeric"
+                          placeholder="0"
+                          value={cookMinutes}
+                          onChange={(e) => setCookMinutes(e.target.value)}
+                          className="w-16 rounded-xl border border-[var(--line)] bg-[var(--paper)] px-3 py-2 text-sm outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]"
+                        />
+                        <span className="text-sm text-[var(--muted)]">min</span>
+                      </label>
+                    </div>
+                  </fieldset>
+                ) : (
+                  <CookTimeDisplay minutes={cookTimeMin} />
+                )}
+              </div>
+              <div
+                className="hidden h-9 w-px bg-[var(--line)] sm:block"
+                aria-hidden="true"
+              />
+            </>
+            )}
+            <div className="min-w-0 sm:flex-1">
+              <StarRating
+                value={rating}
+                onChange={(next) => {
+                  setRating(next);
+                  void persist({ rating: next });
+                }}
+              />
             </div>
-          )}
-
-          <div className="mt-5">
-            <StarRating
-              value={rating}
-              onChange={(next) => {
-                setRating(next);
-                void persist({ rating: next });
-              }}
-            />
           </div>
+
+          <RecipeImage
+            recipeId={recipe.id}
+            imageUrl={imageUrl}
+            editing={editing}
+            onChange={handleImageChange}
+            onError={setError}
+          />
 
           <RecipeNote
             note={note}
@@ -396,19 +401,10 @@ export function RecipeDetail({ recipe }: { recipe: Recipe }) {
             items={items}
             servings={servings}
             baseServings={baseServings}
-            checked={checked}
             editing={editing}
             className={editing ? "" : "lg:mt-0"}
             onServings={setServings}
             onChange={setItems}
-            onToggleChecked={(key) => {
-              setChecked((prev) => {
-                const next = new Set(prev);
-                if (next.has(key)) next.delete(key);
-                else next.add(key);
-                return next;
-              });
-            }}
             onAddToShoppingList={editing ? undefined : addIngredientToList}
             onAddAllToShoppingList={editing ? undefined : addAllIngredientsToList}
           />

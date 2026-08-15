@@ -44,7 +44,6 @@ export function ImportRecipePreview({
   const [servings, setServings] = useState(baseServings);
   const [items, setItems] = useState<ListedIngredient[]>(() => listedFrom(recipe));
   const [steps, setSteps] = useState<Step[]>(recipe.steps);
-  const [checked, setChecked] = useState<Set<string>>(new Set());
 
   return (
     <div className="px-4 pt-5 pb-8 lg:mx-auto lg:max-w-3xl lg:px-10 lg:pt-10">
@@ -103,18 +102,9 @@ export function ImportRecipePreview({
         items={items}
         servings={servings}
         baseServings={baseServings}
-        checked={checked}
         editing
         onServings={setServings}
         onChange={setItems}
-        onToggleChecked={(key) => {
-          setChecked((prev) => {
-            const next = new Set(prev);
-            if (next.has(key)) next.delete(key);
-            else next.add(key);
-            return next;
-          });
-        }}
       />
 
       {recipe.tools.length > 0 && (
