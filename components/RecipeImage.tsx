@@ -171,9 +171,9 @@ export function RecipeImage({
             className="group relative rounded-2xl border border-[var(--line)] bg-[var(--card)]"
             onPointerUp={onImagePointerUp}
           >
-            <div className="overflow-hidden rounded-2xl">
+            <div className="aspect-[16/9] overflow-hidden rounded-2xl bg-[var(--chip)]">
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={imageUrl} alt="" className="aspect-[16/9] w-full object-cover" />
+              <img src={imageUrl} alt="" className="h-full w-full object-contain" />
             </div>
             {editing ? (
               <div
