@@ -105,6 +105,21 @@ export async function PATCH(
     }
   }
 
+  if ("servings" in body) {
+    if (
+      typeof body.servings === "number" &&
+      Number.isInteger(body.servings) &&
+      body.servings >= 1
+    ) {
+      patch.servings = body.servings;
+    } else {
+      return NextResponse.json(
+        { error: "Servings must be a whole number of at least 1" },
+        { status: 400 },
+      );
+    }
+  }
+
   const overlay = await patchOverlay(id, patch);
   return NextResponse.json(overlay);
 }

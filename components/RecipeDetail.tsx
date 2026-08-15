@@ -68,9 +68,8 @@ export function RecipeDetail({ recipe }: { recipe: Recipe }) {
   const router = useRouter();
   const { addItem, addItems } = useShoppingList();
   const scalable = recipe.source === "web";
-  const [servings, setServings] = useState<number>(() =>
-    scalable ? recipe.servings || 2 : 2,
-  );
+  const defaultViewServings = scalable ? recipe.servings || 2 : 4;
+  const [servings, setServings] = useState<number>(defaultViewServings);
   const [rating, setRating] = useState<number | null>(recipe.rating ?? null);
   const [note, setNote] = useState<string | null>(recipe.note ?? null);
   const [imageUrl, setImageUrl] = useState<string | null>(recipe.imageUrl ?? null);
@@ -84,6 +83,8 @@ export function RecipeDetail({ recipe }: { recipe: Recipe }) {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  const storedServings = scalable ? recipe.servings || 2 : 2;
+  const [yieldServings, setYieldServings] = useState(storedServings);
   const snapshot = useRef({
     protein: recipe.protein,
     cookHours: String(initialCookTime.hours),
@@ -91,6 +92,7 @@ export function RecipeDetail({ recipe }: { recipe: Recipe }) {
     note: recipe.note ?? null,
     items: listedFrom(recipe),
     steps: recipe.steps,
+    servings: defaultViewServings,
   });
 
   function handleImageChange(url: string | null) {
@@ -110,7 +112,8 @@ export function RecipeDetail({ recipe }: { recipe: Recipe }) {
     setSteps(recipe.steps);
     setEditing(false);
     setSaving(false);
-    setServings(scalable ? recipe.servings || 2 : 2);
+    setYieldServings(storedServings);
+    setServings(defaultViewServings);
   }
 
   useEffect(() => {
@@ -141,7 +144,9 @@ export function RecipeDetail({ recipe }: { recipe: Recipe }) {
       note,
       items: cloneItems(items),
       steps: cloneSteps(steps),
+      servings,
     };
+    if (scalable) setServings(yieldServings);
     setError(null);
     setEditing(true);
   }
@@ -153,6 +158,7 @@ export function RecipeDetail({ recipe }: { recipe: Recipe }) {
     setNote(snapshot.current.note);
     setItems(cloneItems(snapshot.current.items));
     setSteps(cloneSteps(snapshot.current.steps));
+    setServings(snapshot.current.servings);
     setError(null);
     setEditing(false);
   }
@@ -172,9 +178,11 @@ export function RecipeDetail({ recipe }: { recipe: Recipe }) {
         ingredients,
         pantry,
         steps: steps.map((s, i) => ({ ...s, n: i + 1 })),
+        ...(scalable ? { servings } : {}),
       });
       if (!ok) return;
       setNote((note ?? "").trim() || null);
+      if (scalable) setYieldServings(servings);
       setEditing(false);
     } finally {
       setSaving(false);
@@ -182,7 +190,7 @@ export function RecipeDetail({ recipe }: { recipe: Recipe }) {
   }
 
   const cookTimeMin = combineCookTime(Number(cookHours) || 0, Number(cookMinutes) || 0);
-  const baseServings = scalable ? recipe.servings || 2 : undefined;
+  const baseServings = scalable ? yieldServings : undefined;
 
   function addIngredientToList(item: ListedIngredient, qty: string) {
     addItem({

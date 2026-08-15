@@ -66,6 +66,13 @@ export function parseOverlay(value: unknown): UserRecipeOverlay | null {
   ) {
     overlay.cookTimeMin = Math.round(raw.cookTimeMin);
   }
+  if (
+    typeof raw.servings === "number" &&
+    Number.isInteger(raw.servings) &&
+    raw.servings >= 1
+  ) {
+    overlay.servings = raw.servings;
+  }
   if (typeof raw.updatedAt === "string") overlay.updatedAt = raw.updatedAt;
   return overlay;
 }
@@ -79,7 +86,8 @@ export function overlayIsEmpty(overlay: UserRecipeOverlay): boolean {
     overlay.pantry === undefined &&
     overlay.steps === undefined &&
     overlay.protein === undefined &&
-    overlay.cookTimeMin === undefined
+    overlay.cookTimeMin === undefined &&
+    overlay.servings === undefined
   );
 }
 
@@ -144,6 +152,10 @@ export async function patchOverlay(
   if ("cookTimeMin" in patch) {
     if (patch.cookTimeMin === null) delete next.cookTimeMin;
     else next.cookTimeMin = patch.cookTimeMin;
+  }
+  if ("servings" in patch) {
+    if (patch.servings === undefined) delete next.servings;
+    else next.servings = patch.servings;
   }
 
   const stored = overlayIsEmpty(next) ? {} : next;

@@ -135,6 +135,8 @@ export function EditableIngredients({
 }) {
   const [addedKeys, setAddedKeys] = useState<Set<string>>(new Set());
   const [allAdded, setAllAdded] = useState(false);
+  // In edit mode, servings is the stored yield — don't scale listed quantities.
+  const qtyBase = editing && baseServings != null ? servings : baseServings;
 
   function flashKey(key: string) {
     setAddedKeys((prev) => {
@@ -207,10 +209,10 @@ export function EditableIngredients({
             >
               <div className="flex gap-2">
                 <input
-                  value={displayQty(item, servings, baseServings)}
+                  value={displayQty(item, servings, qtyBase)}
                   onChange={(e) =>
                     update(index, {
-                      ...setDisplayQty(item, servings, e.target.value, baseServings),
+                      ...setDisplayQty(item, servings, e.target.value, qtyBase),
                       pantry: item.pantry,
                     })
                   }
@@ -250,7 +252,7 @@ export function EditableIngredients({
         <ul className="mt-3 divide-y divide-[var(--line)]">
           {items.map((item, index) => {
             const key = `${item.name}-${index}`;
-            const qty = displayQty(item, servings, baseServings);
+            const qty = displayQty(item, servings, qtyBase);
             const justAdded = addedKeys.has(key);
             return (
               <li key={key} className="flex items-center gap-1">

@@ -49,6 +49,7 @@ export function applyOverlay(recipe: Recipe, overlay?: UserRecipeOverlay): Recip
     protein: overlay.protein ?? recipe.protein,
     cookTimeMin:
       overlay.cookTimeMin !== undefined ? overlay.cookTimeMin : recipe.cookTimeMin,
+    servings: overlay.servings ?? recipe.servings,
     ingredients: overlay.ingredients ?? recipe.ingredients,
     pantry: overlay.pantry ?? recipe.pantry,
     steps: overlay.steps ?? recipe.steps,

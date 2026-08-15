@@ -89,6 +89,7 @@ export interface UserRecipeOverlay {
   imageUrl?: string | null;
   protein?: Protein;
   cookTimeMin?: number | null;
+  servings?: number;
   ingredients?: Ingredient[];
   pantry?: Ingredient[];
   steps?: Step[];

@@ -109,8 +109,7 @@ export function AddRecipeForm() {
             ingredients,
             pantry,
             steps: payload.steps.map((s, i) => ({ ...s, n: i + 1 })),
-            servings: preview.servings || 2,
-            currentServings: payload.servings,
+            servings: payload.servings,
           },
         }),
       });
