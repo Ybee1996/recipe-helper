@@ -73,6 +73,9 @@ export function parseOverlay(value: unknown): UserRecipeOverlay | null {
   ) {
     overlay.servings = raw.servings;
   }
+  if (typeof raw.title === "string" && raw.title.trim()) {
+    overlay.title = raw.title.trim();
+  }
   if (typeof raw.updatedAt === "string") overlay.updatedAt = raw.updatedAt;
   return overlay;
 }
@@ -87,7 +90,8 @@ export function overlayIsEmpty(overlay: UserRecipeOverlay): boolean {
     overlay.steps === undefined &&
     overlay.protein === undefined &&
     overlay.cookTimeMin === undefined &&
-    overlay.servings === undefined
+    overlay.servings === undefined &&
+    !overlay.title
   );
 }
 
@@ -128,6 +132,10 @@ export async function patchOverlay(
   const current = parseOverlay(rows[0].overlay) ?? {};
   const next: UserRecipeOverlay = { ...current, updatedAt: new Date().toISOString() };
 
+  if ("title" in patch) {
+    if (!patch.title?.trim()) delete next.title;
+    else next.title = patch.title.trim();
+  }
   if ("rating" in patch) {
     if (patch.rating === null) delete next.rating;
     else next.rating = patch.rating;
@@ -159,11 +167,30 @@ export async function patchOverlay(
   }
 
   const stored = overlayIsEmpty(next) ? {} : next;
-  if ("protein" in patch && patch.protein) {
+  const titleUpdate = "title" in patch && patch.title?.trim();
+  const proteinUpdate = "protein" in patch && patch.protein;
+  if (titleUpdate && proteinUpdate) {
     await sql`
       UPDATE recipes
       SET overlay = ${JSON.stringify(stored)}::jsonb,
-          protein = ${patch.protein},
+          title = ${patch.title!.trim()},
+          protein = ${patch.protein!},
+          updated_at = now()
+      WHERE id = ${id}
+    `;
+  } else if (titleUpdate) {
+    await sql`
+      UPDATE recipes
+      SET overlay = ${JSON.stringify(stored)}::jsonb,
+          title = ${patch.title!.trim()},
+          updated_at = now()
+      WHERE id = ${id}
+    `;
+  } else if (proteinUpdate) {
+    await sql`
+      UPDATE recipes
+      SET overlay = ${JSON.stringify(stored)}::jsonb,
+          protein = ${patch.protein!},
           updated_at = now()
       WHERE id = ${id}
     `;

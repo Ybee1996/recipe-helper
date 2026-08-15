@@ -70,6 +70,7 @@ export function RecipeDetail({ recipe }: { recipe: Recipe }) {
   const scalable = recipe.source === "web";
   const defaultViewServings = scalable ? recipe.servings || 2 : 4;
   const [servings, setServings] = useState<number>(defaultViewServings);
+  const [title, setTitle] = useState(recipe.title);
   const [rating, setRating] = useState<number | null>(recipe.rating ?? null);
   const [note, setNote] = useState<string | null>(recipe.note ?? null);
   const [imageUrl, setImageUrl] = useState<string | null>(recipe.imageUrl ?? null);
@@ -87,6 +88,7 @@ export function RecipeDetail({ recipe }: { recipe: Recipe }) {
   const storedServings = scalable ? recipe.servings || 2 : 2;
   const [yieldServings, setYieldServings] = useState(storedServings);
   const snapshot = useRef({
+    title: recipe.title,
     protein: recipe.protein,
     cookHours: String(initialCookTime.hours),
     cookMinutes: String(initialCookTime.minutes),
@@ -103,6 +105,7 @@ export function RecipeDetail({ recipe }: { recipe: Recipe }) {
 
   function resetFromRecipe() {
     const cookTime = splitCookTime(recipe.cookTimeMin);
+    setTitle(recipe.title);
     setRating(recipe.rating ?? null);
     setNote(recipe.note ?? null);
     setImageUrl(recipe.imageUrl ?? null);
@@ -140,6 +143,7 @@ export function RecipeDetail({ recipe }: { recipe: Recipe }) {
 
   function startEditing() {
     snapshot.current = {
+      title,
       protein,
       cookHours,
       cookMinutes,
@@ -155,6 +159,7 @@ export function RecipeDetail({ recipe }: { recipe: Recipe }) {
   }
 
   function cancelEditing() {
+    setTitle(snapshot.current.title);
     setProtein(snapshot.current.protein);
     setCookHours(snapshot.current.cookHours);
     setCookMinutes(snapshot.current.cookMinutes);
@@ -168,6 +173,11 @@ export function RecipeDetail({ recipe }: { recipe: Recipe }) {
 
   async function saveEditing() {
     if (saving) return;
+    const trimmedTitle = title.trim();
+    if (!trimmedTitle) {
+      setError("Title is required");
+      return;
+    }
     setSaving(true);
     setError(null);
     try {
@@ -175,6 +185,7 @@ export function RecipeDetail({ recipe }: { recipe: Recipe }) {
       const hours = Number(cookHours) || 0;
       const minutes = Number(cookMinutes) || 0;
       const ok = await persist({
+        title: trimmedTitle,
         protein,
         cookTimeMin: combineCookTime(hours, minutes),
         note: (note ?? "").trim() || null,
@@ -184,6 +195,7 @@ export function RecipeDetail({ recipe }: { recipe: Recipe }) {
         ...(scalable ? { servings } : {}),
       });
       if (!ok) return;
+      setTitle(trimmedTitle);
       setNote((note ?? "").trim() || null);
       if (scalable) setYieldServings(servings);
       setEditing(false);
@@ -214,7 +226,7 @@ export function RecipeDetail({ recipe }: { recipe: Recipe }) {
       name: item.name,
       qty,
       recipeId: recipe.id,
-      recipeTitle: recipe.title,
+      recipeTitle: title,
     });
   }
 
@@ -225,7 +237,7 @@ export function RecipeDetail({ recipe }: { recipe: Recipe }) {
         name: item.name,
         qty: displayQty(item, servings, baseServings),
         recipeId: recipe.id,
-        recipeTitle: recipe.title,
+        recipeTitle: title,
       }));
     addItems(toAdd);
   }
@@ -286,12 +298,23 @@ export function RecipeDetail({ recipe }: { recipe: Recipe }) {
 
       <div className="mt-3 flex items-start justify-between gap-3">
         <div className="flex min-w-0 flex-1 items-center gap-2">
-          <h1
-            className="min-w-0 text-[1.75rem] font-medium leading-tight lg:text-4xl"
-            style={{ fontFamily: "var(--font-display), Georgia, serif" }}
-          >
-            {recipe.title}
-          </h1>
+          {editing ? (
+            <input
+              type="text"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              aria-label="Recipe title"
+              className="min-w-0 flex-1 rounded-xl border border-[var(--line)] bg-[var(--paper)] px-3 py-1.5 text-[1.75rem] font-medium leading-tight outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)] lg:text-4xl"
+              style={{ fontFamily: "var(--font-display), Georgia, serif" }}
+            />
+          ) : (
+            <h1
+              className="min-w-0 text-[1.75rem] font-medium leading-tight lg:text-4xl"
+              style={{ fontFamily: "var(--font-display), Georgia, serif" }}
+            >
+              {title}
+            </h1>
+          )}
           {showNoteButton ? (
             <NoteEditButton
               label={hasNote ? "Edit note" : "Add note"}

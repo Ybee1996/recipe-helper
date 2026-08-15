@@ -40,6 +40,13 @@ export async function PATCH(
   const body = (await req.json()) as Record<string, unknown>;
   const patch: UserRecipeOverlay = {};
 
+  if ("title" in body) {
+    if (typeof body.title !== "string" || !body.title.trim()) {
+      return NextResponse.json({ error: "Title is required" }, { status: 400 });
+    }
+    patch.title = body.title.trim();
+  }
+
   if ("rating" in body) {
     if (body.rating === null) patch.rating = null;
     else if (

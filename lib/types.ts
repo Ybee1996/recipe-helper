@@ -84,6 +84,7 @@ export interface Recipe {
 
 /** Personal edits stored separately so PDF ingest never overwrites them. */
 export interface UserRecipeOverlay {
+  title?: string;
   rating?: number | null;
   note?: string | null;
   imageUrl?: string | null;

@@ -43,6 +43,7 @@ export function applyOverlay(recipe: Recipe, overlay?: UserRecipeOverlay): Recip
   if (!overlay) return recipe;
   return {
     ...recipe,
+    title: overlay.title ?? recipe.title,
     rating: overlay.rating ?? null,
     note: overlay.note ?? null,
     imageUrl: overlay.imageUrl ?? null,
