@@ -5,5 +5,6 @@ CREATE TABLE IF NOT EXISTS recipes (
   source text NOT NULL,
   data jsonb NOT NULL,
   overlay jsonb NOT NULL DEFAULT '{}',
-  updated_at timestamptz NOT NULL DEFAULT now()
+  updated_at timestamptz NOT NULL DEFAULT now(),
+  archived_at timestamptz
 );

@@ -17,6 +17,9 @@ async function main() {
   );
   const sql = neon(url);
   await sql.query(schema);
+  await sql.query(
+    "ALTER TABLE recipes ADD COLUMN IF NOT EXISTS archived_at timestamptz",
+  );
   console.log("pushed db/schema.sql");
 }
 

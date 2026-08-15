@@ -77,11 +77,22 @@ function rowToRecipe(row: RecipeRow): Recipe | null {
   return applyOverlay(recipe, parseOverlay(row.overlay) ?? undefined);
 }
 
+let archiveColumnReady = false;
+
+async function ensureArchiveColumn() {
+  if (archiveColumnReady) return;
+  const sql = getSql();
+  await sql`ALTER TABLE recipes ADD COLUMN IF NOT EXISTS archived_at timestamptz`;
+  archiveColumnReady = true;
+}
+
 export async function loadRecipes(): Promise<Recipe[]> {
+  await ensureArchiveColumn();
   const sql = getSql();
   const rows = (await sql`
     SELECT id, title, protein, source, data, overlay
     FROM recipes
+    WHERE archived_at IS NULL
     ORDER BY title
   `) as RecipeRow[];
   const recipes: Recipe[] = [];
@@ -93,18 +104,40 @@ export async function loadRecipes(): Promise<Recipe[]> {
 }
 
 export async function getRecipe(id: string): Promise<Recipe | undefined> {
+  await ensureArchiveColumn();
   const sql = getSql();
   const rows = (await sql`
     SELECT id, title, protein, source, data, overlay
     FROM recipes
-    WHERE id = ${id}
+    WHERE id = ${id} AND archived_at IS NULL
   `) as RecipeRow[];
   if (!rows[0]) return undefined;
   return rowToRecipe(rows[0]) ?? undefined;
 }
 
+export async function recipeIdExists(id: string): Promise<boolean> {
+  await ensureArchiveColumn();
+  const sql = getSql();
+  const rows = (await sql`
+    SELECT id FROM recipes WHERE id = ${id}
+  `) as { id: string }[];
+  return Boolean(rows[0]);
+}
+
+export async function archiveRecipe(id: string): Promise<boolean> {
+  await ensureArchiveColumn();
+  const sql = getSql();
+  const rows = (await sql`
+    UPDATE recipes
+    SET archived_at = now(), updated_at = now()
+    WHERE id = ${id} AND archived_at IS NULL
+    RETURNING id
+  `) as { id: string }[];
+  return Boolean(rows[0]);
+}
+
 export async function insertRecipe(recipe: Recipe): Promise<"ok" | "conflict"> {
-  const existing = await getRecipe(recipe.id);
+  const existing = await recipeIdExists(recipe.id);
   if (existing) return "conflict";
   const sql = getSql();
   const data = toStoredData(recipe);
