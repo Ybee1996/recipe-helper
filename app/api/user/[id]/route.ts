@@ -92,6 +92,19 @@ export async function PATCH(
     patch.protein = body.protein;
   }
 
+  if ("cookTimeMin" in body) {
+    if (body.cookTimeMin === null) patch.cookTimeMin = null;
+    else if (
+      typeof body.cookTimeMin === "number" &&
+      Number.isFinite(body.cookTimeMin) &&
+      body.cookTimeMin >= 0
+    ) {
+      patch.cookTimeMin = Math.round(body.cookTimeMin);
+    } else {
+      return NextResponse.json({ error: "Cook time must be a number" }, { status: 400 });
+    }
+  }
+
   const overlay = await patchOverlay(id, patch);
   return NextResponse.json(overlay);
 }

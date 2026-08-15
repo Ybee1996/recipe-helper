@@ -58,6 +58,14 @@ export function parseOverlay(value: unknown): UserRecipeOverlay | null {
   ) {
     overlay.protein = raw.protein as Protein;
   }
+  if (raw.cookTimeMin === null) overlay.cookTimeMin = null;
+  else if (
+    typeof raw.cookTimeMin === "number" &&
+    Number.isFinite(raw.cookTimeMin) &&
+    raw.cookTimeMin >= 0
+  ) {
+    overlay.cookTimeMin = Math.round(raw.cookTimeMin);
+  }
   if (typeof raw.updatedAt === "string") overlay.updatedAt = raw.updatedAt;
   return overlay;
 }
@@ -70,7 +78,8 @@ export function overlayIsEmpty(overlay: UserRecipeOverlay): boolean {
     overlay.ingredients === undefined &&
     overlay.pantry === undefined &&
     overlay.steps === undefined &&
-    overlay.protein === undefined
+    overlay.protein === undefined &&
+    overlay.cookTimeMin === undefined
   );
 }
 
@@ -131,6 +140,10 @@ export async function patchOverlay(
   if ("protein" in patch) {
     if (patch.protein === undefined) delete next.protein;
     else next.protein = patch.protein;
+  }
+  if ("cookTimeMin" in patch) {
+    if (patch.cookTimeMin === null) delete next.cookTimeMin;
+    else next.cookTimeMin = patch.cookTimeMin;
   }
 
   const stored = overlayIsEmpty(next) ? {} : next;

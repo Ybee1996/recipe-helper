@@ -8,12 +8,17 @@ import {
   splitPantry,
   type ListedIngredient,
 } from "@/components/EditableIngredients";
+import { CookTimeDisplay } from "@/components/CookTimeDisplay";
 import { EditableSteps } from "@/components/EditableSteps";
 import { RecipeImage } from "@/components/RecipeImage";
 import { RecipeNote } from "@/components/RecipeNote";
 import { SourceRecipeLink } from "@/components/SourceRecipeLink";
 import { StarRating } from "@/components/StarRating";
 import { saveOverlay } from "@/lib/save-overlay";
+import {
+  combineCookTime,
+  splitCookTime,
+} from "@/lib/format-time";
 import type { Protein, Recipe, Step } from "@/lib/types";
 import { ALLERGEN_LABELS, PROTEIN_LABELS, PROTEINS } from "@/lib/types";
 
@@ -68,6 +73,9 @@ export function RecipeDetail({ recipe }: { recipe: Recipe }) {
   const [note, setNote] = useState<string | null>(recipe.note ?? null);
   const [imageUrl, setImageUrl] = useState<string | null>(recipe.imageUrl ?? null);
   const [protein, setProtein] = useState<Protein>(recipe.protein);
+  const initialCookTime = splitCookTime(recipe.cookTimeMin);
+  const [cookHours, setCookHours] = useState(String(initialCookTime.hours));
+  const [cookMinutes, setCookMinutes] = useState(String(initialCookTime.minutes));
   const [items, setItems] = useState<ListedIngredient[]>(() => listedFrom(recipe));
   const [steps, setSteps] = useState<Step[]>(recipe.steps);
   const [editing, setEditing] = useState(false);
@@ -76,6 +84,8 @@ export function RecipeDetail({ recipe }: { recipe: Recipe }) {
 
   const snapshot = useRef({
     protein: recipe.protein,
+    cookHours: String(initialCookTime.hours),
+    cookMinutes: String(initialCookTime.minutes),
     note: recipe.note ?? null,
     items: listedFrom(recipe),
     steps: recipe.steps,
@@ -87,10 +97,13 @@ export function RecipeDetail({ recipe }: { recipe: Recipe }) {
   }
 
   function resetFromRecipe() {
+    const cookTime = splitCookTime(recipe.cookTimeMin);
     setRating(recipe.rating ?? null);
     setNote(recipe.note ?? null);
     setImageUrl(recipe.imageUrl ?? null);
     setProtein(recipe.protein);
+    setCookHours(String(cookTime.hours));
+    setCookMinutes(String(cookTime.minutes));
     setItems(listedFrom(recipe));
     setSteps(recipe.steps);
     setEditing(false);
@@ -122,6 +135,8 @@ export function RecipeDetail({ recipe }: { recipe: Recipe }) {
   function startEditing() {
     snapshot.current = {
       protein,
+      cookHours,
+      cookMinutes,
       note,
       items: cloneItems(items),
       steps: cloneSteps(steps),
@@ -132,6 +147,8 @@ export function RecipeDetail({ recipe }: { recipe: Recipe }) {
 
   function cancelEditing() {
     setProtein(snapshot.current.protein);
+    setCookHours(snapshot.current.cookHours);
+    setCookMinutes(snapshot.current.cookMinutes);
     setNote(snapshot.current.note);
     setItems(cloneItems(snapshot.current.items));
     setSteps(cloneSteps(snapshot.current.steps));
@@ -145,8 +162,11 @@ export function RecipeDetail({ recipe }: { recipe: Recipe }) {
     setError(null);
     try {
       const { ingredients, pantry } = splitPantry(items);
+      const hours = Number(cookHours) || 0;
+      const minutes = Number(cookMinutes) || 0;
       const ok = await persist({
         protein,
+        cookTimeMin: combineCookTime(hours, minutes),
         note: (note ?? "").trim() || null,
         ingredients,
         pantry,
@@ -160,10 +180,28 @@ export function RecipeDetail({ recipe }: { recipe: Recipe }) {
     }
   }
 
+  const cookTimeMin = combineCookTime(Number(cookHours) || 0, Number(cookMinutes) || 0);
+
+  // The desktop rail is too narrow for the ingredient/step edit controls, so
+  // editing falls back to the single-column flow at every width. Groups stay in
+  // reading order in the DOM and are placed into columns explicitly, so the
+  // phone layout is untouched.
+  const gridClass = editing
+    ? ""
+    : "lg:grid lg:grid-cols-[minmax(0,1fr)_20rem] lg:gap-x-10";
+  const overviewClass = editing ? "" : "lg:col-start-1 lg:row-start-1";
+  const railClass = editing
+    ? ""
+    : "lg:sticky lg:top-8 lg:col-start-2 lg:row-start-1 lg:row-end-3 lg:self-start lg:max-h-[calc(100dvh-4rem)] lg:overflow-y-auto lg:rounded-2xl lg:border lg:border-[var(--line)] lg:bg-[var(--card)] lg:p-5";
+  const stepsClass = editing ? "" : "lg:col-start-1 lg:row-start-2";
+
   return (
-    <article className="px-4 pb-8 pt-4">
+    <article className="px-4 pb-8 pt-4 lg:mx-auto lg:max-w-5xl lg:px-10 lg:pb-16 lg:pt-8">
       <div className="flex items-center justify-between gap-3">
-        <Link href="/" className="text-sm font-semibold text-[var(--accent)]">
+        <Link
+          href="/"
+          className="text-sm font-semibold text-[var(--accent)] lg:hover:underline"
+        >
           ← Recipes
         </Link>
         {editing ? (
@@ -172,7 +210,7 @@ export function RecipeDetail({ recipe }: { recipe: Recipe }) {
               type="button"
               disabled={saving}
               onClick={cancelEditing}
-              className="rounded-full bg-[var(--chip)] px-3.5 py-1.5 text-sm font-semibold disabled:opacity-50"
+              className="rounded-full bg-[var(--chip)] px-3.5 py-1.5 text-sm font-semibold disabled:opacity-50 lg:transition-colors lg:hover:bg-[var(--line)]"
             >
               Cancel
             </button>
@@ -200,7 +238,7 @@ export function RecipeDetail({ recipe }: { recipe: Recipe }) {
 
       <div className="mt-3 flex items-start justify-between gap-3">
         <h1
-          className="min-w-0 text-[1.75rem] font-medium leading-tight"
+          className="min-w-0 text-[1.75rem] font-medium leading-tight lg:text-4xl"
           style={{ fontFamily: "var(--font-display), Georgia, serif" }}
         >
           {recipe.title}
@@ -208,106 +246,157 @@ export function RecipeDetail({ recipe }: { recipe: Recipe }) {
         {recipe.sourceUrl ? <SourceRecipeLink url={recipe.sourceUrl} /> : null}
       </div>
 
-      <RecipeImage
-        recipeId={recipe.id}
-        imageUrl={imageUrl}
-        editing={editing}
-        onChange={handleImageChange}
-        onError={setError}
-      />
+      <div className={gridClass}>
+        <div className={overviewClass}>
+          <RecipeImage
+            recipeId={recipe.id}
+            imageUrl={imageUrl}
+            editing={editing}
+            onChange={handleImageChange}
+            onError={setError}
+          />
 
-      <div className="mt-3">
-        {editing ? (
-          <fieldset>
-            <legend className="mb-2 text-sm font-semibold">Category</legend>
-            <div className="flex flex-wrap gap-2">
-              {PROTEINS.map((p) => {
-                const on = protein === p;
-                return (
-                  <button
-                    key={p}
-                    type="button"
-                    onClick={() => setProtein(p)}
-                    className={`rounded-full px-3 py-1 text-xs font-semibold uppercase tracking-wide ${
-                      on
-                        ? "bg-[var(--ink)] text-[var(--paper)]"
-                        : "bg-[var(--chip)] text-[var(--ink)]"
-                    }`}
-                  >
-                    {PROTEIN_LABELS[p]}
-                  </button>
-                );
-              })}
-            </div>
-          </fieldset>
-        ) : (
-          <div className="flex flex-wrap items-center gap-2">
-            <span className="rounded-full bg-[var(--chip)] px-3 py-1 text-xs font-semibold uppercase tracking-wide">
-              {PROTEIN_LABELS[protein]}
-            </span>
-            {recipe.highProtein && (
-              <span className="rounded-full bg-[var(--sage)] px-3 py-1 text-xs font-semibold uppercase tracking-wide text-white">
-                High protein
-              </span>
-            )}
-            {recipe.nutrition && (
-              <span className="rounded-full bg-[var(--chip)] px-3 py-1 text-xs font-semibold">
-                {recipe.nutrition.kcal} kcal · {recipe.nutrition.protein_g}g protein
-              </span>
+          <div className="mt-3">
+            {editing ? (
+              <fieldset>
+                <legend className="mb-2 text-sm font-semibold">Category</legend>
+                <div className="flex flex-wrap gap-2">
+                  {PROTEINS.map((p) => {
+                    const on = protein === p;
+                    return (
+                      <button
+                        key={p}
+                        type="button"
+                        onClick={() => setProtein(p)}
+                        className={`rounded-full px-3 py-1 text-xs font-semibold uppercase tracking-wide outline-none transition-colors focus-visible:ring-2 focus-visible:ring-[var(--accent)] ${
+                          on
+                            ? "bg-[var(--ink)] text-[var(--paper)]"
+                            : "bg-[var(--chip)] text-[var(--ink)] lg:hover:bg-[var(--line)]"
+                        }`}
+                      >
+                        {PROTEIN_LABELS[p]}
+                      </button>
+                    );
+                  })}
+                </div>
+              </fieldset>
+            ) : (
+              <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
+                <span className="rounded-full bg-[var(--chip)] px-3 py-1 text-xs font-semibold uppercase tracking-wide">
+                  {PROTEIN_LABELS[protein]}
+                </span>
+                {recipe.highProtein && (
+                  <span className="rounded-full bg-[var(--sage)] px-3 py-1 text-xs font-semibold uppercase tracking-wide text-white">
+                    High protein
+                  </span>
+                )}
+                {recipe.nutrition && (
+                  <span className="rounded-full bg-[var(--chip)] px-3 py-1 text-xs font-semibold">
+                    {recipe.nutrition.kcal} kcal · {recipe.nutrition.protein_g}g
+                    protein
+                  </span>
+                )}
+              </div>
             )}
           </div>
-        )}
+
+          {recipe.allergens.length > 0 && (
+            <p className="mt-3 text-sm text-[var(--muted)]">
+              Contains {recipe.allergens.map((a) => ALLERGEN_LABELS[a]).join(", ")}
+            </p>
+          )}
+
+          {(editing || cookTimeMin) && (
+            <div className="mt-5">
+              {editing ? (
+                <fieldset>
+                  <legend className="mb-2 text-xs font-semibold uppercase tracking-[0.14em] text-[var(--muted)]">
+                    Cook time
+                  </legend>
+                  <div className="mt-1.5 flex items-center gap-3">
+                    <label className="flex items-center gap-1.5">
+                      <input
+                        type="number"
+                        min={0}
+                        inputMode="numeric"
+                        placeholder="0"
+                        value={cookHours}
+                        onChange={(e) => setCookHours(e.target.value)}
+                        className="w-16 rounded-xl border border-[var(--line)] bg-[var(--paper)] px-3 py-2 text-sm outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]"
+                      />
+                      <span className="text-sm text-[var(--muted)]">hr</span>
+                    </label>
+                    <label className="flex items-center gap-1.5">
+                      <input
+                        type="number"
+                        min={0}
+                        max={59}
+                        inputMode="numeric"
+                        placeholder="0"
+                        value={cookMinutes}
+                        onChange={(e) => setCookMinutes(e.target.value)}
+                        className="w-16 rounded-xl border border-[var(--line)] bg-[var(--paper)] px-3 py-2 text-sm outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]"
+                      />
+                      <span className="text-sm text-[var(--muted)]">min</span>
+                    </label>
+                  </div>
+                </fieldset>
+              ) : (
+                <CookTimeDisplay minutes={cookTimeMin} />
+              )}
+            </div>
+          )}
+
+          <div className="mt-5">
+            <StarRating
+              value={rating}
+              onChange={(next) => {
+                setRating(next);
+                void persist({ rating: next });
+              }}
+            />
+          </div>
+
+          <RecipeNote
+            note={note}
+            editing={editing}
+            onChange={(text) => setNote(text)}
+          />
+
+          {error && <p className="mt-3 text-sm text-[var(--accent)]">{error}</p>}
+        </div>
+
+        <div className={railClass}>
+          <EditableIngredients
+            items={items}
+            servings={servings}
+            baseServings={scalable ? recipe.servings || 2 : undefined}
+            checked={checked}
+            editing={editing}
+            className={editing ? "" : "lg:mt-0"}
+            onServings={setServings}
+            onChange={setItems}
+            onToggleChecked={(key) => {
+              setChecked((prev) => {
+                const next = new Set(prev);
+                if (next.has(key)) next.delete(key);
+                else next.add(key);
+                return next;
+              });
+            }}
+          />
+
+          {recipe.tools.length > 0 && (
+            <p className="mt-2 text-sm text-[var(--muted)]">
+              Tools: {recipe.tools.join(", ")}
+            </p>
+          )}
+        </div>
+
+        <div className={stepsClass}>
+          <EditableSteps steps={steps} editing={editing} onChange={setSteps} />
+        </div>
       </div>
-
-      {recipe.allergens.length > 0 && (
-        <p className="mt-3 text-sm text-[var(--muted)]">
-          Contains {recipe.allergens.map((a) => ALLERGEN_LABELS[a]).join(", ")}
-        </p>
-      )}
-
-      <div className="mt-5">
-        <StarRating
-          value={rating}
-          onChange={(next) => {
-            setRating(next);
-            void persist({ rating: next });
-          }}
-        />
-      </div>
-
-      <RecipeNote
-        note={note}
-        editing={editing}
-        onChange={(text) => setNote(text)}
-      />
-
-      {error && <p className="mt-3 text-sm text-[var(--accent)]">{error}</p>}
-
-      <EditableIngredients
-        items={items}
-        servings={servings}
-        baseServings={scalable ? recipe.servings || 2 : undefined}
-        checked={checked}
-        editing={editing}
-        onServings={setServings}
-        onChange={setItems}
-        onToggleChecked={(key) => {
-          setChecked((prev) => {
-            const next = new Set(prev);
-            if (next.has(key)) next.delete(key);
-            else next.add(key);
-            return next;
-          });
-        }}
-      />
-
-      {recipe.tools.length > 0 && (
-        <p className="mt-2 text-sm text-[var(--muted)]">
-          Tools: {recipe.tools.join(", ")}
-        </p>
-      )}
-
-      <EditableSteps steps={steps} editing={editing} onChange={setSteps} />
     </article>
   );
 }

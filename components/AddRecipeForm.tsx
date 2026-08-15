@@ -150,14 +150,14 @@ export function AddRecipeForm() {
   return (
     <form
       onSubmit={mode === "url" ? extractFromUrl : saveManual}
-      className="px-4 pt-5 pb-8"
+      className="px-4 pt-5 pb-8 lg:mx-auto lg:max-w-2xl lg:px-10 lg:pt-10"
     >
       <header className="mb-4">
         <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[var(--accent)]">
           Personal box
         </p>
         <h1
-          className="mt-1 text-3xl font-medium tracking-tight"
+          className="mt-1 text-3xl font-medium tracking-tight lg:text-4xl"
           style={{ fontFamily: "var(--font-display), Georgia, serif" }}
         >
           Add a recipe
@@ -178,10 +178,10 @@ export function AddRecipeForm() {
               setMode(id);
               setError(null);
             }}
-            className={`flex-1 rounded-xl py-2 text-sm font-semibold ${
+            className={`flex-1 rounded-xl py-2 text-sm font-semibold outline-none transition-colors focus-visible:ring-2 focus-visible:ring-[var(--accent)] ${
               mode === id
                 ? "bg-[var(--card)] text-[var(--ink)] shadow-sm"
-                : "text-[var(--muted)]"
+                : "text-[var(--muted)] lg:hover:text-[var(--ink)]"
             }`}
           >
             {label}
@@ -228,10 +228,10 @@ export function AddRecipeForm() {
                     key={p}
                     type="button"
                     onClick={() => setProtein(p)}
-                    className={`rounded-full px-3.5 py-2 text-sm font-semibold ${
+                    className={`rounded-full px-3.5 py-2 text-sm font-semibold outline-none transition-colors focus-visible:ring-2 focus-visible:ring-[var(--accent)] ${
                       on
                         ? "bg-[var(--ink)] text-[var(--paper)]"
-                        : "bg-[var(--chip)] text-[var(--ink)]"
+                        : "bg-[var(--chip)] text-[var(--ink)] lg:hover:bg-[var(--line)]"
                     }`}
                   >
                     {PROTEIN_LABELS[p]}
@@ -282,19 +282,21 @@ export function AddRecipeForm() {
 
       {error && <p className="mt-4 text-sm text-[var(--accent)]">{error}</p>}
 
-      <button
-        type="submit"
-        disabled={pending}
-        className="mt-5 w-full rounded-2xl bg-[var(--accent)] px-4 py-3.5 text-base font-semibold text-white disabled:opacity-60"
-      >
-        {pending
-          ? mode === "url"
-            ? "Extracting…"
-            : "Saving…"
-          : mode === "url"
-            ? "Import recipe"
-            : "Save recipe"}
-      </button>
+      <div className="lg:flex lg:justify-end">
+        <button
+          type="submit"
+          disabled={pending}
+          className="mt-5 w-full rounded-2xl bg-[var(--accent)] px-4 py-3.5 text-base font-semibold text-white disabled:opacity-60 lg:w-auto lg:px-8 lg:transition-colors lg:hover:bg-[var(--accent-dark)]"
+        >
+          {pending
+            ? mode === "url"
+              ? "Extracting…"
+              : "Saving…"
+            : mode === "url"
+              ? "Import recipe"
+              : "Save recipe"}
+        </button>
+      </div>
     </form>
   );
 }

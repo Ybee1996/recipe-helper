@@ -92,13 +92,13 @@ export function ChatClient() {
   }
 
   return (
-    <div className="flex min-h-[calc(100dvh-5.5rem)] flex-col px-4 pt-5">
+    <div className="flex min-h-[calc(100dvh-5.5rem)] flex-col px-4 pt-5 lg:mx-auto lg:min-h-dvh lg:max-w-3xl lg:px-10 lg:pt-10">
       <header className="mb-3">
         <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[var(--accent)]">
           Assistant
         </p>
         <h1
-          className="mt-1 text-3xl font-medium tracking-tight"
+          className="mt-1 text-3xl font-medium tracking-tight lg:text-4xl"
           style={{ fontFamily: "var(--font-display), Georgia, serif" }}
         >
           Ask your recipes
@@ -113,7 +113,7 @@ export function ChatClient() {
                 key={s}
                 type="button"
                 onClick={() => send(s)}
-                className="rounded-full bg-[var(--chip)] px-3.5 py-2 text-sm font-semibold"
+                className="rounded-full bg-[var(--chip)] px-3.5 py-2 text-sm font-semibold outline-none transition-colors focus-visible:ring-2 focus-visible:ring-[var(--accent)] lg:hover:bg-[var(--line)]"
               >
                 {s}
               </button>
@@ -124,7 +124,7 @@ export function ChatClient() {
         {messages.map((m, i) => (
           <div key={i} className={m.role === "user" ? "text-right" : ""}>
             <div
-              className={`inline-block max-w-[92%] whitespace-pre-wrap rounded-2xl px-4 py-3 text-left text-[0.95rem] leading-relaxed ${
+              className={`inline-block max-w-[92%] whitespace-pre-wrap rounded-2xl px-4 py-3 text-left text-[0.95rem] leading-relaxed lg:max-w-[75%] ${
                 m.role === "user"
                   ? "bg-[var(--ink)] text-[var(--paper)]"
                   : "bg-[var(--card)] border border-[var(--line)]"
@@ -138,7 +138,7 @@ export function ChatClient() {
                   <li key={r.id}>
                     <Link
                       href={`/recipe/${r.id}`}
-                      className="block rounded-xl border border-[var(--line)] bg-[var(--card)] px-3 py-2"
+                      className="block rounded-xl border border-[var(--line)] bg-[var(--card)] px-3 py-2 lg:transition-colors lg:hover:border-[var(--accent)]"
                     >
                       <span className="font-semibold">{r.title}</span>
                       <span className="mt-0.5 block text-xs text-[var(--muted)]">
@@ -161,7 +161,7 @@ export function ChatClient() {
       </div>
 
       <form
-        className="sticky bottom-16 -mx-4 border-t border-[var(--line)] bg-[var(--paper)] px-4 py-3"
+        className="sticky bottom-16 -mx-4 border-t border-[var(--line)] bg-[var(--paper)] px-4 py-3 lg:-mx-10 lg:bottom-0 lg:px-10 lg:py-4"
         onSubmit={(e) => {
           e.preventDefault();
           void send(input);

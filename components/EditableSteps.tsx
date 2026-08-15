@@ -5,11 +5,13 @@ import type { Step } from "@/lib/types";
 export function EditableSteps({
   steps,
   editing,
+  className = "",
   onToggleEdit,
   onChange,
 }: {
   steps: Step[];
   editing: boolean;
+  className?: string;
   onToggleEdit?: () => void;
   onChange: (steps: Step[]) => void;
 }) {
@@ -27,7 +29,7 @@ export function EditableSteps({
   }
 
   return (
-    <section className="mt-8">
+    <section className={`mt-8 ${className}`}>
       <div className="flex items-center justify-between">
         <h2 className="text-lg font-semibold">Steps</h2>
         {onToggleEdit ? (
@@ -101,7 +103,7 @@ export function EditableSteps({
           ))}
         </ul>
       ) : (
-        <ol className="mt-3 space-y-5">
+        <ol className="mt-3 space-y-5 lg:max-w-[65ch]">
           {steps.map((step, index) => (
             <li key={index} className="flex gap-3">
               <span className="grid h-7 w-7 shrink-0 place-items-center rounded-full bg-[var(--accent)] text-sm font-bold text-white">
@@ -109,7 +111,7 @@ export function EditableSteps({
               </span>
               <div>
                 <h3 className="font-semibold">{step.title}</h3>
-                <p className="mt-1 text-[0.95rem] leading-relaxed text-[var(--ink)]/90">
+                <p className="mt-1 text-[0.95rem] leading-relaxed text-[var(--ink)]/90 lg:text-base">
                   {step.text}
                 </p>
               </div>

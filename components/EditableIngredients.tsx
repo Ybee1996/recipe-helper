@@ -36,7 +36,7 @@ function ServingsControl({
           type="button"
           disabled={servings <= 1}
           onClick={() => onServings(Math.max(1, servings - 1))}
-          className="grid h-7 w-7 place-items-center rounded-full text-[var(--ink)] disabled:opacity-30"
+          className="grid h-7 w-7 place-items-center rounded-full text-[var(--ink)] transition-colors disabled:opacity-30 lg:hover:bg-[var(--chip)]"
           aria-label="Fewer servings"
         >
           −
@@ -47,7 +47,7 @@ function ServingsControl({
         <button
           type="button"
           onClick={() => onServings(servings + 1)}
-          className="grid h-7 w-7 place-items-center rounded-full text-[var(--ink)]"
+          className="grid h-7 w-7 place-items-center rounded-full text-[var(--ink)] transition-colors lg:hover:bg-[var(--chip)]"
           aria-label="More servings"
         >
           +
@@ -63,10 +63,10 @@ function ServingsControl({
           key={n}
           type="button"
           onClick={() => onServings(n)}
-          className={`px-3 py-1.5 ${
+          className={`px-3 py-1.5 transition-colors ${
             servings === n
               ? "bg-[var(--ink)] text-[var(--paper)]"
-              : "text-[var(--muted)]"
+              : "text-[var(--muted)] lg:hover:bg-[var(--chip)]"
           }`}
         >
           {n}p
@@ -82,6 +82,7 @@ export function EditableIngredients({
   baseServings,
   checked,
   editing,
+  className = "",
   onToggleEdit,
   onServings,
   onChange,
@@ -92,6 +93,7 @@ export function EditableIngredients({
   baseServings?: number;
   checked: Set<string>;
   editing: boolean;
+  className?: string;
   onToggleEdit?: () => void;
   onServings: (n: number) => void;
   onChange: (items: ListedIngredient[]) => void;
@@ -102,7 +104,7 @@ export function EditableIngredients({
   }
 
   return (
-    <section className="mt-6">
+    <section className={`mt-6 ${className}`}>
       <div className="flex items-center justify-between gap-2">
         <h2 className="text-lg font-semibold">Ingredients</h2>
         <div className="flex items-center gap-2">
@@ -181,7 +183,7 @@ export function EditableIngredients({
                 <button
                   type="button"
                   onClick={() => onToggleChecked(key)}
-                  className="flex w-full items-start gap-3 py-3 text-left"
+                  className="flex w-full items-start gap-3 py-3 text-left outline-none transition-colors focus-visible:ring-2 focus-visible:ring-[var(--accent)] lg:-mx-2 lg:w-[calc(100%+1rem)] lg:rounded-lg lg:px-2 lg:hover:bg-[var(--chip)]/50"
                 >
                   <span
                     className={`mt-0.5 grid h-5 w-5 shrink-0 place-items-center rounded-md border ${

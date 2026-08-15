@@ -2,24 +2,16 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-
-const tabs = [
-  { href: "/", label: "Recipes" },
-  { href: "/add", label: "Add" },
-  { href: "/chat", label: "Ask" },
-];
+import { NAV_TABS, isNavActive } from "@/lib/nav";
 
 export function BottomNav() {
   const pathname = usePathname();
 
   return (
-    <nav className="fixed inset-x-0 bottom-0 z-20 border-t border-[var(--line)] bg-[var(--paper)]/95 backdrop-blur-md">
+    <nav className="fixed inset-x-0 bottom-0 z-20 border-t border-[var(--line)] bg-[var(--paper)]/95 backdrop-blur-md lg:hidden">
       <div className="mx-auto flex max-w-lg">
-        {tabs.map((tab) => {
-          const active =
-            tab.href === "/"
-              ? pathname === "/" || pathname.startsWith("/recipe")
-              : pathname.startsWith(tab.href);
+        {NAV_TABS.map((tab) => {
+          const active = isNavActive(pathname, tab.href);
           return (
             <Link
               key={tab.href}

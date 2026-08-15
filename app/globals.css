@@ -41,6 +41,12 @@ select {
   font: inherit;
 }
 
+/* Tailwind v4 preflight sets buttons to cursor: default. */
+button:not(:disabled),
+[role="button"]:not(:disabled) {
+  cursor: pointer;
+}
+
 ::selection {
   background: #f3c9b4;
 }

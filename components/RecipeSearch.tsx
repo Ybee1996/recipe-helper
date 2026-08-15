@@ -31,20 +31,20 @@ export function RecipeSearch({ recipes }: { recipes: Recipe[] }) {
   );
 
   return (
-    <div className="px-4 pt-5">
+    <div className="px-4 pt-5 lg:mx-auto lg:max-w-6xl lg:px-10 lg:pt-10">
       <header className="mb-4">
         <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[var(--accent)]">
           Personal box
         </p>
         <h1
-          className="mt-1 text-3xl font-medium tracking-tight"
+          className="mt-1 text-3xl font-medium tracking-tight lg:text-4xl"
           style={{ fontFamily: "var(--font-display), Georgia, serif" }}
         >
           What are we cooking?
         </h1>
       </header>
 
-      <label className="block">
+      <label className="block lg:max-w-xl">
         <span className="sr-only">Search recipes</span>
         <input
           type="search"
@@ -56,7 +56,7 @@ export function RecipeSearch({ recipes }: { recipes: Recipe[] }) {
         />
       </label>
 
-      <div className="no-scrollbar -mx-4 mt-3 flex gap-2 overflow-x-auto px-4 pb-1">
+      <div className="no-scrollbar -mx-4 mt-3 flex gap-2 overflow-x-auto px-4 pb-1 lg:mx-0 lg:flex-wrap lg:overflow-visible lg:px-0">
         {PROTEIN_CHIPS.map((protein) => {
           const on = proteins.includes(protein);
           return (
@@ -64,10 +64,10 @@ export function RecipeSearch({ recipes }: { recipes: Recipe[] }) {
               key={protein}
               type="button"
               onClick={() => setProteins(toggle(proteins, protein))}
-              className={`shrink-0 rounded-full px-3.5 py-2 text-sm font-semibold ${
+              className={`shrink-0 rounded-full px-3.5 py-2 text-sm font-semibold outline-none transition-colors focus-visible:ring-2 focus-visible:ring-[var(--accent)] ${
                 on
                   ? "bg-[var(--ink)] text-[var(--paper)]"
-                  : "bg-[var(--chip)] text-[var(--ink)]"
+                  : "bg-[var(--chip)] text-[var(--ink)] lg:hover:bg-[var(--line)]"
               }`}
             >
               {PROTEIN_LABELS[protein]}
@@ -81,10 +81,10 @@ export function RecipeSearch({ recipes }: { recipes: Recipe[] }) {
               key={chip.id}
               type="button"
               onClick={() => setDietary(toggle(dietary, chip.id))}
-              className={`shrink-0 rounded-full px-3.5 py-2 text-sm font-semibold ${
+              className={`shrink-0 rounded-full px-3.5 py-2 text-sm font-semibold outline-none transition-colors focus-visible:ring-2 focus-visible:ring-[var(--accent)] ${
                 on
                   ? "bg-[var(--sage)] text-white"
-                  : "bg-[var(--chip)] text-[var(--ink)]"
+                  : "bg-[var(--chip)] text-[var(--ink)] lg:hover:bg-[var(--line)]"
               }`}
             >
               {chip.label}
@@ -97,7 +97,7 @@ export function RecipeSearch({ recipes }: { recipes: Recipe[] }) {
         {results.length} recipe{results.length === 1 ? "" : "s"}
       </p>
 
-      <ul className="mt-3 space-y-3">
+      <ul className="mt-3 space-y-3 lg:grid lg:grid-cols-2 lg:items-stretch lg:gap-4 lg:space-y-0 xl:grid-cols-3">
         {results.map((recipe) => (
           <li key={recipe.id}>
             <RecipeCard recipe={recipe} />

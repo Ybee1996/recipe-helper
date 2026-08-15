@@ -29,7 +29,7 @@ export function StarRating({
               aria-checked={n === rating}
               aria-label={`${n} out of 10`}
               onClick={() => onChange(n)}
-              className={`flex h-9 w-9 items-center justify-center text-[1.35rem] leading-none ${
+              className={`flex h-9 w-9 items-center justify-center rounded-full text-[1.35rem] leading-none outline-none transition-colors focus-visible:ring-2 focus-visible:ring-[var(--accent)] lg:hover:text-[var(--accent)] ${
                 filled ? "text-[var(--accent)]" : "text-[var(--line)]"
               }`}
             >
@@ -39,7 +39,14 @@ export function StarRating({
         })}
       </div>
       <p className="mt-0.5 text-right text-xs font-semibold text-[var(--muted)]">
-        {rating ? `${rating}/10` : "Tap a star"}
+        {rating ? (
+          `${rating}/10`
+        ) : (
+          <>
+            <span className="lg:hidden">Tap a star</span>
+            <span className="hidden lg:inline">Click a star</span>
+          </>
+        )}
       </p>
     </div>
   );
