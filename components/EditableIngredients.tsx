@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { displayQty, setDisplayQty } from "@/lib/filters";
 import type { Ingredient } from "@/lib/types";
 
@@ -18,6 +19,39 @@ export function splitPantry(items: ListedIngredient[]): {
     else ingredients.push(rest);
   }
   return { ingredients, pantry };
+}
+
+function BasketIcon() {
+  return (
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+      <path
+        d="M2.5 5.5h11l-.85 6.2a1.5 1.5 0 0 1-1.49 1.3H4.84a1.5 1.5 0 0 1-1.49-1.3L2.5 5.5Z"
+        stroke="currentColor"
+        strokeWidth="1.4"
+        strokeLinejoin="round"
+      />
+      <path
+        d="M5.5 5.5V4a2.5 2.5 0 0 1 5 0v1.5"
+        stroke="currentColor"
+        strokeWidth="1.4"
+        strokeLinecap="round"
+      />
+    </svg>
+  );
+}
+
+function CheckIcon() {
+  return (
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+      <path
+        d="M3.5 8.5 6.5 11.5 12.5 4.5"
+        stroke="currentColor"
+        strokeWidth="1.6"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
 }
 
 function ServingsControl({
@@ -87,6 +121,8 @@ export function EditableIngredients({
   onServings,
   onChange,
   onToggleChecked,
+  onAddToShoppingList,
+  onAddAllToShoppingList,
 }: {
   items: ListedIngredient[];
   servings: number;
@@ -98,16 +134,42 @@ export function EditableIngredients({
   onServings: (n: number) => void;
   onChange: (items: ListedIngredient[]) => void;
   onToggleChecked: (key: string) => void;
+  onAddToShoppingList?: (item: ListedIngredient, qty: string) => void;
+  onAddAllToShoppingList?: () => void;
 }) {
+  const [addedKeys, setAddedKeys] = useState<Set<string>>(new Set());
+  const [allAdded, setAllAdded] = useState(false);
+
+  function flashKey(key: string) {
+    setAddedKeys((prev) => {
+      const next = new Set(prev);
+      next.add(key);
+      return next;
+    });
+    window.setTimeout(() => {
+      setAddedKeys((prev) => {
+        const next = new Set(prev);
+        next.delete(key);
+        return next;
+      });
+    }, 1400);
+  }
+
   function update(index: number, next: ListedIngredient) {
     onChange(items.map((item, i) => (i === index ? next : item)));
   }
 
+  function handleAddAll() {
+    onAddAllToShoppingList?.();
+    setAllAdded(true);
+    window.setTimeout(() => setAllAdded(false), 1400);
+  }
+
   return (
     <section className={`mt-6 ${className}`}>
-      <div className="flex items-center justify-between gap-2">
-        <h2 className="text-lg font-semibold">Ingredients</h2>
-        <div className="flex items-center gap-2">
+      <div className="flex items-center justify-between gap-3">
+        <h2 className="min-w-0 shrink text-lg font-semibold">Ingredients</h2>
+        <div className="flex shrink-0 items-center gap-2">
           <ServingsControl
             servings={servings}
             baseServings={baseServings}
@@ -124,6 +186,21 @@ export function EditableIngredients({
           ) : null}
         </div>
       </div>
+
+      {!editing && onAddAllToShoppingList ? (
+        <button
+          type="button"
+          onClick={handleAddAll}
+          className={`mt-3 flex w-full items-center justify-center gap-2 rounded-full border px-3 py-2 text-sm font-semibold outline-none transition-colors focus-visible:ring-2 focus-visible:ring-[var(--accent)] ${
+            allAdded
+              ? "border-[var(--sage)] bg-[var(--sage)]/10 text-[var(--sage)]"
+              : "border-[var(--line)] bg-[var(--paper)] text-[var(--accent)] lg:hover:bg-[var(--chip)]"
+          }`}
+        >
+          {allAdded ? <CheckIcon /> : <BasketIcon />}
+          {allAdded ? "Added to list" : "Add to shopping list"}
+        </button>
+      ) : null}
 
       {editing ? (
         <ul className="mt-3 space-y-3">
@@ -178,12 +255,14 @@ export function EditableIngredients({
           {items.map((item, index) => {
             const key = `${item.name}-${index}`;
             const on = checked.has(key);
+            const qty = displayQty(item, servings, baseServings);
+            const justAdded = addedKeys.has(key);
             return (
-              <li key={key}>
+              <li key={key} className="flex items-center gap-1">
                 <button
                   type="button"
                   onClick={() => onToggleChecked(key)}
-                  className="flex w-full items-start gap-3 py-3 text-left outline-none transition-colors focus-visible:ring-2 focus-visible:ring-[var(--accent)] lg:-mx-2 lg:w-[calc(100%+1rem)] lg:rounded-lg lg:px-2 lg:hover:bg-[var(--chip)]/50"
+                  className="flex min-w-0 flex-1 items-start gap-3 py-3 text-left outline-none transition-colors focus-visible:ring-2 focus-visible:ring-[var(--accent)] lg:-mx-2 lg:rounded-lg lg:px-2 lg:hover:bg-[var(--chip)]/50"
                 >
                   <span
                     className={`mt-0.5 grid h-5 w-5 shrink-0 place-items-center rounded-md border ${
@@ -195,15 +274,34 @@ export function EditableIngredients({
                     {on ? "✓" : ""}
                   </span>
                   <span className={on ? "text-[var(--muted)] line-through" : ""}>
-                    <span className="font-semibold">
-                      {displayQty(item, servings, baseServings)}
-                    </span>{" "}
-                    {item.name}
+                    <span className="font-semibold">{qty}</span> {item.name}
                     {item.pantry ? (
                       <span className="text-[var(--muted)]"> · pantry</span>
                     ) : null}
                   </span>
                 </button>
+                {onAddToShoppingList ? (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      onAddToShoppingList(item, qty);
+                      flashKey(key);
+                    }}
+                    aria-label={
+                      justAdded
+                        ? `${item.name} added to shopping list`
+                        : `Add ${item.name} to shopping list`
+                    }
+                    title={justAdded ? "Added" : "Add to shopping list"}
+                    className={`grid h-8 w-8 shrink-0 place-items-center rounded-full outline-none transition-colors focus-visible:ring-2 focus-visible:ring-[var(--accent)] ${
+                      justAdded
+                        ? "text-[var(--sage)]"
+                        : "text-[var(--muted)] lg:hover:bg-[var(--chip)] lg:hover:text-[var(--accent)]"
+                    }`}
+                  >
+                    {justAdded ? <CheckIcon /> : <BasketIcon />}
+                  </button>
+                ) : null}
               </li>
             );
           })}

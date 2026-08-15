@@ -12,9 +12,11 @@ import { CookTimeDisplay } from "@/components/CookTimeDisplay";
 import { EditableSteps } from "@/components/EditableSteps";
 import { RecipeImage } from "@/components/RecipeImage";
 import { RecipeNote } from "@/components/RecipeNote";
+import { useShoppingList } from "@/components/ShoppingListProvider";
 import { SourceRecipeLink } from "@/components/SourceRecipeLink";
 import { StarRating } from "@/components/StarRating";
 import { saveOverlay } from "@/lib/save-overlay";
+import { displayQty } from "@/lib/filters";
 import {
   combineCookTime,
   splitCookTime,
@@ -64,6 +66,7 @@ function EditIcon() {
 
 export function RecipeDetail({ recipe }: { recipe: Recipe }) {
   const router = useRouter();
+  const { addItem, addItems } = useShoppingList();
   const scalable = recipe.source === "web";
   const [servings, setServings] = useState<number>(() =>
     scalable ? recipe.servings || 2 : 2,
@@ -181,6 +184,28 @@ export function RecipeDetail({ recipe }: { recipe: Recipe }) {
   }
 
   const cookTimeMin = combineCookTime(Number(cookHours) || 0, Number(cookMinutes) || 0);
+  const baseServings = scalable ? recipe.servings || 2 : undefined;
+
+  function addIngredientToList(item: ListedIngredient, qty: string) {
+    addItem({
+      name: item.name,
+      qty,
+      recipeId: recipe.id,
+      recipeTitle: recipe.title,
+    });
+  }
+
+  function addAllIngredientsToList() {
+    const toAdd = items
+      .filter((item) => !item.pantry && item.name.trim())
+      .map((item) => ({
+        name: item.name,
+        qty: displayQty(item, servings, baseServings),
+        recipeId: recipe.id,
+        recipeTitle: recipe.title,
+      }));
+    addItems(toAdd);
+  }
 
   // The desktop rail is too narrow for the ingredient/step edit controls, so
   // editing falls back to the single-column flow at every width. Groups stay in
@@ -188,7 +213,7 @@ export function RecipeDetail({ recipe }: { recipe: Recipe }) {
   // phone layout is untouched.
   const gridClass = editing
     ? ""
-    : "lg:grid lg:grid-cols-[minmax(0,1fr)_20rem] lg:gap-x-10";
+    : "lg:grid lg:grid-cols-[minmax(0,1fr)_22rem] lg:gap-x-10";
   const overviewClass = editing ? "" : "lg:col-start-1 lg:row-start-1";
   const railClass = editing
     ? ""
@@ -370,7 +395,7 @@ export function RecipeDetail({ recipe }: { recipe: Recipe }) {
           <EditableIngredients
             items={items}
             servings={servings}
-            baseServings={scalable ? recipe.servings || 2 : undefined}
+            baseServings={baseServings}
             checked={checked}
             editing={editing}
             className={editing ? "" : "lg:mt-0"}
@@ -384,6 +409,8 @@ export function RecipeDetail({ recipe }: { recipe: Recipe }) {
                 return next;
               });
             }}
+            onAddToShoppingList={editing ? undefined : addIngredientToList}
+            onAddAllToShoppingList={editing ? undefined : addAllIngredientsToList}
           />
 
           {recipe.tools.length > 0 && (
