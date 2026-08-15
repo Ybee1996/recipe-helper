@@ -17,6 +17,7 @@ const PROTEIN_WORDS: Record<string, Protein> = {
   vegetarian: "veggie",
   vegan: "veggie",
   vegetable: "veggie",
+  dessert: "dessert",
 };
 
 const DIET_WORDS: { pattern: RegExp; filter: DietaryFilter }[] = [

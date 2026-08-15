@@ -1,4 +1,12 @@
-export const PROTEINS = ["chicken", "beef", "pork", "fish", "veggie", "other"] as const;
+export const PROTEINS = [
+  "chicken",
+  "beef",
+  "pork",
+  "fish",
+  "veggie",
+  "dessert",
+  "other",
+] as const;
 export type Protein = (typeof PROTEINS)[number];
 
 export const ALLERGENS = [
@@ -91,6 +99,7 @@ export interface SearchFilters {
   query: string;
   proteins: Protein[];
   dietary: DietaryFilter[];
+  avoidAllergens?: Allergen[];
 }
 
 export const ALLERGEN_LABELS: Record<Allergen, string> = {
@@ -114,5 +123,6 @@ export const PROTEIN_LABELS: Record<Protein, string> = {
   pork: "Pork",
   fish: "Fish",
   veggie: "Veggie",
+  dessert: "Dessert",
   other: "Other",
 };

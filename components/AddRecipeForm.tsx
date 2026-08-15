@@ -219,7 +219,7 @@ export function AddRecipeForm() {
           </label>
 
           <fieldset>
-            <legend className="mb-1.5 text-sm font-semibold">Protein</legend>
+            <legend className="mb-1.5 text-sm font-semibold">Category</legend>
             <div className="flex flex-wrap gap-2">
               {PROTEINS.map((p) => {
                 const on = protein === p;

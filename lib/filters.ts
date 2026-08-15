@@ -21,10 +21,18 @@ export function matchesDietary(recipe: Recipe, dietary: DietaryFilter): boolean 
 
 export function applyFilters(
   recipes: Recipe[],
-  filters: Pick<SearchFilters, "proteins" | "dietary">,
+  filters: Pick<SearchFilters, "proteins" | "dietary" | "avoidAllergens">,
 ): Recipe[] {
   return recipes.filter((recipe) => {
     if (filters.proteins.length && !filters.proteins.includes(recipe.protein)) {
+      return false;
+    }
+    if (
+      filters.avoidAllergens?.length &&
+      filters.avoidAllergens.some((allergen) =>
+        recipe.allergens.includes(allergen),
+      )
+    ) {
       return false;
     }
     return filters.dietary.every((d) => matchesDietary(recipe, d));

@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useRef, useState } from "react";
+import { PROTEIN_LABELS, type Protein } from "@/lib/types";
 
 type ChatRecipe = {
   id: string;
@@ -142,7 +143,7 @@ export function ChatClient() {
                     >
                       <span className="font-semibold">{r.title}</span>
                       <span className="mt-0.5 block text-xs text-[var(--muted)]">
-                        {r.protein}
+                        {PROTEIN_LABELS[r.protein as Protein] ?? r.protein}
                         {r.protein_g ? ` · ${r.protein_g}g protein` : ""}
                         {r.kcal ? ` · ${r.kcal} kcal` : ""}
                       </span>

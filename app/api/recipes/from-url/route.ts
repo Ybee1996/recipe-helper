@@ -75,7 +75,7 @@ export async function POST(req: Request) {
         role: "system",
         content:
           "Extract a single recipe as JSON matching this schema: " +
-          "id, title, source='web', sourceUrl, protein (chicken|beef|pork|fish|veggie|other), " +
+          "id, title, source='web', sourceUrl, protein (chicken|beef|pork|fish|veggie|dessert|other; use dessert for sweets, cakes, puddings), " +
           "cookTimeMin, servings, tags[], allergens[] (gluten,milk,egg,soy,peanut,tree_nut," +
           "mustard,sulphites,sesame,celery,fish,crustacean), " +
           "ingredients[{name,qty2}], pantry[], tools[], steps[{n,title,text}], " +
