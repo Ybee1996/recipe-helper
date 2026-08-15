@@ -72,6 +72,7 @@ export function RecipeImage({
   const [revealed, setRevealed] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
+  const [portraitPhoto, setPortraitPhoto] = useState(false);
 
   useEffect(() => {
     if (editing) return;
@@ -79,6 +80,10 @@ export function RecipeImage({
     setMenuOpen(false);
     setConfirmDelete(false);
   }, [editing]);
+
+  useEffect(() => {
+    setPortraitPhoto(false);
+  }, [imageUrl]);
 
   function openPicker() {
     if (busy) return;
@@ -173,7 +178,17 @@ export function RecipeImage({
           >
             <div className="aspect-[16/9] overflow-hidden rounded-2xl bg-[var(--chip)]">
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={imageUrl} alt="" className="h-full w-full object-contain" />
+              <img
+                src={imageUrl}
+                alt=""
+                className={`h-full w-full ${
+                  portraitPhoto ? "object-contain" : "object-cover"
+                }`}
+                onLoad={(e) => {
+                  const { naturalWidth, naturalHeight } = e.currentTarget;
+                  setPortraitPhoto(naturalHeight > naturalWidth);
+                }}
+              />
             </div>
             {editing ? (
               <div

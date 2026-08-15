@@ -156,8 +156,8 @@ async function decodeImage(
     : null;
 
   const attempts: Array<() => Promise<DecodedImage>> = [
-    () => decodeBitmap(file, { imageOrientation: "none" }),
     () => decodeBitmap(file, { imageOrientation: "from-image" }),
+    () => decodeBitmap(file, { imageOrientation: "none" }),
     () => decodeBitmap(file),
     () => decodeHtmlImage(file),
   ];
@@ -171,10 +171,16 @@ async function decodeImage(
         return { decoded, orientation: 1 };
       }
 
-      if (sameSize(decoded.width, decoded.height, meta)) {
+      const matchesRaw = sameSize(decoded.width, decoded.height, meta);
+      const matchesOriented = sameSize(decoded.width, decoded.height, expected);
+
+      if (matchesOriented && !matchesRaw) {
+        return { decoded, orientation: 1 };
+      }
+      if (matchesRaw) {
         return { decoded, orientation: meta.orientation };
       }
-      if (sameSize(decoded.width, decoded.height, expected)) {
+      if (matchesOriented) {
         return { decoded, orientation: 1 };
       }
 
