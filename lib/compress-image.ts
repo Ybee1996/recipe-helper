@@ -241,7 +241,15 @@ function drawNormalized(
   ctx.drawImage(source, 0, 0, w, h);
 }
 
-export async function compressImage(file: File): Promise<Blob> {
+export async function canvasToJpeg(canvas: HTMLCanvasElement): Promise<Blob> {
+  const out = await new Promise<Blob | null>((resolve) =>
+    canvas.toBlob(resolve, "image/jpeg", JPEG_QUALITY),
+  );
+  if (!out) throw new Error("Could not compress photo");
+  return out;
+}
+
+export async function loadOrientedImage(file: File): Promise<HTMLCanvasElement> {
   const meta = readJpegMeta(await file.arrayBuffer());
   const { decoded, orientation } = await decodeImage(file, meta);
 
@@ -256,13 +264,41 @@ export async function compressImage(file: File): Promise<Blob> {
       decoded.height,
       orientation,
     );
-
-    const out = await new Promise<Blob | null>((resolve) =>
-      canvas.toBlob(resolve, "image/jpeg", JPEG_QUALITY),
-    );
-    if (!out) throw new Error("Could not compress photo");
-    return out;
+    return canvas;
   } finally {
     decoded.close();
   }
+}
+
+export async function loadImageFromUrl(url: string): Promise<HTMLCanvasElement> {
+  const res = await fetch(url);
+  if (!res.ok) throw new Error("Could not open photo");
+  const blob = await res.blob();
+  const type = blob.type.startsWith("image/") ? blob.type : "image/jpeg";
+  return loadOrientedImage(new File([blob], "photo.jpg", { type }));
+}
+
+export async function cropToJpeg(
+  source: HTMLCanvasElement,
+  crop: { x: number; y: number; width: number; height: number },
+): Promise<Blob> {
+  const sx = Math.min(source.width - 1, Math.max(0, crop.x));
+  const sy = Math.min(source.height - 1, Math.max(0, crop.y));
+  const sw = Math.min(source.width - sx, Math.max(1, crop.width));
+  const sh = Math.min(source.height - sy, Math.max(1, crop.height));
+
+  const scale = Math.min(1, MAX_EDGE / Math.max(sw, sh));
+  const canvas = document.createElement("canvas");
+  canvas.width = Math.max(1, Math.round(sw * scale));
+  canvas.height = Math.max(1, Math.round(sh * scale));
+  const ctx = canvas.getContext("2d");
+  if (!ctx) throw new Error("Could not compress photo");
+  ctx.imageSmoothingEnabled = true;
+  ctx.imageSmoothingQuality = "high";
+  ctx.drawImage(source, sx, sy, sw, sh, 0, 0, canvas.width, canvas.height);
+  return canvasToJpeg(canvas);
+}
+
+export async function compressImage(file: File): Promise<Blob> {
+  return canvasToJpeg(await loadOrientedImage(file));
 }

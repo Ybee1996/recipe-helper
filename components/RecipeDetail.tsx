@@ -74,6 +74,9 @@ export function RecipeDetail({ recipe }: { recipe: Recipe }) {
   const [rating, setRating] = useState<number | null>(recipe.rating ?? null);
   const [note, setNote] = useState<string | null>(recipe.note ?? null);
   const [imageUrl, setImageUrl] = useState<string | null>(recipe.imageUrl ?? null);
+  const [originalImageUrl, setOriginalImageUrl] = useState<string | null>(
+    recipe.originalImageUrl ?? null,
+  );
   const [protein, setProtein] = useState<Protein>(recipe.protein);
   const initialCookTime = splitCookTime(recipe.cookTimeMin);
   const [cookHours, setCookHours] = useState(String(initialCookTime.hours));
@@ -98,8 +101,12 @@ export function RecipeDetail({ recipe }: { recipe: Recipe }) {
     servings: defaultViewServings,
   });
 
-  function handleImageChange(url: string | null) {
-    setImageUrl(url);
+  function handleImageChange(next: {
+    imageUrl: string | null;
+    originalImageUrl: string | null;
+  }) {
+    setImageUrl(next.imageUrl);
+    setOriginalImageUrl(next.originalImageUrl);
     router.refresh();
   }
 
@@ -109,6 +116,7 @@ export function RecipeDetail({ recipe }: { recipe: Recipe }) {
     setRating(recipe.rating ?? null);
     setNote(recipe.note ?? null);
     setImageUrl(recipe.imageUrl ?? null);
+    setOriginalImageUrl(recipe.originalImageUrl ?? null);
     setProtein(recipe.protein);
     setCookHours(String(cookTime.hours));
     setCookMinutes(String(cookTime.minutes));
@@ -440,6 +448,7 @@ export function RecipeDetail({ recipe }: { recipe: Recipe }) {
           <RecipeImage
             recipeId={recipe.id}
             imageUrl={imageUrl}
+            originalImageUrl={originalImageUrl}
             editing={editing}
             onChange={handleImageChange}
             onError={setError}

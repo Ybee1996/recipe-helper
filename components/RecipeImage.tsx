@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { compressImage } from "@/lib/compress-image";
+import { PhotoCropper } from "@/components/PhotoCropper";
+import { canvasToJpeg, loadImageFromUrl, loadOrientedImage } from "@/lib/compress-image";
 
 function CameraIcon() {
   return (
@@ -57,14 +58,19 @@ function EditIcon() {
 export function RecipeImage({
   recipeId,
   imageUrl,
+  originalImageUrl = null,
   editing = false,
   onChange,
   onError,
 }: {
   recipeId: string;
   imageUrl: string | null;
+  originalImageUrl?: string | null;
   editing?: boolean;
-  onChange: (url: string | null) => void;
+  onChange: (next: {
+    imageUrl: string | null;
+    originalImageUrl: string | null;
+  }) => void;
   onError: (message: string | null) => void;
 }) {
   const inputRef = useRef<HTMLInputElement>(null);
@@ -73,6 +79,11 @@ export function RecipeImage({
   const [menuOpen, setMenuOpen] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [portraitPhoto, setPortraitPhoto] = useState(false);
+  const [crop, setCrop] = useState<{
+    source: HTMLCanvasElement;
+    previewUrl: string;
+    originalBlob: Blob | null;
+  } | null>(null);
 
   useEffect(() => {
     if (editing) return;
@@ -84,6 +95,12 @@ export function RecipeImage({
   useEffect(() => {
     setPortraitPhoto(false);
   }, [imageUrl]);
+
+  useEffect(() => {
+    return () => {
+      if (crop?.previewUrl) URL.revokeObjectURL(crop.previewUrl);
+    };
+  }, [crop?.previewUrl]);
 
   function openPicker() {
     if (busy) return;
@@ -106,6 +123,16 @@ export function RecipeImage({
     setMenuOpen((open) => !open);
   }
 
+  async function beginCrop(source: HTMLCanvasElement, originalBlob: Blob | null) {
+    const previewUrl = URL.createObjectURL(
+      originalBlob ?? (await canvasToJpeg(source)),
+    );
+    setCrop((prev) => {
+      if (prev?.previewUrl) URL.revokeObjectURL(prev.previewUrl);
+      return { source, previewUrl, originalBlob };
+    });
+  }
+
   async function onPick(file: File | undefined) {
     if (!file) return;
     setConfirmDelete(false);
@@ -113,27 +140,81 @@ export function RecipeImage({
     setBusy(true);
     onError(null);
     try {
-      const blob = await compressImage(file);
-      const compressed = new File([blob], "photo.jpg", { type: "image/jpeg" });
+      const source = await loadOrientedImage(file);
+      const originalBlob = await canvasToJpeg(source);
+      await beginCrop(source, originalBlob);
+    } catch (err) {
+      onError(err instanceof Error ? err.message : "Could not open photo");
+    } finally {
+      setBusy(false);
+      if (inputRef.current) inputRef.current.value = "";
+    }
+  }
+
+  async function cropExisting() {
+    const sourceUrl = originalImageUrl || imageUrl;
+    if (!sourceUrl || busy) return;
+    setConfirmDelete(false);
+    setMenuOpen(false);
+    setBusy(true);
+    onError(null);
+    try {
+      await beginCrop(await loadImageFromUrl(sourceUrl), null);
+    } catch (err) {
+      onError(err instanceof Error ? err.message : "Could not open photo");
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  const cropRef = useRef(crop);
+  cropRef.current = crop;
+
+  async function saveCropped(blob: Blob) {
+    setBusy(true);
+    onError(null);
+    try {
       const form = new FormData();
-      form.append("file", compressed);
+      form.append("file", new File([blob], "photo.jpg", { type: "image/jpeg" }));
+      if (cropRef.current?.originalBlob) {
+        form.append(
+          "original",
+          new File([cropRef.current.originalBlob], "original.jpg", {
+            type: "image/jpeg",
+          }),
+        );
+      }
       const res = await fetch(`/api/recipes/${recipeId}/image`, {
         method: "POST",
         body: form,
       });
       const data = (await res.json().catch(() => null)) as
-        | { imageUrl?: string; error?: string }
+        | { imageUrl?: string; originalImageUrl?: string; error?: string }
         | null;
       if (!res.ok || !data?.imageUrl) {
         throw new Error(data?.error || "Could not save photo");
       }
-      onChange(data.imageUrl);
+      setCrop((prev) => {
+        if (prev?.previewUrl) URL.revokeObjectURL(prev.previewUrl);
+        return null;
+      });
+      onChange({
+        imageUrl: data.imageUrl,
+        originalImageUrl: data.originalImageUrl ?? data.imageUrl,
+      });
     } catch (err) {
-      onError(err instanceof Error ? err.message : "Could not save photo");
+      throw err instanceof Error ? err : new Error("Could not save photo");
     } finally {
       setBusy(false);
-      if (inputRef.current) inputRef.current.value = "";
     }
+  }
+
+  function cancelCrop() {
+    if (busy) return;
+    setCrop((prev) => {
+      if (prev?.previewUrl) URL.revokeObjectURL(prev.previewUrl);
+      return null;
+    });
   }
 
   async function remove() {
@@ -147,7 +228,7 @@ export function RecipeImage({
       if (!res.ok) {
         throw new Error(data?.error || "Could not remove photo");
       }
-      onChange(null);
+      onChange({ imageUrl: null, originalImageUrl: null });
       setConfirmDelete(false);
       setMenuOpen(false);
       setRevealed(false);
@@ -213,10 +294,18 @@ export function RecipeImage({
                     <button
                       type="button"
                       disabled={busy}
+                      onClick={() => void cropExisting()}
+                      className="block w-full rounded-xl px-3 py-2 text-left text-[var(--ink)] disabled:opacity-50"
+                    >
+                      {busy ? "Opening…" : "Crop"}
+                    </button>
+                    <button
+                      type="button"
+                      disabled={busy}
                       onClick={openPicker}
                       className="block w-full rounded-xl px-3 py-2 text-left text-[var(--ink)] disabled:opacity-50"
                     >
-                      {busy ? "Saving…" : "Change"}
+                      Change
                     </button>
                     {confirmDelete ? (
                       <>
@@ -260,8 +349,19 @@ export function RecipeImage({
           className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-2xl border border-dashed border-[var(--line)] bg-[var(--card)] px-4 py-6 text-sm font-semibold text-[var(--muted)] disabled:opacity-50"
         >
           <CameraIcon />
-          {busy ? "Saving…" : "Add photo"}
+          {busy ? "Opening…" : "Add photo"}
         </button>
+      ) : null}
+
+      {crop ? (
+        <PhotoCropper
+          source={crop.source}
+          previewUrl={crop.previewUrl}
+          busy={busy}
+          onCancel={cancelCrop}
+          onConfirm={saveCropped}
+          onError={onError}
+        />
       ) : null}
     </>
   );

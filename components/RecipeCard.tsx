@@ -141,10 +141,10 @@ export function RecipeCard({
         href={`/recipe/${recipe.id}`}
         className="flex h-full gap-3 rounded-2xl border border-[var(--line)] bg-[var(--card)] p-4 active:scale-[0.99] lg:transition-colors lg:hover:border-[var(--accent)]"
       >
-        {recipe.imageUrl ? (
+        {recipe.originalImageUrl || recipe.imageUrl ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img
-            src={recipe.imageUrl}
+            src={recipe.originalImageUrl || recipe.imageUrl}
             alt=""
             draggable={false}
             className="h-16 w-16 shrink-0 self-center rounded-xl object-cover lg:h-20 lg:w-20"

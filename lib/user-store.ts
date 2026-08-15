@@ -43,6 +43,14 @@ export function parseOverlay(value: unknown): UserRecipeOverlay | null {
     overlay.imageUrl = raw.imageUrl;
   }
 
+  if (raw.originalImageUrl === null) overlay.originalImageUrl = null;
+  else if (
+    typeof raw.originalImageUrl === "string" &&
+    /^https?:\/\//.test(raw.originalImageUrl)
+  ) {
+    overlay.originalImageUrl = raw.originalImageUrl;
+  }
+
   if (Array.isArray(raw.ingredients) && raw.ingredients.every(isIngredient)) {
     overlay.ingredients = raw.ingredients;
   }
@@ -85,6 +93,7 @@ export function overlayIsEmpty(overlay: UserRecipeOverlay): boolean {
     overlay.rating == null &&
     !overlay.note &&
     !overlay.imageUrl &&
+    !overlay.originalImageUrl &&
     overlay.ingredients === undefined &&
     overlay.pantry === undefined &&
     overlay.steps === undefined &&
@@ -147,6 +156,11 @@ export async function patchOverlay(
   if ("imageUrl" in patch) {
     if (patch.imageUrl === null || patch.imageUrl === "") delete next.imageUrl;
     else next.imageUrl = patch.imageUrl;
+  }
+  if ("originalImageUrl" in patch) {
+    if (patch.originalImageUrl === null || patch.originalImageUrl === "") {
+      delete next.originalImageUrl;
+    } else next.originalImageUrl = patch.originalImageUrl;
   }
   if ("ingredients" in patch) next.ingredients = patch.ingredients;
   if ("pantry" in patch) next.pantry = patch.pantry;

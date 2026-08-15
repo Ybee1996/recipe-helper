@@ -34,8 +34,14 @@ export function slugId(text: string, prefix = "web"): string {
 
 export function toStoredData(
   recipe: Recipe,
-): Omit<Recipe, "rating" | "note" | "imageUrl"> {
-  const { rating: _rating, note: _note, imageUrl: _imageUrl, ...data } = recipe;
+): Omit<Recipe, "rating" | "note" | "imageUrl" | "originalImageUrl"> {
+  const {
+    rating: _rating,
+    note: _note,
+    imageUrl: _imageUrl,
+    originalImageUrl: _originalImageUrl,
+    ...data
+  } = recipe;
   return data;
 }
 
@@ -47,6 +53,7 @@ export function applyOverlay(recipe: Recipe, overlay?: UserRecipeOverlay): Recip
     rating: overlay.rating ?? null,
     note: overlay.note ?? null,
     imageUrl: overlay.imageUrl ?? null,
+    originalImageUrl: overlay.originalImageUrl ?? null,
     protein: overlay.protein ?? recipe.protein,
     cookTimeMin:
       overlay.cookTimeMin !== undefined ? overlay.cookTimeMin : recipe.cookTimeMin,

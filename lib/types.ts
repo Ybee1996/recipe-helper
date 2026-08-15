@@ -80,6 +80,7 @@ export interface Recipe {
   rating?: number | null;
   note?: string | null;
   imageUrl?: string | null;
+  originalImageUrl?: string | null;
 }
 
 /** Personal edits stored separately so PDF ingest never overwrites them. */
@@ -88,6 +89,7 @@ export interface UserRecipeOverlay {
   rating?: number | null;
   note?: string | null;
   imageUrl?: string | null;
+  originalImageUrl?: string | null;
   protein?: Protein;
   cookTimeMin?: number | null;
   servings?: number;

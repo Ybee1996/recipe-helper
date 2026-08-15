@@ -17,6 +17,31 @@ async function deleteBlob(url: string | null | undefined) {
   }
 }
 
+async function deleteBlobs(urls: Array<string | null | undefined>) {
+  const unique = [...new Set(urls.filter((url): url is string => Boolean(url)))];
+  await Promise.all(unique.map(deleteBlob));
+}
+
+function isPhoto(file: FormDataEntryValue | null): file is File {
+  return file instanceof Blob && file.size > 0;
+}
+
+function photoError(file: Blob): string | null {
+  if (!ALLOWED_TYPES.has(file.type)) return "Photo must be JPEG, PNG, or WebP";
+  if (file.size > MAX_BYTES) return "Photo is too large";
+  return null;
+}
+
+async function putJpeg(id: string, file: Blob, kind: "crop" | "original") {
+  const safeId = id.replace(/[^a-zA-Z0-9_-]/g, "_");
+  const pathname = `recipes/${safeId}/${kind}-${Date.now()}.jpg`;
+  return put(pathname, file, {
+    access: "public",
+    contentType: "image/jpeg",
+    addRandomSuffix: true,
+  });
+}
+
 export async function POST(
   req: Request,
   { params }: { params: Promise<{ id: string }> },
@@ -34,42 +59,64 @@ export async function POST(
 
   const form = await req.formData();
   const file = form.get("file");
-  if (!(file instanceof Blob) || file.size === 0) {
+  const original = form.get("original");
+  if (!isPhoto(file)) {
     return NextResponse.json({ error: "Choose a photo" }, { status: 400 });
   }
-  if (!ALLOWED_TYPES.has(file.type)) {
-    return NextResponse.json(
-      { error: "Photo must be JPEG, PNG, or WebP" },
-      { status: 400 },
-    );
+  const fileError = photoError(file);
+  if (fileError) {
+    return NextResponse.json({ error: fileError }, { status: 400 });
   }
-  if (file.size > MAX_BYTES) {
-    return NextResponse.json({ error: "Photo is too large" }, { status: 400 });
+  if (original != null && original !== "") {
+    if (!isPhoto(original)) {
+      return NextResponse.json({ error: "Choose a photo" }, { status: 400 });
+    }
+    const originalError = photoError(original);
+    if (originalError) {
+      return NextResponse.json({ error: originalError }, { status: 400 });
+    }
   }
 
-  const previousUrl = (await getOverlay(id)).imageUrl ?? null;
-  const pathname = `recipes/${id.replace(/[^a-zA-Z0-9_-]/g, "_")}/${Date.now()}.jpg`;
+  const overlay = await getOverlay(id);
+  const previousCrop = overlay.imageUrl ?? null;
+  const previousOriginal = overlay.originalImageUrl ?? null;
+  const replacingOriginal = isPhoto(original);
 
-  let blob: { url: string };
+  let originalBlob: { url: string } | null = null;
+  let cropBlob: { url: string };
   try {
-    blob = await put(pathname, file, {
-      access: "public",
-      contentType: "image/jpeg",
-      addRandomSuffix: true,
-    });
+    if (replacingOriginal) {
+      originalBlob = await putJpeg(id, original, "original");
+    }
+    cropBlob = await putJpeg(id, file, "crop");
   } catch {
+    await deleteBlobs([originalBlob?.url]);
     return NextResponse.json({ error: "Could not save photo" }, { status: 500 });
   }
 
+  const originalImageUrl = originalBlob?.url ?? previousOriginal ?? previousCrop;
+
   try {
-    await patchOverlay(id, { imageUrl: blob.url });
+    await patchOverlay(id, {
+      imageUrl: cropBlob.url,
+      originalImageUrl,
+    });
   } catch (err) {
-    await deleteBlob(blob.url);
+    await deleteBlobs([cropBlob.url, originalBlob?.url]);
     throw err;
   }
-  await deleteBlob(previousUrl);
 
-  return NextResponse.json({ imageUrl: blob.url });
+  const keep = new Set([cropBlob.url, originalImageUrl]);
+  await deleteBlobs(
+    replacingOriginal
+      ? [previousCrop, previousOriginal].filter((url) => url && !keep.has(url))
+      : [previousCrop].filter((url) => url && !keep.has(url)),
+  );
+
+  return NextResponse.json({
+    imageUrl: cropBlob.url,
+    originalImageUrl,
+  });
 }
 
 export async function DELETE(
@@ -81,9 +128,9 @@ export async function DELETE(
     return NextResponse.json({ error: "Recipe not found" }, { status: 404 });
   }
 
-  const previousUrl = (await getOverlay(id)).imageUrl ?? null;
-  await patchOverlay(id, { imageUrl: null });
-  await deleteBlob(previousUrl);
+  const overlay = await getOverlay(id);
+  await patchOverlay(id, { imageUrl: null, originalImageUrl: null });
+  await deleteBlobs([overlay.imageUrl, overlay.originalImageUrl]);
 
-  return NextResponse.json({ imageUrl: null });
+  return NextResponse.json({ imageUrl: null, originalImageUrl: null });
 }
