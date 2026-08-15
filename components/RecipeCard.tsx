@@ -1,10 +1,9 @@
 import Link from "next/link";
-import { formatCookTime } from "@/lib/format-time";
+import { CookTimeDisplay } from "@/components/CookTimeDisplay";
 import type { Recipe } from "@/lib/types";
 import { PROTEIN_LABELS } from "@/lib/types";
 
 export function RecipeCard({ recipe }: { recipe: Recipe }) {
-  const cookTimeLabel = formatCookTime(recipe.cookTimeMin);
   const metaParts: string[] = [];
   if (recipe.nutrition) {
     metaParts.push(
@@ -13,7 +12,6 @@ export function RecipeCard({ recipe }: { recipe: Recipe }) {
   } else if (recipe.tags.length > 0) {
     metaParts.push(recipe.tags.slice(0, 3).join(" · "));
   }
-  if (cookTimeLabel) metaParts.push(cookTimeLabel);
   if (recipe.highProtein) metaParts.push("high protein");
 
   return (
@@ -41,6 +39,7 @@ export function RecipeCard({ recipe }: { recipe: Recipe }) {
             <span className="rounded-full bg-[var(--chip)] px-2.5 py-1 text-xs font-semibold uppercase tracking-wide text-[var(--sage)]">
               {PROTEIN_LABELS[recipe.protein]}
             </span>
+            <CookTimeDisplay minutes={recipe.cookTimeMin} compact />
             {recipe.rating ? (
               <span className="text-xs font-semibold text-[var(--accent)]">
                 ★ {recipe.rating}/10
