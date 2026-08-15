@@ -127,6 +127,8 @@ export function RecipeCard({
   }
   if (recipe.highProtein) metaParts.push("high protein");
 
+  const thumbUrl = recipe.originalImageUrl || recipe.imageUrl;
+
   return (
     <div
       className="group relative h-full w-full [-webkit-touch-callout:none] select-none"
@@ -141,10 +143,10 @@ export function RecipeCard({
         href={`/recipe/${recipe.id}`}
         className="flex h-full gap-3 rounded-2xl border border-[var(--line)] bg-[var(--card)] p-4 active:scale-[0.99] lg:transition-colors lg:hover:border-[var(--accent)]"
       >
-        {recipe.originalImageUrl || recipe.imageUrl ? (
+        {thumbUrl ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img
-            src={recipe.originalImageUrl || recipe.imageUrl}
+            src={thumbUrl}
             alt=""
             draggable={false}
             className="h-16 w-16 shrink-0 self-center rounded-xl object-cover lg:h-20 lg:w-20"
