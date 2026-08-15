@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { PhotoCropper } from "@/components/PhotoCropper";
 import { canvasToJpeg, loadImageFromUrl, loadOrientedImage } from "@/lib/compress-image";
 
@@ -75,10 +76,10 @@ export function RecipeImage({
 }) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [busy, setBusy] = useState(false);
-  const [revealed, setRevealed] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [portraitPhoto, setPortraitPhoto] = useState(false);
+  const [menuMounted, setMenuMounted] = useState(false);
   const [crop, setCrop] = useState<{
     source: HTMLCanvasElement;
     previewUrl: string;
@@ -86,8 +87,11 @@ export function RecipeImage({
   } | null>(null);
 
   useEffect(() => {
+    setMenuMounted(true);
+  }, []);
+
+  useEffect(() => {
     if (editing) return;
-    setRevealed(false);
     setMenuOpen(false);
     setConfirmDelete(false);
   }, [editing]);
@@ -109,16 +113,9 @@ export function RecipeImage({
     inputRef.current?.click();
   }
 
-  function onImagePointerUp(e: React.PointerEvent) {
-    if (!editing || busy) return;
-    if (e.pointerType !== "touch") return;
-    setRevealed(true);
-  }
-
   function toggleMenu(e: React.MouseEvent) {
     e.stopPropagation();
     if (busy) return;
-    setRevealed(true);
     setConfirmDelete(false);
     setMenuOpen((open) => !open);
   }
@@ -231,15 +228,12 @@ export function RecipeImage({
       onChange({ imageUrl: null, originalImageUrl: null });
       setConfirmDelete(false);
       setMenuOpen(false);
-      setRevealed(false);
     } catch (err) {
       onError(err instanceof Error ? err.message : "Could not remove photo");
     } finally {
       setBusy(false);
     }
   }
-
-  const showEditIcon = editing && (revealed || menuOpen);
 
   return (
     <>
@@ -253,10 +247,7 @@ export function RecipeImage({
 
       {imageUrl ? (
         <section className="mt-4">
-          <div
-            className="group relative rounded-2xl border border-[var(--line)] bg-[var(--card)]"
-            onPointerUp={onImagePointerUp}
-          >
+          <div className="relative rounded-2xl border border-[var(--line)] bg-[var(--card)]">
             <div className="aspect-[16/9] overflow-hidden rounded-2xl bg-[var(--chip)]">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
@@ -272,71 +263,17 @@ export function RecipeImage({
               />
             </div>
             {editing ? (
-              <div
-                className={`absolute right-2.5 top-2.5 ${
-                  showEditIcon
-                    ? "opacity-100"
-                    : "opacity-0 group-hover:opacity-100"
-                }`}
-              >
+              <div className="absolute right-2.5 top-2.5 z-10">
                 <button
                   type="button"
                   disabled={busy}
                   onClick={toggleMenu}
                   aria-label="Edit photo"
                   title="Edit photo"
-                  className="inline-flex h-9 w-9 items-center justify-center rounded-full bg-[var(--paper)]/90 text-[var(--ink)] shadow-sm backdrop-blur-sm disabled:opacity-50"
+                  className="inline-flex h-9 w-9 items-center justify-center rounded-full bg-[var(--paper)]/90 text-[var(--ink)] shadow-sm disabled:opacity-50"
                 >
                   <EditIcon />
                 </button>
-                {menuOpen ? (
-                  <div className="absolute right-0 top-11 z-10 min-w-[8.5rem] rounded-2xl border border-[var(--line)] bg-[var(--card)] p-1.5 text-sm font-semibold shadow-sm">
-                    <button
-                      type="button"
-                      disabled={busy}
-                      onClick={() => void cropExisting()}
-                      className="block w-full rounded-xl px-3 py-2 text-left text-[var(--ink)] disabled:opacity-50"
-                    >
-                      {busy ? "Opening…" : "Crop"}
-                    </button>
-                    <button
-                      type="button"
-                      disabled={busy}
-                      onClick={openPicker}
-                      className="block w-full rounded-xl px-3 py-2 text-left text-[var(--ink)] disabled:opacity-50"
-                    >
-                      Change
-                    </button>
-                    {confirmDelete ? (
-                      <>
-                        <button
-                          type="button"
-                          disabled={busy}
-                          onClick={() => void remove()}
-                          className="block w-full rounded-xl px-3 py-2 text-left text-[var(--accent)] disabled:opacity-50"
-                        >
-                          Confirm
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => setConfirmDelete(false)}
-                          className="block w-full rounded-xl px-3 py-2 text-left text-[var(--muted)]"
-                        >
-                          Cancel
-                        </button>
-                      </>
-                    ) : (
-                      <button
-                        type="button"
-                        disabled={busy}
-                        onClick={() => setConfirmDelete(true)}
-                        className="block w-full rounded-xl px-3 py-2 text-left text-[var(--muted)] disabled:opacity-50"
-                      >
-                        Remove
-                      </button>
-                    )}
-                  </div>
-                ) : null}
               </div>
             ) : null}
           </div>
@@ -352,6 +289,80 @@ export function RecipeImage({
           {busy ? "Opening…" : "Add photo"}
         </button>
       ) : null}
+
+      {menuMounted && menuOpen
+        ? createPortal(
+            <>
+              <button
+                type="button"
+                className="fixed inset-0 z-[80] bg-[var(--ink)]/40"
+                aria-label="Close photo menu"
+                onClick={() => {
+                  setMenuOpen(false);
+                  setConfirmDelete(false);
+                }}
+              />
+              <div
+                role="menu"
+                className="fixed inset-x-0 bottom-0 z-[90] rounded-t-3xl border-t border-[var(--line)] bg-[var(--card)] p-3 pb-[max(1rem,env(safe-area-inset-bottom))] text-sm font-semibold shadow-lg"
+              >
+                <p className="px-3 pb-2 pt-1 text-xs font-semibold uppercase tracking-wide text-[var(--muted)]">
+                  Photo
+                </p>
+                <button
+                  type="button"
+                  role="menuitem"
+                  disabled={busy}
+                  onClick={() => void cropExisting()}
+                  className="block min-h-12 w-full rounded-xl px-3 py-3 text-left text-[var(--ink)] disabled:opacity-50"
+                >
+                  {busy ? "Opening…" : "Crop"}
+                </button>
+                <button
+                  type="button"
+                  role="menuitem"
+                  disabled={busy}
+                  onClick={openPicker}
+                  className="block min-h-12 w-full rounded-xl px-3 py-3 text-left text-[var(--ink)] disabled:opacity-50"
+                >
+                  Change
+                </button>
+                {confirmDelete ? (
+                  <>
+                    <button
+                      type="button"
+                      role="menuitem"
+                      disabled={busy}
+                      onClick={() => void remove()}
+                      className="block min-h-12 w-full rounded-xl px-3 py-3 text-left text-[var(--accent)] disabled:opacity-50"
+                    >
+                      Confirm
+                    </button>
+                    <button
+                      type="button"
+                      role="menuitem"
+                      onClick={() => setConfirmDelete(false)}
+                      className="block min-h-12 w-full rounded-xl px-3 py-3 text-left text-[var(--muted)]"
+                    >
+                      Cancel
+                    </button>
+                  </>
+                ) : (
+                  <button
+                    type="button"
+                    role="menuitem"
+                    disabled={busy}
+                    onClick={() => setConfirmDelete(true)}
+                    className="block min-h-12 w-full rounded-xl px-3 py-3 text-left text-[var(--muted)] disabled:opacity-50"
+                  >
+                    Remove
+                  </button>
+                )}
+              </div>
+            </>,
+            document.body,
+          )
+        : null}
 
       {crop ? (
         <PhotoCropper
