@@ -92,8 +92,16 @@ export function RecipeSearch({ recipes }: { recipes: Recipe[] }) {
         <label className="block min-w-0 flex-1">
           <span className="sr-only">Search recipes</span>
           <input
-            type="search"
+            type="text"
+            role="searchbox"
             enterKeyHint="search"
+            autoCorrect="off"
+            autoCapitalize="none"
+            autoComplete="off"
+            spellCheck="false"
+            data-lpignore="true"
+            data-1p-ignore="true"
+            data-bwignore="true"
             placeholder="Ingredient, dish, leftover…"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
@@ -107,7 +115,7 @@ export function RecipeSearch({ recipes }: { recipes: Recipe[] }) {
               ? `Allergy filters, ${avoidAllergens.length} selected`
               : "Allergy filters"
           }
-          aria-expanded={allergyOpen}
+          aria-expanded={allergyOpen ? "true" : "false"}
           aria-controls="allergy-filter"
           onClick={() => setAllergyOpen((open) => !open)}
           className={`relative flex w-14 shrink-0 items-center justify-center rounded-2xl border outline-none transition-colors focus-visible:ring-2 focus-visible:ring-[var(--accent)] ${

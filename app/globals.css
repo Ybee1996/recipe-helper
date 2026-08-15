@@ -10,6 +10,11 @@
   --card: #fffaf3;
   --line: #e4d9c8;
   --chip: #efe6d6;
+  --ink-faint: #b3a48d;
+  --accent-soft: #f1ddca;
+  --got: #f3e9da;
+  --danger: #b34434;
+  --tint: #fbf5eb;
 }
 
 * {

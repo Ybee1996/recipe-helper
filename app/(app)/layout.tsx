@@ -1,4 +1,5 @@
 import { BottomNav } from "@/components/BottomNav";
+import { ShoppingListOverlay } from "@/components/ShoppingListOverlay";
 import { ShoppingListProvider } from "@/components/ShoppingListProvider";
 import { SideNav } from "@/components/SideNav";
 
@@ -12,6 +13,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
         </div>
       </div>
       <BottomNav />
+      <ShoppingListOverlay />
     </ShoppingListProvider>
   );
 }

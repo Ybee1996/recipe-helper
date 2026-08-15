@@ -1,5 +1,5 @@
-import { ShoppingListPage } from "@/components/ShoppingListPage";
+import { redirect } from "next/navigation";
 
 export default function ListPage() {
-  return <ShoppingListPage />;
+  redirect("/");
 }

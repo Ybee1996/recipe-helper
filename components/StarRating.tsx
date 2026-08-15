@@ -27,7 +27,7 @@ export function StarRating({
                 key={n}
                 type="button"
                 role="radio"
-                aria-checked={n === rating}
+                aria-checked={n === rating ? "true" : "false"}
                 aria-label={`${n} out of 10`}
                 onClick={() => onChange(n)}
                 className={`flex aspect-square items-center justify-center rounded-full text-[1.1rem] leading-none outline-none transition-colors focus-visible:ring-2 focus-visible:ring-[var(--accent)] sm:text-[1.25rem] lg:hover:text-[var(--accent)] ${

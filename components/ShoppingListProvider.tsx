@@ -19,6 +19,10 @@ import {
 interface ShoppingListContextValue {
   items: ShoppingItem[];
   uncheckedCount: number;
+  listOpen: boolean;
+  openList: () => void;
+  closeList: () => void;
+  toggleList: () => void;
   addItem: (input: Omit<ShoppingItem, "id" | "checked">) => void;
   addItems: (inputs: Omit<ShoppingItem, "id" | "checked">[]) => void;
   removeItem: (id: string) => void;
@@ -34,6 +38,7 @@ const ShoppingListContext = createContext<ShoppingListContextValue | null>(null)
 export function ShoppingListProvider({ children }: { children: React.ReactNode }) {
   const [items, setItems] = useState<ShoppingItem[]>([]);
   const [ready, setReady] = useState(false);
+  const [listOpen, setListOpen] = useState(false);
 
   useEffect(() => {
     setItems(loadShoppingItems());
@@ -103,10 +108,18 @@ export function ShoppingListProvider({ children }: { children: React.ReactNode }
     [items],
   );
 
+  const openList = useCallback(() => setListOpen(true), []);
+  const closeList = useCallback(() => setListOpen(false), []);
+  const toggleList = useCallback(() => setListOpen((open) => !open), []);
+
   const value = useMemo(
     () => ({
       items,
       uncheckedCount,
+      listOpen,
+      openList,
+      closeList,
+      toggleList,
       addItem,
       addItems,
       removeItem,
@@ -119,6 +132,10 @@ export function ShoppingListProvider({ children }: { children: React.ReactNode }
     [
       items,
       uncheckedCount,
+      listOpen,
+      openList,
+      closeList,
+      toggleList,
       addItem,
       addItems,
       removeItem,

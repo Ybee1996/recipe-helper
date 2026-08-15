@@ -148,7 +148,7 @@ export function RecipeCard({
           <img
             src={thumbUrl}
             alt=""
-            draggable={false}
+            draggable="false"
             className="h-16 w-16 shrink-0 self-center rounded-xl object-cover [image-orientation:none] lg:h-20 lg:w-20"
           />
         ) : null}

@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { ShoppingListTrigger } from "@/components/ShoppingListOverlay";
 import { NAV_TABS, isNavActive } from "@/lib/nav";
 
 export function SideNav() {
@@ -10,7 +11,7 @@ export function SideNav() {
   return (
     <nav
       aria-label="Main"
-      className="hidden lg:sticky lg:top-0 lg:flex lg:h-dvh lg:w-60 lg:shrink-0 lg:flex-col lg:border-r lg:border-[var(--line)] lg:px-4 lg:py-6"
+      className="relative z-[36] hidden lg:sticky lg:top-0 lg:flex lg:h-dvh lg:w-60 lg:shrink-0 lg:flex-col lg:border-r lg:border-[var(--line)] lg:px-4 lg:py-6"
     >
       <Link
         href="/"
@@ -39,6 +40,9 @@ export function SideNav() {
             </li>
           );
         })}
+        <li>
+          <ShoppingListTrigger variant="row" />
+        </li>
       </ul>
 
       <button
