@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { displayQty, setDisplayQty } from "@/lib/filters";
 import type { Ingredient } from "@/lib/types";
 
@@ -40,17 +40,17 @@ function BasketIcon() {
   );
 }
 
-function CheckIcon() {
+function ShoppingToast({ message }: { message: string }) {
   return (
-    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
-      <path
-        d="M3.5 8.5 6.5 11.5 12.5 4.5"
-        stroke="currentColor"
-        strokeWidth="1.6"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-    </svg>
+    <div
+      role="status"
+      aria-live="polite"
+      className="pointer-events-none fixed inset-x-0 bottom-24 z-30 flex justify-center px-4 lg:bottom-8"
+    >
+      <p className="max-w-sm rounded-full bg-[var(--ink)] px-4 py-2.5 text-center text-sm font-semibold text-[var(--paper)] shadow-lg">
+        {message}
+      </p>
+    </div>
   );
 }
 
@@ -119,8 +119,9 @@ export function EditableIngredients({
   onToggleEdit,
   onServings,
   onChange,
-  onAddToShoppingList,
-  onAddAllToShoppingList,
+  onToggleShoppingItem,
+  onToggleAllShopping,
+  shoppingNamesFromRecipe,
 }: {
   items: ListedIngredient[];
   servings: number;
@@ -130,37 +131,46 @@ export function EditableIngredients({
   onToggleEdit?: () => void;
   onServings: (n: number) => void;
   onChange: (items: ListedIngredient[]) => void;
-  onAddToShoppingList?: (item: ListedIngredient, qty: string) => void;
-  onAddAllToShoppingList?: () => void;
+  onToggleShoppingItem?: (item: ListedIngredient, qty: string, onList: boolean) => void;
+  onToggleAllShopping?: (allOnList: boolean) => void;
+  shoppingNamesFromRecipe?: Set<string>;
 }) {
-  const [addedKeys, setAddedKeys] = useState<Set<string>>(new Set());
-  const [allAdded, setAllAdded] = useState(false);
+  const [toast, setToast] = useState<{ id: number; message: string } | null>(
+    null,
+  );
   // In edit mode, servings is the stored yield — don't scale listed quantities.
   const qtyBase = editing && baseServings != null ? servings : baseServings;
 
-  function flashKey(key: string) {
-    setAddedKeys((prev) => {
-      const next = new Set(prev);
-      next.add(key);
-      return next;
-    });
-    window.setTimeout(() => {
-      setAddedKeys((prev) => {
-        const next = new Set(prev);
-        next.delete(key);
-        return next;
-      });
-    }, 1400);
+  const shoppable = items.filter((item) => !item.pantry && item.name.trim());
+  const allOnList =
+    shoppable.length > 0 &&
+    shoppable.every((item) =>
+      shoppingNamesFromRecipe?.has(item.name.trim()),
+    );
+
+  useEffect(() => {
+    if (!toast) return;
+    const timer = window.setTimeout(() => setToast(null), 2200);
+    return () => window.clearTimeout(timer);
+  }, [toast]);
+
+  function showToast(message: string) {
+    setToast({ id: Date.now(), message });
   }
 
   function update(index: number, next: ListedIngredient) {
     onChange(items.map((item, i) => (i === index ? next : item)));
   }
 
-  function handleAddAll() {
-    onAddAllToShoppingList?.();
-    setAllAdded(true);
-    window.setTimeout(() => setAllAdded(false), 1400);
+  function handleToggleItem(item: ListedIngredient, qty: string, onList: boolean) {
+    onToggleShoppingItem?.(item, qty, onList);
+    const name = item.name.trim() || "Item";
+    showToast(onList ? `Removed ${name} from list` : `Added ${name} to list`);
+  }
+
+  function handleToggleAll(onList: boolean) {
+    onToggleAllShopping?.(onList);
+    showToast(onList ? "Removed ingredients from list" : "Added ingredients to list");
   }
 
   return (
@@ -185,18 +195,18 @@ export function EditableIngredients({
         </div>
       </div>
 
-      {!editing && onAddAllToShoppingList ? (
+      {!editing && onToggleAllShopping ? (
         <button
           type="button"
-          onClick={handleAddAll}
+          onClick={() => handleToggleAll(Boolean(allOnList))}
           className={`mt-3 flex w-full items-center justify-center gap-2 rounded-full border px-3 py-2 text-sm font-semibold outline-none transition-colors focus-visible:ring-2 focus-visible:ring-[var(--accent)] ${
-            allAdded
-              ? "border-[var(--sage)] bg-[var(--sage)]/10 text-[var(--sage)]"
+            allOnList
+              ? "border-[var(--sage)] bg-[var(--sage)]/20 text-[var(--sage)]"
               : "border-[var(--line)] bg-[var(--paper)] text-[var(--accent)] lg:hover:bg-[var(--chip)]"
           }`}
         >
-          {allAdded ? <CheckIcon /> : <BasketIcon />}
-          {allAdded ? "Added to list" : "Add to shopping list"}
+          <BasketIcon />
+          {allOnList ? "Remove from list" : "Add to shopping list"}
         </button>
       ) : null}
 
@@ -253,7 +263,9 @@ export function EditableIngredients({
           {items.map((item, index) => {
             const key = `${item.name}-${index}`;
             const qty = displayQty(item, servings, qtyBase);
-            const justAdded = addedKeys.has(key);
+            const onList = Boolean(
+              item.name.trim() && shoppingNamesFromRecipe?.has(item.name.trim()),
+            );
             return (
               <li key={key} className="flex items-center gap-1">
                 <span className="min-w-0 flex-1 py-3">
@@ -262,26 +274,27 @@ export function EditableIngredients({
                     <span className="text-[var(--muted)]"> · pantry</span>
                   ) : null}
                 </span>
-                {onAddToShoppingList ? (
+                {onToggleShoppingItem ? (
                   <button
                     type="button"
-                    onClick={() => {
-                      onAddToShoppingList(item, qty);
-                      flashKey(key);
-                    }}
+                    onClick={() => handleToggleItem(item, qty, onList)}
                     aria-label={
-                      justAdded
-                        ? `${item.name} added to shopping list`
+                      onList
+                        ? `Remove ${item.name} from shopping list`
                         : `Add ${item.name} to shopping list`
                     }
-                    title={justAdded ? "Added" : "Add to shopping list"}
+                    title={
+                      onList
+                        ? "Remove from shopping list"
+                        : "Add to shopping list"
+                    }
                     className={`grid h-8 w-8 shrink-0 place-items-center rounded-full outline-none transition-colors focus-visible:ring-2 focus-visible:ring-[var(--accent)] ${
-                      justAdded
-                        ? "text-[var(--sage)]"
+                      onList
+                        ? "bg-[var(--sage)]/20 text-[var(--sage)] lg:hover:bg-[var(--sage)]/30"
                         : "text-[var(--muted)] lg:hover:bg-[var(--chip)] lg:hover:text-[var(--accent)]"
                     }`}
                   >
-                    {justAdded ? <CheckIcon /> : <BasketIcon />}
+                    <BasketIcon />
                   </button>
                 ) : null}
               </li>
@@ -304,6 +317,8 @@ export function EditableIngredients({
           + Add ingredient
         </button>
       )}
+
+      {toast ? <ShoppingToast key={toast.id} message={toast.message} /> : null}
     </section>
   );
 }

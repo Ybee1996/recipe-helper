@@ -22,6 +22,8 @@ interface ShoppingListContextValue {
   addItem: (input: Omit<ShoppingItem, "id" | "checked">) => void;
   addItems: (inputs: Omit<ShoppingItem, "id" | "checked">[]) => void;
   removeItem: (id: string) => void;
+  removeByRecipe: (recipeId: string) => void;
+  removeByRecipeName: (recipeId: string, name: string) => void;
   toggleItem: (id: string) => void;
   clearChecked: () => void;
   clearAll: () => void;
@@ -65,6 +67,20 @@ export function ShoppingListProvider({ children }: { children: React.ReactNode }
     setItems((prev) => prev.filter((item) => item.id !== id));
   }, []);
 
+  const removeByRecipe = useCallback((recipeId: string) => {
+    setItems((prev) => prev.filter((item) => item.recipeId !== recipeId));
+  }, []);
+
+  const removeByRecipeName = useCallback((recipeId: string, name: string) => {
+    const trimmed = name.trim();
+    if (!trimmed) return;
+    setItems((prev) =>
+      prev.filter(
+        (item) => !(item.recipeId === recipeId && item.name.trim() === trimmed),
+      ),
+    );
+  }, []);
+
   const toggleItem = useCallback((id: string) => {
     setItems((prev) =>
       prev.map((item) =>
@@ -94,11 +110,24 @@ export function ShoppingListProvider({ children }: { children: React.ReactNode }
       addItem,
       addItems,
       removeItem,
+      removeByRecipe,
+      removeByRecipeName,
       toggleItem,
       clearChecked,
       clearAll,
     }),
-    [items, uncheckedCount, addItem, addItems, removeItem, toggleItem, clearChecked, clearAll],
+    [
+      items,
+      uncheckedCount,
+      addItem,
+      addItems,
+      removeItem,
+      removeByRecipe,
+      removeByRecipeName,
+      toggleItem,
+      clearChecked,
+      clearAll,
+    ],
   );
 
   return (

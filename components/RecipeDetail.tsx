@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import {
@@ -66,7 +66,8 @@ function EditIcon() {
 
 export function RecipeDetail({ recipe }: { recipe: Recipe }) {
   const router = useRouter();
-  const { addItem, addItems } = useShoppingList();
+  const { items: shoppingItems, addItem, addItems, removeByRecipe, removeByRecipeName } =
+    useShoppingList();
   const scalable = recipe.source === "web";
   const defaultViewServings = scalable ? recipe.servings || 2 : 4;
   const [servings, setServings] = useState<number>(defaultViewServings);
@@ -229,20 +230,45 @@ export function RecipeDetail({ recipe }: { recipe: Recipe }) {
     />
   ) : null;
 
-  function addIngredientToList(item: ListedIngredient, qty: string) {
+  const shoppingNamesFromRecipe = useMemo(() => {
+    const names = new Set<string>();
+    for (const item of shoppingItems) {
+      if (item.recipeId === recipe.id && item.name.trim()) {
+        names.add(item.name.trim());
+      }
+    }
+    return names;
+  }, [shoppingItems, recipe.id]);
+
+  function toggleIngredientOnList(item: ListedIngredient, qty: string, onList: boolean) {
+    const name = item.name.trim();
+    if (!name) return;
+    if (onList) {
+      removeByRecipeName(recipe.id, name);
+      return;
+    }
     addItem({
-      name: item.name,
+      name,
       qty,
       recipeId: recipe.id,
       recipeTitle: title,
     });
   }
 
-  function addAllIngredientsToList() {
+  function toggleAllIngredientsOnList(allOnList: boolean) {
+    if (allOnList) {
+      removeByRecipe(recipe.id);
+      return;
+    }
     const toAdd = items
-      .filter((item) => !item.pantry && item.name.trim())
+      .filter(
+        (item) =>
+          !item.pantry &&
+          item.name.trim() &&
+          !shoppingNamesFromRecipe.has(item.name.trim()),
+      )
       .map((item) => ({
-        name: item.name,
+        name: item.name.trim(),
         qty: displayQty(item, servings, baseServings),
         recipeId: recipe.id,
         recipeTitle: title,
@@ -468,8 +494,9 @@ export function RecipeDetail({ recipe }: { recipe: Recipe }) {
             className={editing ? "" : "lg:mt-0"}
             onServings={setServings}
             onChange={setItems}
-            onAddToShoppingList={editing ? undefined : addIngredientToList}
-            onAddAllToShoppingList={editing ? undefined : addAllIngredientsToList}
+            onToggleShoppingItem={editing ? undefined : toggleIngredientOnList}
+            onToggleAllShopping={editing ? undefined : toggleAllIngredientsOnList}
+            shoppingNamesFromRecipe={shoppingNamesFromRecipe}
           />
 
           {recipe.tools.length > 0 && (
