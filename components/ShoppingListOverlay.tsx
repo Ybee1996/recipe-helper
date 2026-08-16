@@ -83,12 +83,10 @@ export function ShoppingListTrigger({
         listOpen ? "text-[var(--accent)]" : "text-[var(--muted)]"
       } ${className}`}
     >
-      <BasketIcon size={iconSize} />
-      {uncheckedCount > 0 ? (
-        <span className="absolute -right-1 -top-1 grid h-4 min-w-4 place-items-center rounded-full bg-[var(--accent)] px-0.5 text-[10px] font-bold leading-none text-white">
-          {count}
-        </span>
-      ) : null}
+      <BasketIcon
+        size={iconSize}
+        count={uncheckedCount > 0 ? count : undefined}
+      />
     </button>
   );
 }
