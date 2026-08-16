@@ -6,14 +6,22 @@ import {
   useContext,
   useEffect,
   useMemo,
+  useRef,
   useState,
 } from "react";
 import {
-  clearShoppingList,
+  fetchShoppingList,
+  hasSyncedShoppingList,
   loadShoppingItems,
+  markShoppingListSynced,
+  mergeShoppingLists,
   newShoppingItem,
+  postShoppingListOp,
   saveShoppingItems,
+  shoppingListsEqual,
+  SHOPPING_LIST_STORAGE_KEY,
   type ShoppingItem,
+  type ShoppingListOp,
 } from "@/lib/shopping-list";
 
 interface ShoppingListContextValue {
@@ -35,26 +43,119 @@ interface ShoppingListContextValue {
 
 const ShoppingListContext = createContext<ShoppingListContextValue | null>(null);
 
-export function ShoppingListProvider({ children }: { children: React.ReactNode }) {
-  const [items, setItems] = useState<ShoppingItem[]>([]);
-  const [ready, setReady] = useState(false);
+export function ShoppingListProvider({
+  children,
+  initialItems = [],
+}: {
+  children: React.ReactNode;
+  initialItems?: ShoppingItem[];
+}) {
+  const [items, setItems] = useState<ShoppingItem[]>(initialItems);
   const [listOpen, setListOpen] = useState(false);
+  const itemsRef = useRef(items);
+  const pendingRef = useRef(0);
+  const queueRef = useRef(Promise.resolve());
+  const retryRef = useRef<ShoppingListOp[]>([]);
+
+  const persist = useCallback((next: ShoppingItem[]) => {
+    if (shoppingListsEqual(itemsRef.current, next)) return;
+    itemsRef.current = next;
+    setItems(next);
+    saveShoppingItems(next);
+  }, []);
+
+  const sendOp = useCallback(
+    (op: ShoppingListOp) => {
+      pendingRef.current++;
+      queueRef.current = queueRef.current.then(async () => {
+        try {
+          const next = await postShoppingListOp(op);
+          markShoppingListSynced();
+          if (pendingRef.current === 1) persist(next);
+        } catch {
+          retryRef.current.push(op);
+        } finally {
+          pendingRef.current--;
+        }
+      });
+    },
+    [persist],
+  );
+
+  const pull = useCallback(async () => {
+    if (pendingRef.current > 0) return;
+    try {
+      if (retryRef.current.length) {
+        const retries = retryRef.current.splice(0);
+        for (const op of retries) {
+          try {
+            await postShoppingListOp(op);
+          } catch {
+            retryRef.current.push(op);
+            return;
+          }
+        }
+      }
+      const remote = await fetchShoppingList();
+      if (pendingRef.current > 0) return;
+      if (!hasSyncedShoppingList()) {
+        const merged = mergeShoppingLists(itemsRef.current, remote);
+        markShoppingListSynced();
+        persist(merged.items);
+        if (merged.toUpload.length) sendOp({ op: "add", items: merged.toUpload });
+        return;
+      }
+      persist(remote);
+    } catch {
+      // Stay on the cached list when offline.
+    }
+  }, [persist, sendOp]);
 
   useEffect(() => {
-    setItems(loadShoppingItems());
-    setReady(true);
+    persist(loadShoppingItems());
+    void pull();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
-    if (!ready) return;
-    saveShoppingItems(items);
-  }, [items, ready]);
+    function onVisibility() {
+      if (document.visibilityState === "visible") void pull();
+    }
+    function onStorage(e: StorageEvent) {
+      if (e.key !== SHOPPING_LIST_STORAGE_KEY || pendingRef.current > 0) return;
+      const next = loadShoppingItems();
+      itemsRef.current = next;
+      setItems(next);
+    }
+    window.addEventListener("focus", pull);
+    window.addEventListener("online", pull);
+    document.addEventListener("visibilitychange", onVisibility);
+    window.addEventListener("storage", onStorage);
+    return () => {
+      window.removeEventListener("focus", pull);
+      window.removeEventListener("online", pull);
+      document.removeEventListener("visibilitychange", onVisibility);
+      window.removeEventListener("storage", onStorage);
+    };
+  }, [pull]);
 
-  const addItem = useCallback((input: Omit<ShoppingItem, "id" | "checked">) => {
-    const name = input.name.trim();
-    if (!name) return;
-    setItems((prev) => [...prev, newShoppingItem({ ...input, name })]);
-  }, []);
+  useEffect(() => {
+    if (!listOpen) return;
+    void pull();
+    const id = window.setInterval(() => void pull(), 8000);
+    return () => window.clearInterval(id);
+  }, [listOpen, pull]);
+
+  const addItem = useCallback(
+    (input: Omit<ShoppingItem, "id" | "checked">) => {
+      const name = input.name.trim();
+      if (!name) return;
+      const item = newShoppingItem({ ...input, name });
+      persist([...itemsRef.current, item]);
+      sendOp({ op: "add", items: [item] });
+    },
+    [persist, sendOp],
+  );
 
   const addItems = useCallback(
     (inputs: Omit<ShoppingItem, "id" | "checked">[]) => {
@@ -63,45 +164,66 @@ export function ShoppingListProvider({ children }: { children: React.ReactNode }
         .filter((input) => input.name)
         .map((input) => newShoppingItem(input));
       if (!next.length) return;
-      setItems((prev) => [...prev, ...next]);
+      persist([...itemsRef.current, ...next]);
+      sendOp({ op: "add", items: next });
     },
-    [],
+    [persist, sendOp],
   );
 
-  const removeItem = useCallback((id: string) => {
-    setItems((prev) => prev.filter((item) => item.id !== id));
-  }, []);
+  const removeItem = useCallback(
+    (id: string) => {
+      persist(itemsRef.current.filter((item) => item.id !== id));
+      sendOp({ op: "remove", ids: [id] });
+    },
+    [persist, sendOp],
+  );
 
-  const removeByRecipe = useCallback((recipeId: string) => {
-    setItems((prev) => prev.filter((item) => item.recipeId !== recipeId));
-  }, []);
+  const removeByRecipe = useCallback(
+    (recipeId: string) => {
+      persist(itemsRef.current.filter((item) => item.recipeId !== recipeId));
+      sendOp({ op: "removeByRecipe", recipeId });
+    },
+    [persist, sendOp],
+  );
 
-  const removeByRecipeName = useCallback((recipeId: string, name: string) => {
-    const trimmed = name.trim();
-    if (!trimmed) return;
-    setItems((prev) =>
-      prev.filter(
-        (item) => !(item.recipeId === recipeId && item.name.trim() === trimmed),
-      ),
-    );
-  }, []);
+  const removeByRecipeName = useCallback(
+    (recipeId: string, name: string) => {
+      const trimmed = name.trim();
+      if (!trimmed) return;
+      persist(
+        itemsRef.current.filter(
+          (item) => !(item.recipeId === recipeId && item.name.trim() === trimmed),
+        ),
+      );
+      sendOp({ op: "removeByRecipeName", recipeId, name: trimmed });
+    },
+    [persist, sendOp],
+  );
 
-  const toggleItem = useCallback((id: string) => {
-    setItems((prev) =>
-      prev.map((item) =>
-        item.id === id ? { ...item, checked: !item.checked } : item,
-      ),
-    );
-  }, []);
+  const toggleItem = useCallback(
+    (id: string) => {
+      const current = itemsRef.current.find((item) => item.id === id);
+      if (!current) return;
+      const checked = !current.checked;
+      persist(
+        itemsRef.current.map((item) =>
+          item.id === id ? { ...item, checked } : item,
+        ),
+      );
+      sendOp({ op: "setChecked", id, checked });
+    },
+    [persist, sendOp],
+  );
 
   const clearChecked = useCallback(() => {
-    setItems((prev) => prev.filter((item) => !item.checked));
-  }, []);
+    persist(itemsRef.current.filter((item) => !item.checked));
+    sendOp({ op: "clearChecked" });
+  }, [persist, sendOp]);
 
   const clearAll = useCallback(() => {
-    clearShoppingList();
-    setItems([]);
-  }, []);
+    persist([]);
+    sendOp({ op: "clearAll" });
+  }, [persist, sendOp]);
 
   const uncheckedCount = useMemo(
     () => items.filter((item) => !item.checked).length,

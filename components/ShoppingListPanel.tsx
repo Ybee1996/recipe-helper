@@ -166,7 +166,7 @@ export function ShoppingListPanel({ onNavigate }: { onNavigate?: () => void }) {
       </div>
 
       <p className="hidden shrink-0 px-5 pb-4 pt-2.5 text-center text-xs text-[var(--ink-faint)] lg:block">
-        Saved on this device
+        Synced across devices
       </p>
     </div>
   );

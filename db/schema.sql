@@ -8,3 +8,13 @@ CREATE TABLE IF NOT EXISTS recipes (
   updated_at timestamptz NOT NULL DEFAULT now(),
   archived_at timestamptz
 );
+
+CREATE TABLE IF NOT EXISTS shopping_items (
+  id text PRIMARY KEY,
+  name text NOT NULL,
+  qty text NOT NULL DEFAULT '',
+  recipe_id text,
+  recipe_title text,
+  checked boolean NOT NULL DEFAULT false,
+  created_at timestamptz NOT NULL DEFAULT now()
+);

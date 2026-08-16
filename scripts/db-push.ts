@@ -16,7 +16,10 @@ async function main() {
     "utf8",
   );
   const sql = neon(url);
-  await sql.query(schema);
+  // Neon HTTP runs one statement per request.
+  for (const statement of schema.split(";").map((s) => s.trim()).filter(Boolean)) {
+    await sql.query(statement);
+  }
   await sql.query(
     "ALTER TABLE recipes ADD COLUMN IF NOT EXISTS archived_at timestamptz",
   );
