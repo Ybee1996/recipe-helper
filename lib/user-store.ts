@@ -82,6 +82,7 @@ export function parseOverlay(value: unknown): UserRecipeOverlay | null {
     overlay.title = raw.title.trim();
   }
   if (raw.favourite === true) overlay.favourite = true;
+  if (raw.pinned === true) overlay.pinned = true;
   if (typeof raw.updatedAt === "string") overlay.updatedAt = raw.updatedAt;
   return overlay;
 }
@@ -99,7 +100,8 @@ export function overlayIsEmpty(overlay: UserRecipeOverlay): boolean {
     overlay.cookTimeMin === undefined &&
     overlay.servings === undefined &&
     !overlay.title &&
-    !overlay.favourite
+    !overlay.favourite &&
+    !overlay.pinned
   );
 }
 
@@ -181,6 +183,10 @@ export async function patchOverlay(
   if ("favourite" in patch) {
     if (patch.favourite) next.favourite = true;
     else delete next.favourite;
+  }
+  if ("pinned" in patch) {
+    if (patch.pinned) next.pinned = true;
+    else delete next.pinned;
   }
 
   const stored = overlayIsEmpty(next) ? {} : next;

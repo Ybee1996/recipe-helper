@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { CardLinkPending } from "@/components/LinkPending";
-import { RecipeCardActions } from "@/components/RecipeCardActions";
+import { PinIcon, RecipeCardActions } from "@/components/RecipeCardActions";
 import { formatCookTime } from "@/lib/format-time";
 import type { Recipe } from "@/lib/types";
 import { useCategories } from "@/components/CategoriesProvider";
@@ -39,10 +39,12 @@ export function RecipeCard({
   recipe,
   onArchived,
   onFavouriteChange,
+  onPinnedChange,
 }: {
   recipe: Recipe;
   onArchived?: (id: string) => void;
   onFavouriteChange?: (id: string, favourite: boolean) => void;
+  onPinnedChange?: (id: string, pinned: boolean) => void;
 }) {
   const { labelFor } = useCategories();
   const metaParts: string[] = [];
@@ -62,6 +64,7 @@ export function RecipeCard({
       recipe={recipe}
       onArchived={onArchived}
       onFavouriteChange={onFavouriteChange}
+      onPinnedChange={onPinnedChange}
     >
       <Link
         href={`/recipe/${recipe.id}`}
@@ -83,10 +86,15 @@ export function RecipeCard({
         <div className="min-w-0 flex-1">
           <div className="flex items-start justify-between gap-3">
             <h2
-              className="line-clamp-2 min-h-[2.75em] text-[1.05rem] font-semibold leading-snug"
+              className="line-clamp-2 min-h-[2.75em] min-w-0 text-[1.05rem] font-semibold leading-snug"
               style={{ fontFamily: "var(--font-display), Georgia, serif" }}
               title={recipe.title}
             >
+              {recipe.pinned ? (
+                <span className="mr-1.5 inline-block align-[-2px] text-[var(--accent)]" aria-hidden="true">
+                  <PinIcon filled size={14} />
+                </span>
+              ) : null}
               {recipe.title}
             </h2>
             <div className="flex shrink-0 flex-col items-end gap-1">

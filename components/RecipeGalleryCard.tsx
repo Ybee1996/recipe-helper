@@ -6,7 +6,7 @@ import {
   TimeRating,
 } from "@/components/RecipeCard";
 import { CardLinkPending } from "@/components/LinkPending";
-import { RecipeCardActions } from "@/components/RecipeCardActions";
+import { PinIcon, RecipeCardActions } from "@/components/RecipeCardActions";
 import { recipePhotoUrl } from "@/lib/recipe-photo";
 import type { Recipe } from "@/lib/types";
 import { useCategories } from "@/components/CategoriesProvider";
@@ -15,10 +15,12 @@ export function RecipeGalleryCard({
   recipe,
   onArchived,
   onFavouriteChange,
+  onPinnedChange,
 }: {
   recipe: Recipe;
   onArchived?: (id: string) => void;
   onFavouriteChange?: (id: string, favourite: boolean) => void;
+  onPinnedChange?: (id: string, pinned: boolean) => void;
 }) {
   const { labelFor } = useCategories();
   const photoUrl = recipePhotoUrl(recipe);
@@ -29,6 +31,7 @@ export function RecipeGalleryCard({
       recipe={recipe}
       onArchived={onArchived}
       onFavouriteChange={onFavouriteChange}
+      onPinnedChange={onPinnedChange}
     >
       <Link
         href={`/recipe/${recipe.id}`}
@@ -51,6 +54,11 @@ export function RecipeGalleryCard({
             style={{ fontFamily: "var(--font-display), Georgia, serif" }}
             title={recipe.title}
           >
+            {recipe.pinned ? (
+              <span className="mr-1.5 inline-block align-[-2px] text-[var(--accent)]" aria-hidden="true">
+                <PinIcon filled size={14} />
+              </span>
+            ) : null}
             {recipe.title}
           </h2>
           <div className="flex shrink-0 flex-col items-end gap-1">

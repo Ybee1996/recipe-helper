@@ -54,14 +54,16 @@ export function RecipeSearch({ recipes }: { recipes: Recipe[] }) {
   const [favouriteById, setFavouriteById] = useState<Record<string, boolean>>(
     {},
   );
+  const [pinnedById, setPinnedById] = useState<Record<string, boolean>>({});
 
   const recipesWithFavourites = useMemo(
     () =>
       recipes.map((recipe) => ({
         ...recipe,
         favourite: favouriteById[recipe.id] ?? recipe.favourite,
+        pinned: pinnedById[recipe.id] ?? recipe.pinned,
       })),
-    [recipes, favouriteById],
+    [recipes, favouriteById, pinnedById],
   );
 
   const extraCategoryIds = useMemo(
@@ -81,7 +83,8 @@ export function RecipeSearch({ recipes }: { recipes: Recipe[] }) {
         avoidAllergens,
       })
         .filter((recipe) => !archivedIds.includes(recipe.id))
-        .filter((recipe) => !favouritesOnly || recipe.favourite),
+        .filter((recipe) => !favouritesOnly || recipe.favourite)
+        .sort((a, b) => Number(Boolean(b.pinned)) - Number(Boolean(a.pinned))),
     [
       recipesWithFavourites,
       query,
@@ -124,6 +127,10 @@ export function RecipeSearch({ recipes }: { recipes: Recipe[] }) {
 
   function onFavouriteChange(id: string, favourite: boolean) {
     setFavouriteById((current) => ({ ...current, [id]: favourite }));
+  }
+
+  function onPinnedChange(id: string, pinned: boolean) {
+    setPinnedById((current) => ({ ...current, [id]: pinned }));
   }
 
   const allergyOn = avoidAllergens.length > 0;
@@ -300,12 +307,14 @@ export function RecipeSearch({ recipes }: { recipes: Recipe[] }) {
                 recipe={recipe}
                 onArchived={onArchived}
                 onFavouriteChange={onFavouriteChange}
+                onPinnedChange={onPinnedChange}
               />
             ) : (
               <RecipeCard
                 recipe={recipe}
                 onArchived={onArchived}
                 onFavouriteChange={onFavouriteChange}
+                onPinnedChange={onPinnedChange}
               />
             )}
           </li>

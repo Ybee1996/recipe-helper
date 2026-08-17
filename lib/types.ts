@@ -98,6 +98,7 @@ export interface Recipe {
   imageUrl?: string | null;
   originalImageUrl?: string | null;
   favourite?: boolean;
+  pinned?: boolean;
 }
 
 /** Personal edits stored separately so PDF ingest never overwrites them. */
@@ -108,6 +109,7 @@ export interface UserRecipeOverlay {
   imageUrl?: string | null;
   originalImageUrl?: string | null;
   favourite?: boolean;
+  pinned?: boolean;
   protein?: Protein;
   cookTimeMin?: number | null;
   servings?: number;

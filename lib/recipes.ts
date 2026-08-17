@@ -32,20 +32,24 @@ export function slugId(text: string, prefix = "web"): string {
 
 export function toStoredData(
   recipe: Recipe,
-): Omit<Recipe, "rating" | "note" | "imageUrl" | "originalImageUrl" | "favourite"> {
+): Omit<
+  Recipe,
+  "rating" | "note" | "imageUrl" | "originalImageUrl" | "favourite" | "pinned"
+> {
   const {
     rating: _rating,
     note: _note,
     imageUrl: _imageUrl,
     originalImageUrl: _originalImageUrl,
     favourite: _favourite,
+    pinned: _pinned,
     ...data
   } = recipe;
   return data;
 }
 
 export function applyOverlay(recipe: Recipe, overlay?: UserRecipeOverlay): Recipe {
-  if (!overlay) return { ...recipe, favourite: false };
+  if (!overlay) return { ...recipe, favourite: false, pinned: false };
   return {
     ...recipe,
     title: overlay.title ?? recipe.title,
@@ -54,6 +58,7 @@ export function applyOverlay(recipe: Recipe, overlay?: UserRecipeOverlay): Recip
     imageUrl: overlay.imageUrl ?? null,
     originalImageUrl: overlay.originalImageUrl ?? null,
     favourite: overlay.favourite === true,
+    pinned: overlay.pinned === true,
     protein: overlay.protein ?? recipe.protein,
     cookTimeMin:
       overlay.cookTimeMin !== undefined ? overlay.cookTimeMin : recipe.cookTimeMin,

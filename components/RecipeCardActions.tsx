@@ -11,6 +11,31 @@ import {
 import { saveOverlay } from "@/lib/save-overlay";
 import type { Recipe } from "@/lib/types";
 
+export function PinIcon({
+  filled,
+  size = 16,
+}: {
+  filled?: boolean;
+  size?: number;
+}) {
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill={filled ? "currentColor" : "none"}
+      stroke="currentColor"
+      strokeWidth="1.8"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
+      <path d="M12 17v5" />
+      <path d="M9 10.76a2 2 0 0 1-1.11 1.79l-1.78.9A2 2 0 0 0 5 15.24V16h14v-.76a2 2 0 0 0-1.11-1.79l-1.78-.9A2 2 0 0 1 15 10.76V7a1 1 0 0 1 1-1 2 2 0 0 0 0-4H8a2 2 0 0 0 0 4 1 1 0 0 1 1 1z" />
+    </svg>
+  );
+}
+
 function BinIcon({ size = 16 }: { size?: number }) {
   return (
     <svg
@@ -35,11 +60,13 @@ export function RecipeCardActions({
   recipe,
   onArchived,
   onFavouriteChange,
+  onPinnedChange,
   children,
 }: {
   recipe: Recipe;
   onArchived?: (id: string) => void;
   onFavouriteChange?: (id: string, favourite: boolean) => void;
+  onPinnedChange?: (id: string, pinned: boolean) => void;
   children: React.ReactNode;
 }) {
   const router = useRouter();
@@ -49,6 +76,7 @@ export function RecipeCardActions({
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const favourited = Boolean(recipe.favourite);
+  const pinned = Boolean(recipe.pinned);
 
   useEffect(() => {
     if (!revealed && !confirming) return;
@@ -90,6 +118,20 @@ export function RecipeCardActions({
       await saveOverlay(recipe.id, { favourite: next });
     } catch {
       onFavouriteChange?.(recipe.id, favourited);
+    }
+  }
+
+  async function togglePinned(e: React.MouseEvent) {
+    e.preventDefault();
+    e.stopPropagation();
+    if (busy) return;
+    const next = !pinned;
+    onPinnedChange?.(recipe.id, next);
+    dismiss();
+    try {
+      await saveOverlay(recipe.id, { pinned: next });
+    } catch {
+      onPinnedChange?.(recipe.id, pinned);
     }
   }
 
@@ -147,6 +189,18 @@ export function RecipeCardActions({
           />
           <button
             type="button"
+            onClick={togglePinned}
+            aria-pressed={pinned}
+            aria-label={pinned ? `Unpin ${recipe.title}` : `Pin ${recipe.title}`}
+            title={pinned ? "Unpin recipe" : "Pin recipe"}
+            className={`inline-flex h-9 w-9 items-center justify-center rounded-full bg-[var(--paper)]/90 shadow-sm backdrop-blur-sm transition-opacity focus-visible:pointer-events-auto focus-visible:opacity-100 focus-visible:ring-2 focus-visible:ring-[var(--accent)] ${
+              pinned ? "text-[var(--accent)]" : "text-[var(--ink)]"
+            } ${hoverActions}`}
+          >
+            <PinIcon filled={pinned} />
+          </button>
+          <button
+            type="button"
             onClick={openConfirm}
             aria-label={`Delete ${recipe.title}`}
             title="Delete recipe"
@@ -178,6 +232,21 @@ export function RecipeCardActions({
               <StarIcon filled={favourited} size={16} />
             </span>
             {favourited ? "Remove favourite" : "Favourite"}
+          </button>
+          <button
+            type="button"
+            role="menuitem"
+            onClick={togglePinned}
+            className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left text-sm font-semibold text-[var(--ink)] active:bg-[var(--chip)]"
+          >
+            <span
+              className={`inline-flex h-8 w-8 items-center justify-center rounded-full bg-[var(--chip)] ${
+                pinned ? "text-[var(--accent)]" : "text-[var(--ink)]"
+              }`}
+            >
+              <PinIcon filled={pinned} size={16} />
+            </span>
+            {pinned ? "Unpin" : "Pin"}
           </button>
           <button
             type="button"

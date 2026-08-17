@@ -139,6 +139,16 @@ export async function PATCH(
     patch.favourite = body.favourite;
   }
 
+  if ("pinned" in body) {
+    if (typeof body.pinned !== "boolean") {
+      return NextResponse.json(
+        { error: "Pinned must be true or false" },
+        { status: 400 },
+      );
+    }
+    patch.pinned = body.pinned;
+  }
+
   const overlay = await patchOverlay(id, patch);
   return NextResponse.json(overlay);
 }
