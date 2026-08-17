@@ -212,7 +212,10 @@ export function RecipeSearch({ recipes }: { recipes: Recipe[] }) {
             <button
               key={protein}
               type="button"
-              onClick={() => setProteins(toggle(proteins, protein))}
+              aria-pressed={on}
+              onClick={() =>
+                setProteins(on ? [] : [protein])
+              }
               className={`shrink-0 rounded-full px-3.5 py-2 text-sm font-semibold outline-none transition-colors focus-visible:ring-2 focus-visible:ring-[var(--accent)] ${
                 on
                   ? "bg-[var(--ink)] text-[var(--paper)]"
