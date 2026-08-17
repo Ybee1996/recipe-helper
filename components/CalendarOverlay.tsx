@@ -3,15 +3,16 @@
 import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { usePathname } from "next/navigation";
-import { BasketIcon } from "@/components/BasketIcon";
-import { useCalendar } from "@/components/CalendarProvider";
+import { CalendarIcon } from "@/components/CalendarIcon";
 import {
-  ShoppingListPanel,
-  SHOPPING_LIST_TITLE_ID,
-} from "@/components/ShoppingListPanel";
+  CalendarPanel,
+  CALENDAR_TITLE_ID,
+} from "@/components/CalendarPanel";
+import { useCalendar } from "@/components/CalendarProvider";
 import { useShoppingList } from "@/components/ShoppingListProvider";
+import { upcomingCount, todayDate } from "@/lib/calendar";
 
-export const SHOPPING_LIST_DIALOG_ID = "shopping-list-dialog";
+export const CALENDAR_DIALOG_ID = "cook-calendar-dialog";
 
 const FOCUSABLE =
   'a[href], button:not([disabled]), input:not([disabled]), textarea:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"])';
@@ -25,7 +26,7 @@ function focusables(root: HTMLElement) {
   );
 }
 
-export function ShoppingListTrigger({
+export function CalendarTrigger({
   variant = "icon",
   className = "",
   iconSize = 20,
@@ -34,15 +35,16 @@ export function ShoppingListTrigger({
   className?: string;
   iconSize?: number;
 }) {
-  const { listOpen, toggleList, uncheckedCount } = useShoppingList();
-  const { calendarOpen, closeCalendar } = useCalendar();
-  const count = uncheckedCount > 99 ? "99+" : uncheckedCount;
+  const { calendarOpen, toggleCalendar, entries } = useCalendar();
+  const { listOpen, closeList } = useShoppingList();
+  const count = upcomingCount(entries, todayDate());
+  const badge = count > 99 ? "99+" : count;
 
   function onToggle(e: React.MouseEvent) {
     e.preventDefault();
     e.stopPropagation();
-    if (!listOpen && calendarOpen) closeCalendar();
-    toggleList();
+    if (!calendarOpen && listOpen) closeList();
+    toggleCalendar();
   }
 
   if (variant === "row") {
@@ -50,20 +52,20 @@ export function ShoppingListTrigger({
       <button
         type="button"
         onClick={onToggle}
-        aria-expanded={listOpen ? "true" : "false"}
-        aria-controls={SHOPPING_LIST_DIALOG_ID}
+        aria-expanded={calendarOpen ? "true" : "false"}
+        aria-controls={CALENDAR_DIALOG_ID}
         aria-haspopup="dialog"
-        className={`flex w-full items-center gap-2.5 rounded-xl px-3 py-2.5 text-sm font-semibold tracking-wide outline-none transition-colors focus-visible:ring-2 focus-visible:ring-[var(--accent)] ${
-          listOpen
-            ? "bg-[var(--chip)] text-[var(--accent)]"
+        className={`flex w-full items-center gap-2.5 rounded-xl px-3 py-2.5 text-sm font-semibold tracking-wide outline-none transition-colors focus-visible:ring-2 focus-visible:ring-[var(--plan)] ${
+          calendarOpen
+            ? "bg-[var(--chip)] text-[var(--plan)]"
             : "text-[var(--muted)] lg:hover:bg-[var(--chip)]/60 lg:hover:text-[var(--ink)]"
         } ${className}`}
       >
-        <BasketIcon size={17} />
-        Shopping list
-        {uncheckedCount > 0 ? (
-          <span className="ml-auto grid h-5 min-w-5 place-items-center rounded-full bg-[var(--accent)] px-1 text-[0.66rem] font-bold leading-none text-white">
-            {count}
+        <CalendarIcon size={17} />
+        Calendar
+        {count > 0 ? (
+          <span className="ml-auto grid h-5 min-w-5 place-items-center rounded-full bg-[var(--plan)] px-1 text-[0.66rem] font-bold leading-none text-white">
+            {badge}
           </span>
         ) : null}
       </button>
@@ -74,21 +76,21 @@ export function ShoppingListTrigger({
     <button
       type="button"
       onClick={onToggle}
-      aria-expanded={listOpen ? "true" : "false"}
-      aria-controls={SHOPPING_LIST_DIALOG_ID}
+      aria-expanded={calendarOpen ? "true" : "false"}
+      aria-controls={CALENDAR_DIALOG_ID}
       aria-haspopup="dialog"
       aria-label={
-        uncheckedCount === 0
-          ? "Shopping list"
-          : `Shopping list, ${uncheckedCount} item${uncheckedCount === 1 ? "" : "s"}`
+        count === 0
+          ? "Calendar"
+          : `Calendar, ${count} upcoming meal${count === 1 ? "" : "s"}`
       }
-      className={`relative z-10 outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)] ${
-        listOpen ? "text-[var(--accent)]" : "text-[var(--muted)]"
+      className={`relative z-10 outline-none focus-visible:ring-2 focus-visible:ring-[var(--plan)] ${
+        calendarOpen ? "text-[var(--plan)]" : "text-[var(--muted)]"
       } ${className}`}
     >
-      <BasketIcon
+      <CalendarIcon
         size={iconSize}
-        count={uncheckedCount > 0 ? count : undefined}
+        count={count > 0 ? badge : undefined}
       />
     </button>
   );
@@ -107,8 +109,8 @@ type DragState = {
   fromList: boolean;
 };
 
-export function ShoppingListOverlay() {
-  const { listOpen, closeList } = useShoppingList();
+export function CalendarOverlay() {
+  const { calendarOpen, closeCalendar } = useCalendar();
   const pathname = usePathname();
   const prevPathname = useRef(pathname);
   const [mounted, setMounted] = useState(false);
@@ -126,21 +128,19 @@ export function ShoppingListOverlay() {
   useEffect(() => {
     if (prevPathname.current === pathname) return;
     prevPathname.current = pathname;
-    closeList();
-  }, [pathname, closeList]);
+    closeCalendar();
+  }, [pathname, closeCalendar]);
 
   useEffect(() => {
-    if (!listOpen) {
+    if (!calendarOpen) {
       setDragY(0);
       setKeyboard(null);
       dragYRef.current = 0;
     }
-  }, [listOpen]);
+  }, [calendarOpen]);
 
-  // The sheet is sized in CSS (svh) so it opens identically every time; JS only
-  // lifts it above the on-screen keyboard, which CSS can't see.
   useEffect(() => {
-    if (!listOpen) return;
+    if (!calendarOpen) return;
     const vv = window.visualViewport;
     if (!vv) return;
 
@@ -155,8 +155,6 @@ export function ShoppingListOverlay() {
         return;
       }
       setKeyboard({ inset, height: Math.round(vv.height) });
-      // iOS pans the document (and any clipped ancestor) to reveal the focused
-      // field; undo that so the sheet stays aligned with the visible area.
       if (window.scrollY !== 0) window.scrollTo(0, 0);
       if (dialogRef.current) dialogRef.current.scrollTop = 0;
     };
@@ -168,10 +166,10 @@ export function ShoppingListOverlay() {
       vv.removeEventListener("resize", measure);
       vv.removeEventListener("scroll", measure);
     };
-  }, [listOpen]);
+  }, [calendarOpen]);
 
   useEffect(() => {
-    if (!listOpen) return;
+    if (!calendarOpen) return;
     previousFocus.current = document.activeElement as HTMLElement | null;
     const html = document.documentElement;
     const body = document.body;
@@ -193,14 +191,14 @@ export function ShoppingListOverlay() {
       if (coarse) {
         dialogRef.current?.focus({ preventScroll: true });
       } else {
-        document.getElementById(SHOPPING_LIST_TITLE_ID)?.focus({ preventScroll: true });
+        document.getElementById(CALENDAR_TITLE_ID)?.focus({ preventScroll: true });
       }
     });
 
     function onKeyDown(e: KeyboardEvent) {
       if (e.key === "Escape") {
         e.preventDefault();
-        closeList();
+        closeCalendar();
         return;
       }
       if (e.key !== "Tab" || !dialogRef.current) return;
@@ -228,7 +226,7 @@ export function ShoppingListOverlay() {
       window.scrollTo(0, scrollY);
       previousFocus.current?.focus?.({ preventScroll: true });
     };
-  }, [listOpen, closeList]);
+  }, [calendarOpen, closeCalendar]);
 
   function isDesktop() {
     return window.matchMedia("(min-width: 1024px)").matches;
@@ -286,10 +284,10 @@ export function ShoppingListOverlay() {
     setDragY(0);
 
     if (!moved) return;
-    if (dy > DISMISS_PX || vy > 0.5) closeList();
+    if (dy > DISMISS_PX || vy > 0.5) closeCalendar();
   }
 
-  if (!mounted || !listOpen) return null;
+  if (!mounted || !calendarOpen) return null;
 
   const dragging = dragY > 0;
 
@@ -298,7 +296,7 @@ export function ShoppingListOverlay() {
       <div
         className="fixed inset-x-0 top-0 bottom-14 z-[35] bg-[var(--ink)]/40 lg:inset-y-0 lg:left-60 lg:right-0"
         aria-hidden="true"
-        onClick={closeList}
+        onClick={closeCalendar}
         style={{
           ...(keyboard ? { bottom: keyboard.inset } : null),
           ...(dragging ? { opacity: Math.max(0.15, 1 - dragY / 280) } : null),
@@ -306,10 +304,10 @@ export function ShoppingListOverlay() {
       />
       <div
         ref={dialogRef}
-        id={SHOPPING_LIST_DIALOG_ID}
+        id={CALENDAR_DIALOG_ID}
         role="dialog"
         aria-modal="true"
-        aria-labelledby={SHOPPING_LIST_TITLE_ID}
+        aria-labelledby={CALENDAR_TITLE_ID}
         tabIndex={-1}
         onPointerDown={onSheetPointerDown}
         onPointerMove={onSheetPointerMove}
@@ -318,7 +316,7 @@ export function ShoppingListOverlay() {
         onScroll={(e) => {
           e.currentTarget.scrollTop = 0;
         }}
-        className="fixed z-[35] flex flex-col overflow-hidden bg-[var(--card)] shadow-lg overscroll-none outline-none max-lg:inset-x-0 max-lg:bottom-14 max-lg:h-[calc(100svh-3.5rem)] max-lg:rounded-t-3xl max-lg:border-t max-lg:border-[var(--line)] lg:top-0 lg:right-0 lg:bottom-0 lg:w-96 lg:border-l lg:border-[var(--line)]"
+        className="fixed z-[35] flex flex-col overflow-hidden bg-[var(--card)] shadow-lg overscroll-none outline-none max-lg:inset-x-0 max-lg:bottom-14 max-lg:h-[calc(100svh-3.5rem)] max-lg:rounded-t-3xl max-lg:border-t max-lg:border-[var(--line)] lg:top-0 lg:right-0 lg:bottom-0 lg:w-[28rem] lg:border-l lg:border-[var(--line)]"
         style={{
           ...(keyboard ? { bottom: keyboard.inset, height: keyboard.height } : null),
           ...(dragY ? { transform: `translateY(${dragY}px)` } : null),
@@ -329,18 +327,18 @@ export function ShoppingListOverlay() {
           data-sheet-handle
           role="button"
           tabIndex={0}
-          aria-label="Close shopping list"
+          aria-label="Close calendar"
           className="flex h-11 w-full shrink-0 touch-none items-center justify-center lg:hidden"
           onKeyDown={(e) => {
             if (e.key === "Enter" || e.key === " ") {
               e.preventDefault();
-              closeList();
+              closeCalendar();
             }
           }}
         >
           <span className="h-1 w-10 rounded-full bg-[var(--line)]" />
         </div>
-        <ShoppingListPanel onNavigate={closeList} />
+        <CalendarPanel onNavigate={closeCalendar} />
       </div>
     </>,
     document.body,

@@ -7,6 +7,8 @@ import {
 } from "@/components/RecipeCard";
 import { CardLinkPending } from "@/components/LinkPending";
 import { PinIcon, RecipeCardActions } from "@/components/RecipeCardActions";
+import { CalendarIcon } from "@/components/CalendarIcon";
+import { useCalendar } from "@/components/CalendarProvider";
 import { recipePhotoUrl } from "@/lib/recipe-photo";
 import type { Recipe } from "@/lib/types";
 import { useCategories } from "@/components/CategoriesProvider";
@@ -23,6 +25,7 @@ export function RecipeGalleryCard({
   onPinnedChange?: (id: string, pinned: boolean) => void;
 }) {
   const { labelFor } = useCategories();
+  const planned = useCalendar().isUpcoming(recipe.id);
   const photoUrl = recipePhotoUrl(recipe);
   if (!photoUrl) return null;
 
@@ -38,6 +41,7 @@ export function RecipeGalleryCard({
         className={recipeCardClass(
           Boolean(recipe.favourite),
           "flex h-full w-full flex-col overflow-hidden",
+          planned,
         )}
       >
         <CardLinkPending />
@@ -57,6 +61,11 @@ export function RecipeGalleryCard({
             {recipe.pinned ? (
               <span className="mr-1.5 inline-block align-[-2px] text-[var(--accent)]" aria-hidden="true">
                 <PinIcon filled size={14} />
+              </span>
+            ) : null}
+            {planned ? (
+              <span className="mr-1.5 inline-block align-[-2px] text-[var(--plan)]" aria-hidden="true">
+                <CalendarIcon size={14} />
               </span>
             ) : null}
             {recipe.title}

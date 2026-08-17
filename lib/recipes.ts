@@ -2,6 +2,7 @@ import type { Recipe, RecipeSource, UserRecipeOverlay } from "./types";
 import { isProtein } from "./types";
 import { getSql } from "./db";
 import { parseOverlay } from "./user-store";
+import { deleteCalendarEntriesForRecipe } from "./calendar-store";
 
 export { isProtein } from "./types";
 
@@ -151,7 +152,9 @@ export async function archiveRecipe(id: string): Promise<boolean> {
     WHERE id = ${id} AND archived_at IS NULL
     RETURNING id
   `) as { id: string }[];
-  return Boolean(rows[0]);
+  if (!rows[0]) return false;
+  await deleteCalendarEntriesForRecipe(id);
+  return true;
 }
 
 export async function insertRecipe(recipe: Recipe): Promise<"ok" | "conflict"> {

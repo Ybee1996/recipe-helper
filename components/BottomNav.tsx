@@ -2,6 +2,7 @@
 
 import Link, { useLinkStatus } from "next/link";
 import { usePathname } from "next/navigation";
+import { CalendarTrigger } from "@/components/CalendarOverlay";
 import { ShoppingListTrigger } from "@/components/ShoppingListOverlay";
 import { NAV_TABS, isNavActive } from "@/lib/nav";
 
@@ -42,6 +43,7 @@ export function BottomNav() {
             </Link>
           );
         })}
+        <CalendarTrigger className="flex w-14 shrink-0 items-center justify-center rounded-xl" />
         <ShoppingListTrigger className="flex w-14 shrink-0 items-center justify-center rounded-xl" />
       </div>
     </nav>

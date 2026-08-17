@@ -3,15 +3,23 @@
 import Link from "next/link";
 import { CardLinkPending } from "@/components/LinkPending";
 import { PinIcon, RecipeCardActions } from "@/components/RecipeCardActions";
+import { CalendarIcon } from "@/components/CalendarIcon";
+import { useCalendar } from "@/components/CalendarProvider";
 import { formatCookTime } from "@/lib/format-time";
 import type { Recipe } from "@/lib/types";
 import { useCategories } from "@/components/CategoriesProvider";
 
-export function recipeCardClass(favourite: boolean, extra: string) {
+export function recipeCardClass(
+  favourite: boolean,
+  extra: string,
+  planned = false,
+) {
   return `relative rounded-2xl border bg-[var(--card)] active:scale-[0.99] lg:transition-colors ${
-    favourite
-      ? "border-[var(--accent)] shadow-[0_0_0_1px_var(--accent)]"
-      : "border-[var(--line)] lg:hover:border-[var(--accent)]"
+    planned
+      ? "border-[var(--plan)] shadow-[0_0_0_1px_var(--plan)]"
+      : favourite
+        ? "border-[var(--accent)] shadow-[0_0_0_1px_var(--accent)]"
+        : "border-[var(--line)] lg:hover:border-[var(--accent)]"
   } ${extra}`;
 }
 
@@ -47,6 +55,7 @@ export function RecipeCard({
   onPinnedChange?: (id: string, pinned: boolean) => void;
 }) {
   const { labelFor } = useCategories();
+  const planned = useCalendar().isUpcoming(recipe.id);
   const metaParts: string[] = [];
   if (recipe.nutrition) {
     metaParts.push(
@@ -71,6 +80,7 @@ export function RecipeCard({
         className={recipeCardClass(
           Boolean(recipe.favourite),
           "flex h-full gap-3 p-4",
+          planned,
         )}
       >
         <CardLinkPending />
@@ -93,6 +103,11 @@ export function RecipeCard({
               {recipe.pinned ? (
                 <span className="mr-1.5 inline-block align-[-2px] text-[var(--accent)]" aria-hidden="true">
                   <PinIcon filled size={14} />
+                </span>
+              ) : null}
+              {planned ? (
+                <span className="mr-1.5 inline-block align-[-2px] text-[var(--plan)]" aria-hidden="true">
+                  <CalendarIcon size={14} />
                 </span>
               ) : null}
               {recipe.title}

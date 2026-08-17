@@ -15,6 +15,9 @@ import { NoteEditButton, RecipeNote } from "@/components/RecipeNote";
 import { useShoppingList } from "@/components/ShoppingListProvider";
 import { SourceRecipeLink } from "@/components/SourceRecipeLink";
 import { FavouriteButton } from "@/components/FavouriteButton";
+import { CalendarDatePicker } from "@/components/CalendarDatePicker";
+import { CalendarIcon } from "@/components/CalendarIcon";
+import { useCalendar } from "@/components/CalendarProvider";
 import { StarRating } from "@/components/StarRating";
 import { saveOverlay } from "@/lib/save-overlay";
 import { displayQty } from "@/lib/filters";
@@ -83,6 +86,8 @@ export function RecipeDetail({ recipe }: { recipe: Recipe }) {
   const { labelFor } = useCategories();
   const { items: shoppingItems, addItem, addItems, removeByRecipe, removeByRecipeName } =
     useShoppingList();
+  const { isUpcoming } = useCalendar();
+  const planned = isUpcoming(recipe.id);
   const scalable = recipe.source === "web";
   const defaultViewServings = scalable ? recipe.servings || 2 : 4;
   const [servings, setServings] = useState<number>(defaultViewServings);
@@ -103,6 +108,7 @@ export function RecipeDetail({ recipe }: { recipe: Recipe }) {
   const [noteEditing, setNoteEditing] = useState(false);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [calendarOpen, setCalendarOpen] = useState(false);
 
   const storedServings = scalable ? recipe.servings || 2 : 2;
   const [yieldServings, setYieldServings] = useState(storedServings);
@@ -305,6 +311,7 @@ export function RecipeDetail({ recipe }: { recipe: Recipe }) {
   const stepsClass = editing ? "" : "lg:col-start-1 lg:row-start-2";
 
   return (
+    <>
     <article className="px-4 pb-8 pt-4 lg:mx-auto lg:max-w-5xl lg:px-10 lg:pb-16 lg:pt-8">
       <div className="flex items-center justify-between gap-3">
         <Link
@@ -321,6 +328,24 @@ export function RecipeDetail({ recipe }: { recipe: Recipe }) {
             iconSize={18}
             className="inline-flex shrink-0 items-center justify-center rounded-full p-1.5 text-[var(--muted)] transition-colors hover:bg-[var(--chip)] hover:text-[var(--accent)]"
           />
+          <button
+            type="button"
+            onClick={() => setCalendarOpen(true)}
+            aria-pressed={planned}
+            aria-label={
+              planned
+                ? `Change calendar dates for ${title}`
+                : `Add ${title} to calendar`
+            }
+            title={planned ? "Change calendar dates" : "Add to calendar"}
+            className={`inline-flex shrink-0 items-center justify-center rounded-full p-1.5 transition-colors hover:bg-[var(--chip)] ${
+              planned
+                ? "text-[var(--plan)]"
+                : "text-[var(--muted)] hover:text-[var(--plan)]"
+            }`}
+          >
+            <CalendarIcon size={18} />
+          </button>
           {editing ? (
             <>
               <button
@@ -527,5 +552,13 @@ export function RecipeDetail({ recipe }: { recipe: Recipe }) {
         </div>
       </div>
     </article>
+    <CalendarDatePicker
+      open={calendarOpen}
+      recipeId={recipe.id}
+      recipeTitle={title}
+      imageUrl={originalImageUrl || imageUrl}
+      onClose={() => setCalendarOpen(false)}
+    />
+    </>
   );
 }

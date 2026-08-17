@@ -3,6 +3,9 @@
 import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { useRouter } from "next/navigation";
+import { CalendarDatePicker } from "@/components/CalendarDatePicker";
+import { CalendarIcon } from "@/components/CalendarIcon";
+import { useCalendar } from "@/components/CalendarProvider";
 import {
   FavouriteButton,
   StarIcon,
@@ -71,12 +74,15 @@ export function RecipeCardActions({
 }) {
   const router = useRouter();
   const { revealed, dismiss, holdHandlers } = useHoldReveal();
+  const { isUpcoming, removeUpcomingByRecipe } = useCalendar();
   const menuRef = useRef<HTMLDivElement | null>(null);
   const [confirming, setConfirming] = useState(false);
+  const [pickerOpen, setPickerOpen] = useState(false);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const favourited = Boolean(recipe.favourite);
   const pinned = Boolean(recipe.pinned);
+  const planned = isUpcoming(recipe.id);
 
   useEffect(() => {
     if (!revealed && !confirming) return;
@@ -119,6 +125,20 @@ export function RecipeCardActions({
     } catch {
       onFavouriteChange?.(recipe.id, favourited);
     }
+  }
+
+  function openCalendarPicker(e: React.MouseEvent) {
+    e.preventDefault();
+    e.stopPropagation();
+    dismiss();
+    setPickerOpen(true);
+  }
+
+  function removeFromCalendar(e: React.MouseEvent) {
+    e.preventDefault();
+    e.stopPropagation();
+    removeUpcomingByRecipe(recipe.id);
+    dismiss();
   }
 
   async function togglePinned(e: React.MouseEvent) {
@@ -201,6 +221,18 @@ export function RecipeCardActions({
           </button>
           <button
             type="button"
+            onClick={openCalendarPicker}
+            aria-pressed={planned}
+            aria-label={`Add ${recipe.title} to calendar`}
+            title="Add to calendar"
+            className={`inline-flex h-9 w-9 items-center justify-center rounded-full bg-[var(--paper)]/90 shadow-sm backdrop-blur-sm transition-opacity focus-visible:pointer-events-auto focus-visible:opacity-100 focus-visible:ring-2 focus-visible:ring-[var(--plan)] ${
+              planned ? "text-[var(--plan)]" : "text-[var(--ink)]"
+            } ${hoverActions}`}
+          >
+            <CalendarIcon size={16} />
+          </button>
+          <button
+            type="button"
             onClick={openConfirm}
             aria-label={`Delete ${recipe.title}`}
             title="Delete recipe"
@@ -248,6 +280,34 @@ export function RecipeCardActions({
             </span>
             {pinned ? "Unpin" : "Pin"}
           </button>
+          <button
+            type="button"
+            role="menuitem"
+            onClick={openCalendarPicker}
+            className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left text-sm font-semibold text-[var(--ink)] active:bg-[var(--chip)]"
+          >
+            <span
+              className={`inline-flex h-8 w-8 items-center justify-center rounded-full bg-[var(--chip)] ${
+                planned ? "text-[var(--plan)]" : "text-[var(--ink)]"
+              }`}
+            >
+              <CalendarIcon size={16} />
+            </span>
+            Add to calendar
+          </button>
+          {planned ? (
+            <button
+              type="button"
+              role="menuitem"
+              onClick={removeFromCalendar}
+              className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left text-sm font-semibold text-[var(--ink)] active:bg-[var(--chip)]"
+            >
+              <span className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-[var(--chip)] text-[var(--plan)]">
+                <CalendarIcon size={16} />
+              </span>
+              Remove from calendar
+            </button>
+          ) : null}
           <button
             type="button"
             role="menuitem"
@@ -316,6 +376,14 @@ export function RecipeCardActions({
             document.body,
           )
         : null}
+
+      <CalendarDatePicker
+        open={pickerOpen}
+        recipeId={recipe.id}
+        recipeTitle={recipe.title}
+        imageUrl={recipe.originalImageUrl || recipe.imageUrl}
+        onClose={() => setPickerOpen(false)}
+      />
     </div>
   );
 }

@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link, { useLinkStatus } from "next/link";
 import { usePathname } from "next/navigation";
+import { CalendarTrigger } from "@/components/CalendarOverlay";
 import { ShoppingListTrigger } from "@/components/ShoppingListOverlay";
 import { NAV_TABS, isNavActive } from "@/lib/nav";
 
@@ -60,6 +61,9 @@ export function SideNav() {
             </li>
           );
         })}
+        <li>
+          <CalendarTrigger variant="row" />
+        </li>
         <li>
           <ShoppingListTrigger variant="row" />
         </li>

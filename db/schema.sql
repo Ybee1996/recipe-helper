@@ -19,6 +19,14 @@ CREATE TABLE IF NOT EXISTS shopping_items (
   created_at timestamptz NOT NULL DEFAULT now()
 );
 
+CREATE TABLE IF NOT EXISTS calendar_entries (
+  id text PRIMARY KEY,
+  recipe_id text NOT NULL,
+  cook_date date NOT NULL,
+  created_at timestamptz NOT NULL DEFAULT now(),
+  UNIQUE (recipe_id, cook_date)
+);
+
 CREATE TABLE IF NOT EXISTS categories (
   id text PRIMARY KEY,
   label text NOT NULL,

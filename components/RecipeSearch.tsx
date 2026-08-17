@@ -6,6 +6,7 @@ import { RecipeCard } from "@/components/RecipeCard";
 import { RecipeGalleryCard } from "@/components/RecipeGalleryCard";
 import { StarIcon } from "@/components/FavouriteButton";
 import { CategoryBar } from "@/components/CategoryBar";
+import { useCalendar } from "@/components/CalendarProvider";
 import { recipePhotoUrl } from "@/lib/recipe-photo";
 import { searchRecipes } from "@/lib/search";
 import type { Allergen, Protein, Recipe } from "@/lib/types";
@@ -44,6 +45,7 @@ function FilterIcon() {
 
 export function RecipeSearch({ recipes }: { recipes: Recipe[] }) {
   const router = useRouter();
+  const { soonestDate } = useCalendar();
   const [query, setQuery] = useState("");
   const [proteins, setProteins] = useState<Protein[]>([]);
   const [avoidAllergens, setAvoidAllergens] = useState<Allergen[]>([]);
@@ -84,7 +86,22 @@ export function RecipeSearch({ recipes }: { recipes: Recipe[] }) {
       })
         .filter((recipe) => !archivedIds.includes(recipe.id))
         .filter((recipe) => !favouritesOnly || recipe.favourite)
-        .sort((a, b) => Number(Boolean(b.pinned)) - Number(Boolean(a.pinned))),
+        .sort((a, b) => {
+          const pinA = Number(Boolean(a.pinned));
+          const pinB = Number(Boolean(b.pinned));
+          if (pinB !== pinA) return pinB - pinA;
+          if (pinA) return 0;
+          const dateA = soonestDate(a.id);
+          const dateB = soonestDate(b.id);
+          if (dateA && dateB) {
+            const byDate = dateA.localeCompare(dateB);
+            if (byDate) return byDate;
+            return a.title.localeCompare(b.title);
+          }
+          if (dateA) return -1;
+          if (dateB) return 1;
+          return 0;
+        }),
     [
       recipesWithFavourites,
       query,
@@ -92,6 +109,7 @@ export function RecipeSearch({ recipes }: { recipes: Recipe[] }) {
       avoidAllergens,
       archivedIds,
       favouritesOnly,
+      soonestDate,
     ],
   );
 
