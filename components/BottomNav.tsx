@@ -30,7 +30,7 @@ export function BottomNav() {
 
   return (
     <nav className="fixed inset-x-0 bottom-0 z-[36] border-t border-[var(--line)] bg-[var(--paper)]/95 backdrop-blur-md lg:hidden">
-      <div className="mx-auto flex max-w-lg">
+      <div className="mx-auto flex max-w-lg pr-[max(1.25rem,env(safe-area-inset-right))]">
         {NAV_TABS.map((tab) => {
           const active = isNavActive(pathname, tab.href);
           return (
