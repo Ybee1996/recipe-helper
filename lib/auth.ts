@@ -1,5 +1,5 @@
 export const SESSION_COOKIE = "recipe_session";
-export const SESSION_MAX_AGE = 60 * 60 * 24;
+export const SESSION_MAX_AGE = 60 * 60 * 24 * 90;
 
 const encoder = new TextEncoder();
 

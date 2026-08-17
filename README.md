@@ -43,4 +43,4 @@ Each PDF page is treated as one recipe card.
 
 ## Deploy
 
-On Vercel, set `DATABASE_URL`, `OPENAI_API_KEY`, `AUTH_SECRET`, and `SITE_PASSWORD` (plus optional `SITE_PASSWORD_2`). Generate `AUTH_SECRET` with `openssl rand -base64 32`. After deploy, the site asks for the household password; the session stays valid for 24 hours on that browser or Home Screen app.
+On Vercel, set `DATABASE_URL`, `OPENAI_API_KEY`, `AUTH_SECRET`, and `SITE_PASSWORD` (plus optional `SITE_PASSWORD_2`). Generate `AUTH_SECRET` with `openssl rand -base64 32`. After deploy, the site asks for the household password; the session stays valid for 90 days on that browser or Home Screen app.

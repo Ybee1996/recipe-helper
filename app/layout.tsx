@@ -59,6 +59,13 @@ const sans = Nunito_Sans({
 export const metadata: Metadata = {
   title: "Recipe Box",
   description: "Personal recipe search and cooking assistant",
+  icons: {
+    icon: [
+      { url: "/icon.svg", type: "image/svg+xml" },
+      { url: "/icon-192.png", sizes: "192x192", type: "image/png" },
+    ],
+    apple: [{ url: "/apple-touch-icon.png", sizes: "180x180" }],
+  },
   appleWebApp: {
     capable: true,
     title: "Recipe Box",
