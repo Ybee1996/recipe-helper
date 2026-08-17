@@ -1,4 +1,20 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
   <rect width="64" height="64" rx="14" fill="#c24e1d"/>
-  <text x="32" y="42" text-anchor="middle" font-size="28" fill="#fffaf3" font-family="Georgia, serif">R</text>
+  <path
+    fill="none"
+    stroke="#fffaf3"
+    stroke-width="2.75"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    transform="rotate(-38 32 32)"
+    d="M26.05 37.35
+       A 10.6 14.2 0 1 1 37.95 37.35
+       C 36.4 40.1 35.15 41.6 34.75 44.6
+       L 36.85 52.35
+       A 3.55 3.55 0 1 1 32 55.55
+       A 3.55 3.55 0 1 1 27.15 52.35
+       L 29.25 44.6
+       C 28.85 41.6 27.6 40.1 26.05 37.35
+       Z"
+  />
 </svg>
