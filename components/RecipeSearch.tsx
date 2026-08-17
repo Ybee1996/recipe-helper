@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { RecipeCard } from "@/components/RecipeCard";
 import { RecipeGalleryCard } from "@/components/RecipeGalleryCard";
 import { StarIcon } from "@/components/FavouriteButton";
-import { CategoryPicker, AddCategoryButton } from "@/components/CategoryPicker";
+import { CategoryBar } from "@/components/CategoryBar";
 import { recipePhotoUrl } from "@/lib/recipe-photo";
 import { searchRecipes } from "@/lib/search";
 import type { Allergen, Protein, Recipe } from "@/lib/types";
@@ -232,8 +232,14 @@ export function RecipeSearch({ recipes }: { recipes: Recipe[] }) {
         </div>
       )}
 
-      <div className="mt-3 flex items-start gap-2">
-        <div className="no-scrollbar flex min-w-0 flex-1 gap-2 overflow-x-auto pb-1 lg:flex-wrap lg:overflow-visible">
+      <CategoryBar
+        selected={proteins[0] ?? null}
+        onSelect={(id) => setProteins(id ? [id] : [])}
+        extraIds={extraCategoryIds}
+        usageCount={(id) =>
+          recipes.filter((recipe) => recipe.protein === id).length
+        }
+        leading={
           <button
             type="button"
             aria-label="Favourites"
@@ -248,16 +254,8 @@ export function RecipeSearch({ recipes }: { recipes: Recipe[] }) {
           >
             <StarIcon filled={favouritesOnly} size={16} />
           </button>
-          <CategoryPicker
-            selected={proteins[0] ?? null}
-            onSelect={(id) => setProteins(id ? [id] : [])}
-            variant="filter"
-            extraIds={extraCategoryIds}
-            showAdd={false}
-          />
-        </div>
-        <AddCategoryButton onAdded={(category) => setProteins([category.id])} />
-      </div>
+        }
+      />
 
       <div className="mt-4 flex items-center justify-between gap-3">
         <p className="text-sm text-[var(--muted)]">

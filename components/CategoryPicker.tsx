@@ -3,6 +3,7 @@
 import { useId, useMemo, useState } from "react";
 import { AddCategoryDialog } from "@/components/AddCategoryDialog";
 import { useCategories } from "@/components/CategoriesProvider";
+import { applyCategoryOrder } from "@/lib/category-order";
 import {
   PROTEIN_FILTERS,
   PROTEINS,
@@ -27,14 +28,14 @@ function PlusIcon({ size = 20 }: { size?: number }) {
   );
 }
 
-const chipClass = {
+export const chipClass = {
   filter:
     "shrink-0 rounded-full px-3.5 py-2 text-sm font-semibold outline-none transition-colors focus-visible:ring-2 focus-visible:ring-[var(--accent)]",
   form: "rounded-full px-3.5 py-2 text-sm font-semibold outline-none transition-colors focus-visible:ring-2 focus-visible:ring-[var(--accent)]",
   edit: "rounded-full px-3 py-1 text-xs font-semibold uppercase tracking-wide outline-none transition-colors focus-visible:ring-2 focus-visible:ring-[var(--accent)]",
 } as const;
 
-function uniqueIds(ids: string[]): Protein[] {
+export function uniqueCategoryIds(ids: string[]): Protein[] {
   const seen = new Set<string>();
   const out: Protein[] = [];
   for (const id of ids) {
@@ -43,6 +44,20 @@ function uniqueIds(ids: string[]): Protein[] {
     out.push(id);
   }
   return out;
+}
+
+export function orderedCategoryIds(
+  variant: keyof typeof chipClass,
+  customIds: string[],
+  extraIds: string[],
+  order: string[],
+): Protein[] {
+  const builtins =
+    variant === "filter" ? [...PROTEIN_FILTERS] : [...PROTEINS];
+  return applyCategoryOrder(
+    uniqueCategoryIds([...builtins, ...customIds, ...extraIds]),
+    order,
+  );
 }
 
 export function AddCategoryButton({
@@ -97,16 +112,17 @@ export function CategoryPicker({
   selectOnCreate?: boolean;
   showAdd?: boolean;
 }) {
-  const { categories, labelFor } = useCategories();
-  const ids = useMemo(() => {
-    const builtins =
-      variant === "filter" ? [...PROTEIN_FILTERS] : [...PROTEINS];
-    return uniqueIds([
-      ...builtins,
-      ...categories.map((c) => c.id),
-      ...extraIds,
-    ]);
-  }, [categories, extraIds, variant]);
+  const { categories, order, labelFor } = useCategories();
+  const ids = useMemo(
+    () =>
+      orderedCategoryIds(
+        variant,
+        categories.map((c) => c.id),
+        extraIds,
+        order,
+      ),
+    [categories, extraIds, order, variant],
+  );
 
   function onAdded(category: CustomCategory) {
     if (selectOnCreate) onSelect(category.id);

@@ -24,3 +24,8 @@ CREATE TABLE IF NOT EXISTS categories (
   label text NOT NULL,
   created_at timestamptz NOT NULL DEFAULT now()
 );
+
+CREATE TABLE IF NOT EXISTS app_settings (
+  key text PRIMARY KEY,
+  value jsonb NOT NULL
+);
