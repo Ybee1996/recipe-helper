@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import Script from "next/script";
 import { Fraunces, Nunito_Sans } from "next/font/google";
+import { NavigationProgress } from "@/components/NavigationProgress";
 import "./globals.css";
 
 // Password managers and Chrome autofill stamp nodes/attrs before hydration.
@@ -90,7 +91,7 @@ export default function RootLayout({
         <Script id="strip-extension-dom" strategy="beforeInteractive">
           {STRIP_EXTENSION_DOM}
         </Script>
-        {children}
+        <NavigationProgress>{children}</NavigationProgress>
       </body>
     </html>
   );

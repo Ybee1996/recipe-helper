@@ -2,9 +2,11 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
+import { BusyScreen } from "@/components/BusyScreen";
 import { ImportRecipePreview } from "@/components/ImportRecipePreview";
 import { splitPantry, type ListedIngredient } from "@/components/EditableIngredients";
 import { CategoryPicker } from "@/components/CategoryPicker";
+import { useNavigationProgress } from "@/components/NavigationProgress";
 import { compressImage } from "@/lib/compress-image";
 import { type Protein, type Recipe, type Step } from "@/lib/types";
 
@@ -13,8 +15,33 @@ type Mode = "url" | "photo" | "blank";
 const fieldClass =
   "w-full rounded-2xl border border-[var(--line)] bg-[var(--card)] px-4 py-3.5 text-base outline-none ring-[var(--accent)] placeholder:text-[var(--muted)] focus:ring-2";
 
+const URL_MESSAGES = [
+  "Fetching the recipe page…",
+  "Reading ingredients and steps…",
+  "Putting the recipe together…",
+  "Still working — this can take a moment…",
+];
+
+const PHOTO_MESSAGES = [
+  "Preparing your photo…",
+  "Reading the recipe card…",
+  "Extracting ingredients and steps…",
+  "Still working — this can take a moment…",
+];
+
+const SAVE_MESSAGES = [
+  "Saving to your box…",
+  "Adding your photo…",
+  "Opening the recipe…",
+];
+
+function isAbortError(err: unknown) {
+  return err instanceof DOMException && err.name === "AbortError";
+}
+
 export function AddRecipeForm() {
   const router = useRouter();
+  const { start: startNav } = useNavigationProgress();
   const [mode, setMode] = useState<Mode>("url");
   const [url, setUrl] = useState("");
   const [title, setTitle] = useState("");
@@ -25,6 +52,7 @@ export function AddRecipeForm() {
   const [photoFile, setPhotoFile] = useState<File | null>(null);
   const [photoPreview, setPhotoPreview] = useState<string | null>(null);
   const photoInputRef = useRef<HTMLInputElement>(null);
+  const abortRef = useRef<AbortController | null>(null);
   const [pending, setPending] = useState(false);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -40,16 +68,35 @@ export function AddRecipeForm() {
     return () => URL.revokeObjectURL(objectUrl);
   }, [photoFile]);
 
+  useEffect(() => {
+    return () => abortRef.current?.abort();
+  }, []);
+
+  function beginRequest() {
+    abortRef.current?.abort();
+    const controller = new AbortController();
+    abortRef.current = controller;
+    return controller;
+  }
+
+  function cancelPending() {
+    abortRef.current?.abort();
+    abortRef.current = null;
+    setPending(false);
+  }
+
   async function extractFromUrl(e: React.FormEvent) {
     e.preventDefault();
     if (pending) return;
     setError(null);
     setPending(true);
+    const controller = beginRequest();
     try {
       const res = await fetch("/api/recipes/from-url", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ url: url.trim() }),
+        signal: controller.signal,
       });
       const data = (await res.json()) as { recipe?: Recipe; error?: string };
       if (!res.ok) {
@@ -61,10 +108,14 @@ export function AddRecipeForm() {
         return;
       }
       setPreview(data.recipe);
-    } catch {
+    } catch (err) {
+      if (isAbortError(err)) return;
       setError("Could not extract recipe");
     } finally {
-      setPending(false);
+      if (abortRef.current === controller) {
+        abortRef.current = null;
+        setPending(false);
+      }
     }
   }
 
@@ -73,13 +124,16 @@ export function AddRecipeForm() {
     if (pending || !photoFile) return;
     setError(null);
     setPending(true);
+    const controller = beginRequest();
     try {
       const blob = await compressImage(photoFile, { maxEdge: 2048, quality: 0.9 });
+      if (controller.signal.aborted) return;
       const form = new FormData();
       form.append("file", new File([blob], "recipe.jpg", { type: "image/jpeg" }));
       const res = await fetch("/api/recipes/from-image", {
         method: "POST",
         body: form,
+        signal: controller.signal,
       });
       const data = (await res.json()) as { recipe?: Recipe; error?: string };
       if (!res.ok) {
@@ -91,10 +145,14 @@ export function AddRecipeForm() {
         return;
       }
       setPreview(data.recipe);
-    } catch {
+    } catch (err) {
+      if (isAbortError(err)) return;
       setError("Could not extract recipe");
     } finally {
-      setPending(false);
+      if (abortRef.current === controller) {
+        abortRef.current = null;
+        setPending(false);
+      }
     }
   }
 
@@ -118,17 +176,19 @@ export function AddRecipeForm() {
       const data = (await res.json()) as { id?: string; error?: string };
       if (!res.ok) {
         setError(data.error || "Could not save recipe");
+        setPending(false);
         return;
       }
       if (!data.id) {
         setError("Could not save recipe");
+        setPending(false);
         return;
       }
+      startNav();
       router.push(`/recipe/${data.id}`);
       router.refresh();
     } catch {
       setError("Could not save recipe");
-    } finally {
       setPending(false);
     }
   }
@@ -162,10 +222,12 @@ export function AddRecipeForm() {
       const data = (await res.json()) as { id?: string; error?: string };
       if (!res.ok) {
         setError(data.error || "Could not save recipe");
+        setSaving(false);
         return;
       }
       if (!data.id) {
         setError("Could not save recipe");
+        setSaving(false);
         return;
       }
       if (payload.photo?.cropBlob) {
@@ -191,28 +253,37 @@ export function AddRecipeForm() {
           // Recipe is saved; they can add a photo on the detail page.
         }
       }
+      startNav();
       router.push(`/recipe/${data.id}`);
       router.refresh();
     } catch {
       setError("Could not save recipe");
-    } finally {
       setSaving(false);
     }
   }
 
   if (preview) {
     return (
-      <ImportRecipePreview
-        recipe={preview}
-        saving={saving}
-        error={error}
-        onCancel={() => {
-          setPreview(null);
-          setError(null);
-        }}
-        onSave={savePreview}
-        onError={setError}
-      />
+      <>
+        <ImportRecipePreview
+          recipe={preview}
+          saving={saving}
+          error={error}
+          onCancel={() => {
+            setPreview(null);
+            setError(null);
+          }}
+          onSave={savePreview}
+          onError={setError}
+        />
+        {saving ? (
+          <BusyScreen
+            title="Saving recipe"
+            messages={SAVE_MESSAGES}
+            detail="Hang on while we add it to your box."
+          />
+        ) : null}
+      </>
     );
   }
 
@@ -250,6 +321,7 @@ export function AddRecipeForm() {
           <button
             key={id}
             type="button"
+            disabled={pending}
             onClick={() => {
               setMode(id);
               setError(null);
@@ -417,6 +489,19 @@ export function AddRecipeForm() {
                 : "Save recipe"}
         </button>
       </div>
+      {pending && mode !== "blank" ? (
+        <BusyScreen
+          title={mode === "url" ? "Importing recipe" : "Reading photo"}
+          messages={mode === "url" ? URL_MESSAGES : PHOTO_MESSAGES}
+          detail="This often takes 10–20 seconds."
+          onCancel={cancelPending}
+        />
+      ) : pending ? (
+        <BusyScreen
+          title="Saving recipe"
+          messages={["Saving to your box…", "Opening the recipe…"]}
+        />
+      ) : null}
     </form>
   );
 }

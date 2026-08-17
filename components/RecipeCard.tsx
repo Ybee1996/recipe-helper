@@ -1,13 +1,14 @@
 "use client";
 
 import Link from "next/link";
+import { CardLinkPending } from "@/components/LinkPending";
 import { RecipeCardActions } from "@/components/RecipeCardActions";
 import { formatCookTime } from "@/lib/format-time";
 import type { Recipe } from "@/lib/types";
 import { useCategories } from "@/components/CategoriesProvider";
 
 export function recipeCardClass(favourite: boolean, extra: string) {
-  return `rounded-2xl border bg-[var(--card)] active:scale-[0.99] lg:transition-colors ${
+  return `relative rounded-2xl border bg-[var(--card)] active:scale-[0.99] lg:transition-colors ${
     favourite
       ? "border-[var(--accent)] shadow-[0_0_0_1px_var(--accent)]"
       : "border-[var(--line)] lg:hover:border-[var(--accent)]"
@@ -69,6 +70,7 @@ export function RecipeCard({
           "flex h-full gap-3 p-4",
         )}
       >
+        <CardLinkPending />
         {thumbUrl ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img

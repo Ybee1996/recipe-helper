@@ -1,12 +1,36 @@
 "use client";
 
-import Link from "next/link";
+import { useState } from "react";
+import Link, { useLinkStatus } from "next/link";
 import { usePathname } from "next/navigation";
 import { ShoppingListTrigger } from "@/components/ShoppingListOverlay";
 import { NAV_TABS, isNavActive } from "@/lib/nav";
 
+function NavTabLabel({
+  label,
+  active,
+}: {
+  label: string;
+  active: boolean;
+}) {
+  const { pending } = useLinkStatus();
+  const on = active || pending;
+  return (
+    <span
+      className={`block rounded-xl px-3 py-2.5 ${
+        on
+          ? "bg-[var(--chip)] text-[var(--accent)]"
+          : "text-[var(--muted)] lg:hover:bg-[var(--chip)]/60 lg:hover:text-[var(--ink)]"
+      }`}
+    >
+      {label}
+    </span>
+  );
+}
+
 export function SideNav() {
   const pathname = usePathname();
+  const [signingOut, setSigningOut] = useState(false);
 
   return (
     <nav
@@ -29,13 +53,9 @@ export function SideNav() {
               <Link
                 href={tab.href}
                 aria-current={active ? "page" : undefined}
-                className={`block rounded-xl px-3 py-2.5 text-sm font-semibold tracking-wide outline-none transition-colors focus-visible:ring-2 focus-visible:ring-[var(--accent)] ${
-                  active
-                    ? "bg-[var(--chip)] text-[var(--accent)]"
-                    : "text-[var(--muted)] lg:hover:bg-[var(--chip)]/60 lg:hover:text-[var(--ink)]"
-                }`}
+                className="block rounded-xl text-sm font-semibold tracking-wide outline-none transition-colors focus-visible:ring-2 focus-visible:ring-[var(--accent)]"
               >
-                {tab.label}
+                <NavTabLabel label={tab.label} active={active} />
               </Link>
             </li>
           );
@@ -47,13 +67,19 @@ export function SideNav() {
 
       <button
         type="button"
+        disabled={signingOut}
         onClick={async () => {
-          await fetch("/api/auth/logout", { method: "POST" });
-          window.location.assign("/login");
+          if (signingOut) return;
+          setSigningOut(true);
+          try {
+            await fetch("/api/auth/logout", { method: "POST" });
+          } finally {
+            window.location.assign("/login");
+          }
         }}
-        className="mt-auto rounded-xl px-3 py-2.5 text-left text-sm font-semibold text-[var(--muted)] outline-none transition-colors focus-visible:ring-2 focus-visible:ring-[var(--accent)] lg:hover:bg-[var(--chip)]/60 lg:hover:text-[var(--ink)]"
+        className="mt-auto rounded-xl px-3 py-2.5 text-left text-sm font-semibold text-[var(--muted)] outline-none transition-colors focus-visible:ring-2 focus-visible:ring-[var(--accent)] disabled:opacity-60 lg:hover:bg-[var(--chip)]/60 lg:hover:text-[var(--ink)]"
       >
-        Sign out
+        {signingOut ? "Signing out…" : "Sign out"}
       </button>
     </nav>
   );

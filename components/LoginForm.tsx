@@ -2,11 +2,13 @@
 
 import { useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
+import { useNavigationProgress } from "@/components/NavigationProgress";
 import { safeReturnPath } from "@/lib/safe-return-path";
 
 export function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const { start: startNav } = useNavigationProgress();
   const [password, setPassword] = useState("");
   const [pending, setPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -25,13 +27,14 @@ export function LoginForm() {
       const data = (await res.json()) as { error?: string };
       if (!res.ok) {
         setError(data.error || "Could not sign in");
+        setPending(false);
         return;
       }
+      startNav();
       router.replace(safeReturnPath(searchParams.get("from")));
       router.refresh();
     } catch {
       setError("Could not sign in");
-    } finally {
       setPending(false);
     }
   }

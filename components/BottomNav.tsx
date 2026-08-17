@@ -1,9 +1,28 @@
 "use client";
 
-import Link from "next/link";
+import Link, { useLinkStatus } from "next/link";
 import { usePathname } from "next/navigation";
 import { ShoppingListTrigger } from "@/components/ShoppingListOverlay";
 import { NAV_TABS, isNavActive } from "@/lib/nav";
+
+function NavTabLabel({
+  label,
+  active,
+}: {
+  label: string;
+  active: boolean;
+}) {
+  const { pending } = useLinkStatus();
+  return (
+    <span
+      className={
+        active || pending ? "text-[var(--accent)]" : "text-[var(--muted)]"
+      }
+    >
+      {label}
+    </span>
+  );
+}
 
 export function BottomNav() {
   const pathname = usePathname();
@@ -17,11 +36,9 @@ export function BottomNav() {
             <Link
               key={tab.href}
               href={tab.href}
-              className={`flex flex-1 items-center justify-center py-3.5 text-sm font-semibold tracking-wide ${
-                active ? "text-[var(--accent)]" : "text-[var(--muted)]"
-              }`}
+              className="flex flex-1 items-center justify-center py-3.5 text-sm font-semibold tracking-wide"
             >
-              {tab.label}
+              <NavTabLabel label={tab.label} active={active} />
             </Link>
           );
         })}

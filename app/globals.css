@@ -26,6 +26,7 @@ body {
   min-height: 100%;
   background: var(--paper);
   color: var(--ink);
+  -webkit-tap-highlight-color: transparent;
 }
 
 body {
@@ -50,6 +51,18 @@ select {
 button:not(:disabled),
 [role="button"]:not(:disabled) {
   cursor: pointer;
+}
+
+button,
+a,
+[role="button"] {
+  touch-action: manipulation;
+}
+
+button:not(:disabled):active,
+a:active,
+[role="button"]:not(:disabled):active {
+  opacity: 0.62;
 }
 
 ::selection {
@@ -80,4 +93,42 @@ button:not(:disabled),
   top: 50%;
   transform: translate(-50%, -50%);
   animation: hold-pop 0.16s ease-out;
+}
+
+@keyframes nav-progress-run {
+  0% {
+    width: 8%;
+  }
+  40% {
+    width: 48%;
+  }
+  70% {
+    width: 72%;
+  }
+  100% {
+    width: 88%;
+  }
+}
+
+.nav-progress-run {
+  width: 88%;
+  animation: nav-progress-run 8s cubic-bezier(0.15, 0.6, 0.3, 1) both;
+}
+
+.nav-progress-done {
+  width: 100%;
+  transition: width 0.18s ease-out;
+}
+
+@keyframes busy-bar {
+  0% {
+    transform: translateX(-140%);
+  }
+  100% {
+    transform: translateX(420%);
+  }
+}
+
+.busy-bar {
+  animation: busy-bar 1.15s ease-in-out infinite;
 }

@@ -5,6 +5,7 @@ import {
   recipeCardClass,
   TimeRating,
 } from "@/components/RecipeCard";
+import { CardLinkPending } from "@/components/LinkPending";
 import { RecipeCardActions } from "@/components/RecipeCardActions";
 import { recipePhotoUrl } from "@/lib/recipe-photo";
 import type { Recipe } from "@/lib/types";
@@ -36,6 +37,7 @@ export function RecipeGalleryCard({
           "flex h-full w-full flex-col overflow-hidden",
         )}
       >
+        <CardLinkPending />
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src={photoUrl}

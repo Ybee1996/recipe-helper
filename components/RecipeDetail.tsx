@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import Link from "next/link";
+import Link, { useLinkStatus } from "next/link";
 import { useRouter } from "next/navigation";
 import {
   EditableIngredients,
@@ -26,6 +26,7 @@ import type { Protein, Recipe, Step } from "@/lib/types";
 import { ALLERGEN_LABELS } from "@/lib/types";
 import { CategoryPicker } from "@/components/CategoryPicker";
 import { useCategories } from "@/components/CategoriesProvider";
+import { Spinner } from "@/components/Spinner";
 
 function listedFrom(recipe: Recipe): ListedIngredient[] {
   return [
@@ -40,6 +41,16 @@ function cloneItems(items: ListedIngredient[]): ListedIngredient[] {
 
 function cloneSteps(steps: Step[]): Step[] {
   return steps.map((step) => ({ ...step }));
+}
+
+function BackToRecipesLabel() {
+  const { pending } = useLinkStatus();
+  return (
+    <span className="inline-flex items-center gap-1.5">
+      {pending ? <Spinner size={14} /> : null}
+      {pending ? "Recipes" : "← Recipes"}
+    </span>
+  );
 }
 
 function EditIcon() {
@@ -298,9 +309,9 @@ export function RecipeDetail({ recipe }: { recipe: Recipe }) {
       <div className="flex items-center justify-between gap-3">
         <Link
           href="/"
-          className="text-sm font-semibold text-[var(--accent)] lg:hover:underline"
+          className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--accent)] lg:hover:underline"
         >
-          ← Recipes
+          <BackToRecipesLabel />
         </Link>
         <div className={`flex items-center ${editing ? "gap-2" : "gap-1"}`}>
           <FavouriteButton
