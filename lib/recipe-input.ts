@@ -8,6 +8,53 @@ import type {
 } from "./types";
 import { slugId } from "./recipes";
 
+export const EXTRACT_TITLE_MAX = 30;
+
+export const EXTRACT_IMPORT_RULES =
+  `Keep the recipe title to ${EXTRACT_TITLE_MAX} characters or fewer; use a short dish name. ` +
+  "Omit salt and pepper from ingredients and pantry, including sea salt, kosher salt, table salt, " +
+  "black pepper, white pepper, ground pepper, peppercorns, and salt and pepper. " +
+  "Keep vegetables such as bell pepper or chilli.";
+
+function clipTitle(title: string, max = EXTRACT_TITLE_MAX): string {
+  const trimmed = title.trim();
+  if (trimmed.length <= max) return trimmed;
+  const sliced = trimmed.slice(0, max + 1);
+  const lastSpace = sliced.lastIndexOf(" ");
+  if (lastSpace >= 12) return sliced.slice(0, lastSpace).trimEnd();
+  return trimmed.slice(0, max).trimEnd();
+}
+
+function isSaltOrPepper(name: string): boolean {
+  let n = name
+    .toLowerCase()
+    .replace(/[^\p{L}\p{N}&+\s-]/gu, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+  n = n.replace(/^(a |freshly |cracked |ground |fine |coarse )+/g, "").trim();
+  n = n.replace(/ (to taste|flakes)$/g, "").trim();
+  if (
+    n === "salt" ||
+    n === "pepper" ||
+    n === "peppercorn" ||
+    n === "peppercorns"
+  ) {
+    return true;
+  }
+  if (
+    n === "salt and pepper" ||
+    n === "salt & pepper" ||
+    n === "pepper and salt" ||
+    n === "pinch of salt" ||
+    n === "pinch of pepper"
+  ) {
+    return true;
+  }
+  return /^(sea|kosher|table|flaky|rock|cooking|black|white) (salt|pepper|peppercorn|peppercorns)$/.test(
+    n,
+  );
+}
+
 function asString(value: unknown, fallback = ""): string {
   return typeof value === "string" ? value.trim() : fallback;
 }
@@ -119,24 +166,28 @@ export function parseStepLines(text: string): Step[] {
     });
 }
 
-export function recipeFromExtract(raw: Record<string, unknown>, sourceUrl: string): Recipe | null {
-  const title = asString(raw.title);
+export function recipeFromExtract(
+  raw: Record<string, unknown>,
+  sourceUrl?: string,
+): Recipe | null {
+  const title = clipTitle(asString(raw.title));
   if (!title) return null;
   const nutrition = asNutrition(raw.nutrition);
   const proteinG = nutrition?.protein_g ?? 0;
   const id = asString(raw.id) || slugId(title);
+  const url = asString(sourceUrl) || undefined;
   return {
     id: id.startsWith("web-") ? id : slugId(title),
     title,
     source: "web",
-    sourceUrl,
+    sourceUrl: url,
     protein: asProtein(raw.protein),
     cookTimeMin: asNumber(raw.cookTimeMin) ?? null,
     servings: asNumber(raw.servings) || 2,
     tags: asStringList(raw.tags),
     allergens: asAllergens(raw.allergens),
-    ingredients: asIngredients(raw.ingredients),
-    pantry: asIngredients(raw.pantry),
+    ingredients: asIngredients(raw.ingredients).filter((i) => !isSaltOrPepper(i.name)),
+    pantry: asIngredients(raw.pantry).filter((i) => !isSaltOrPepper(i.name)),
     tools: asStringList(raw.tools),
     steps: asSteps(raw.steps),
     nutrition,

@@ -14,7 +14,7 @@ npm install
 copy .env.example .env.local
 ```
 
-Set `DATABASE_URL` (required), `OPENAI_API_KEY` (URL import), `AUTH_SECRET`, and `SITE_PASSWORD`. Optionally set `SITE_PASSWORD_2` for a second household password.
+Set `DATABASE_URL` (required), `OPENAI_API_KEY` (URL and photo import), `AUTH_SECRET`, and `SITE_PASSWORD`. Optionally set `SITE_PASSWORD_2` for a second household password.
 
 3. Create the table and load existing JSON:
 
@@ -26,11 +26,11 @@ npm run dev
 
 Open the local URL on your phone (same Wi-Fi) or use the browser. Add to Home Screen from Safari/Chrome for an app-like feel.
 
-Search and handwritten recipes work without an API key. **Paste URL** needs `OPENAI_API_KEY`.
+Search and handwritten recipes work without an API key. **Paste URL** and **Photo** import need `OPENAI_API_KEY`.
 
 ## Add recipes
 
-Use the **Add** tab in the app: paste a recipe URL, or type title / ingredients / steps. After save, the detail page can still edit ingredients, steps, ratings, and notes.
+Use the **Add** tab in the app: paste a recipe URL, photograph a recipe card or book page, or type title / ingredients / steps. Photo import reads the recipe text only — add a dish photo on the review screen before you save. After save, the detail page can still edit ingredients, steps, ratings, and notes.
 
 ## Add more HelloFresh PDFs
 

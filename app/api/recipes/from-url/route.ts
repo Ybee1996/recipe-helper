@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import OpenAI from "openai";
-import { recipeFromExtract } from "@/lib/recipe-input";
+import { EXTRACT_IMPORT_RULES, recipeFromExtract } from "@/lib/recipe-input";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -80,7 +80,8 @@ export async function POST(req: Request) {
           "mustard,sulphites,sesame,celery,fish,crustacean), " +
           "ingredients[{name,qty2}], pantry[], tools[], steps[{n,title,text}], " +
           "nutrition{kcal,protein_g,fat_g,carbs_g} if present, highProtein (protein_g>=30). " +
-          "qty2 is the listed quantity. If servings aren't 2, still put the listed qty in qty2.",
+          "qty2 is the listed quantity. If servings aren't 2, still put the listed qty in qty2. " +
+          EXTRACT_IMPORT_RULES,
       },
       {
         role: "user",

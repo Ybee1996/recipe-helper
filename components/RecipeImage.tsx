@@ -61,17 +61,21 @@ export function RecipeImage({
   imageUrl,
   originalImageUrl = null,
   editing = false,
+  disabled = false,
   onChange,
+  onLocalPhoto,
   onError,
 }: {
-  recipeId: string;
+  recipeId?: string;
   imageUrl: string | null;
   originalImageUrl?: string | null;
   editing?: boolean;
+  disabled?: boolean;
   onChange: (next: {
     imageUrl: string | null;
     originalImageUrl: string | null;
   }) => void;
+  onLocalPhoto?: (photo: { cropBlob: Blob; originalBlob: Blob } | null) => void;
   onError: (message: string | null) => void;
 }) {
   const inputRef = useRef<HTMLInputElement>(null);
@@ -106,8 +110,10 @@ export function RecipeImage({
     };
   }, [crop?.previewUrl]);
 
+  const blocked = busy || disabled;
+
   function openPicker() {
-    if (busy) return;
+    if (blocked) return;
     setMenuOpen(false);
     setConfirmDelete(false);
     inputRef.current?.click();
@@ -115,7 +121,7 @@ export function RecipeImage({
 
   function toggleMenu(e: React.MouseEvent) {
     e.stopPropagation();
-    if (busy) return;
+    if (blocked) return;
     setConfirmDelete(false);
     setMenuOpen((open) => !open);
   }
@@ -131,7 +137,7 @@ export function RecipeImage({
   }
 
   async function onPick(file: File | undefined) {
-    if (!file) return;
+    if (!file || blocked) return;
     setConfirmDelete(false);
     setMenuOpen(false);
     setBusy(true);
@@ -150,13 +156,19 @@ export function RecipeImage({
 
   async function cropExisting() {
     const sourceUrl = originalImageUrl || imageUrl;
-    if (!sourceUrl || busy) return;
+    if (!sourceUrl || blocked) return;
     setConfirmDelete(false);
     setMenuOpen(false);
     setBusy(true);
     onError(null);
     try {
-      await beginCrop(await loadImageFromUrl(sourceUrl), null);
+      const source = await loadImageFromUrl(sourceUrl);
+      let originalBlob: Blob | null = null;
+      if (!recipeId) {
+        const res = await fetch(sourceUrl);
+        if (res.ok) originalBlob = await res.blob();
+      }
+      await beginCrop(source, originalBlob);
     } catch (err) {
       onError(err instanceof Error ? err.message : "Could not open photo");
     } finally {
@@ -171,6 +183,25 @@ export function RecipeImage({
     setBusy(true);
     onError(null);
     try {
+      const originalBlob = cropRef.current?.originalBlob ?? blob;
+      if (!recipeId) {
+        const nextImageUrl = URL.createObjectURL(blob);
+        const nextOriginalUrl =
+          originalBlob === blob
+            ? nextImageUrl
+            : URL.createObjectURL(originalBlob);
+        setCrop((prev) => {
+          if (prev?.previewUrl) URL.revokeObjectURL(prev.previewUrl);
+          return null;
+        });
+        onChange({
+          imageUrl: nextImageUrl,
+          originalImageUrl: nextOriginalUrl,
+        });
+        onLocalPhoto?.({ cropBlob: blob, originalBlob });
+        return;
+      }
+
       const form = new FormData();
       form.append("file", new File([blob], "photo.jpg", { type: "image/jpeg" }));
       if (cropRef.current?.originalBlob) {
@@ -215,9 +246,17 @@ export function RecipeImage({
   }
 
   async function remove() {
+    if (blocked) return;
     setBusy(true);
     onError(null);
     try {
+      if (!recipeId) {
+        onChange({ imageUrl: null, originalImageUrl: null });
+        onLocalPhoto?.(null);
+        setConfirmDelete(false);
+        setMenuOpen(false);
+        return;
+      }
       const res = await fetch(`/api/recipes/${recipeId}/image`, {
         method: "DELETE",
       });
@@ -266,7 +305,7 @@ export function RecipeImage({
               <div className="absolute right-2.5 top-2.5 z-10">
                 <button
                   type="button"
-                  disabled={busy}
+                  disabled={blocked}
                   onClick={toggleMenu}
                   aria-label="Edit photo"
                   title="Edit photo"
@@ -281,7 +320,7 @@ export function RecipeImage({
       ) : editing ? (
         <button
           type="button"
-          disabled={busy}
+          disabled={blocked}
           onClick={openPicker}
           className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-2xl border border-dashed border-[var(--line)] bg-[var(--card)] px-4 py-6 text-sm font-semibold text-[var(--muted)] disabled:opacity-50"
         >
@@ -312,7 +351,7 @@ export function RecipeImage({
                 <button
                   type="button"
                   role="menuitem"
-                  disabled={busy}
+                  disabled={blocked}
                   onClick={() => void cropExisting()}
                   className="block min-h-12 w-full rounded-xl px-3 py-3 text-left text-[var(--ink)] disabled:opacity-50"
                 >
@@ -321,7 +360,7 @@ export function RecipeImage({
                 <button
                   type="button"
                   role="menuitem"
-                  disabled={busy}
+                  disabled={blocked}
                   onClick={openPicker}
                   className="block min-h-12 w-full rounded-xl px-3 py-3 text-left text-[var(--ink)] disabled:opacity-50"
                 >
@@ -332,7 +371,7 @@ export function RecipeImage({
                     <button
                       type="button"
                       role="menuitem"
-                      disabled={busy}
+                      disabled={blocked}
                       onClick={() => void remove()}
                       className="block min-h-12 w-full rounded-xl px-3 py-3 text-left text-[var(--accent)] disabled:opacity-50"
                     >
@@ -351,7 +390,7 @@ export function RecipeImage({
                   <button
                     type="button"
                     role="menuitem"
-                    disabled={busy}
+                    disabled={blocked}
                     onClick={() => setConfirmDelete(true)}
                     className="block min-h-12 w-full rounded-xl px-3 py-3 text-left text-[var(--muted)] disabled:opacity-50"
                   >

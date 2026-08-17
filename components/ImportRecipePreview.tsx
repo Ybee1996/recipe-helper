@@ -1,14 +1,16 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   EditableIngredients,
   splitPantry,
   type ListedIngredient,
 } from "@/components/EditableIngredients";
 import { EditableSteps } from "@/components/EditableSteps";
+import { RecipeImage } from "@/components/RecipeImage";
 import { SourceRecipeLink } from "@/components/SourceRecipeLink";
 import { formatCookTime } from "@/lib/format-time";
+import { EXTRACT_TITLE_MAX } from "@/lib/recipe-input";
 import { ALLERGEN_LABELS, proteinLabel, type Recipe, type Step } from "@/lib/types";
 
 const fieldClass =
@@ -27,6 +29,7 @@ export function ImportRecipePreview({
   error,
   onCancel,
   onSave,
+  onError,
 }: {
   recipe: Recipe;
   saving: boolean;
@@ -37,13 +40,38 @@ export function ImportRecipePreview({
     items: ListedIngredient[];
     steps: Step[];
     servings: number;
+    photo?: { cropBlob: Blob; originalBlob: Blob } | null;
   }) => void;
+  onError: (message: string | null) => void;
 }) {
   const baseServings = recipe.servings || 2;
   const [title, setTitle] = useState(recipe.title);
   const [servings, setServings] = useState(baseServings);
   const [items, setItems] = useState<ListedIngredient[]>(() => listedFrom(recipe));
   const [steps, setSteps] = useState<Step[]>(recipe.steps);
+  const [imageUrl, setImageUrl] = useState<string | null>(null);
+  const [originalImageUrl, setOriginalImageUrl] = useState<string | null>(null);
+  const [photo, setPhoto] = useState<{
+    cropBlob: Blob;
+    originalBlob: Blob;
+  } | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (imageUrl) URL.revokeObjectURL(imageUrl);
+      if (originalImageUrl && originalImageUrl !== imageUrl) {
+        URL.revokeObjectURL(originalImageUrl);
+      }
+    };
+  }, [imageUrl, originalImageUrl]);
+
+  function handleImageChange(next: {
+    imageUrl: string | null;
+    originalImageUrl: string | null;
+  }) {
+    setImageUrl(next.imageUrl);
+    setOriginalImageUrl(next.originalImageUrl);
+  }
 
   return (
     <div className="px-4 pt-5 pb-8 lg:mx-auto lg:max-w-3xl lg:px-10 lg:pt-10">
@@ -68,7 +96,8 @@ export function ImportRecipePreview({
           <input
             type="text"
             value={title}
-            onChange={(e) => setTitle(e.target.value)}
+            onChange={(e) => setTitle(e.target.value.slice(0, EXTRACT_TITLE_MAX))}
+            maxLength={EXTRACT_TITLE_MAX}
             required
             className={fieldClass}
           />
@@ -97,6 +126,16 @@ export function ImportRecipePreview({
           Contains {recipe.allergens.map((a) => ALLERGEN_LABELS[a]).join(", ")}
         </p>
       )}
+
+      <RecipeImage
+        imageUrl={imageUrl}
+        originalImageUrl={originalImageUrl}
+        editing
+        disabled={saving}
+        onChange={handleImageChange}
+        onLocalPhoto={setPhoto}
+        onError={onError}
+      />
 
       <EditableIngredients
         items={items}
@@ -143,6 +182,7 @@ export function ImportRecipePreview({
               ],
               steps,
               servings,
+              photo,
             });
           }}
           className="flex-1 rounded-2xl bg-[var(--accent)] px-4 py-3.5 text-base font-semibold text-white disabled:opacity-60 lg:flex-none lg:px-8 lg:transition-colors lg:hover:bg-[var(--accent-dark)]"

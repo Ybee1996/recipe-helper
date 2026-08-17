@@ -222,10 +222,11 @@ function drawNormalized(
   srcW: number,
   srcH: number,
   orientation: number,
+  maxEdge = MAX_EDGE,
 ) {
   const outW = orientation >= 5 && orientation <= 8 ? srcH : srcW;
   const outH = orientation >= 5 && orientation <= 8 ? srcW : srcH;
-  const scale = Math.min(1, MAX_EDGE / Math.max(outW, outH));
+  const scale = Math.min(1, maxEdge / Math.max(outW, outH));
   const w = Math.max(1, Math.round(srcW * scale));
   const h = Math.max(1, Math.round(srcH * scale));
 
@@ -262,15 +263,21 @@ function drawNormalized(
   ctx.drawImage(source, 0, 0, w, h);
 }
 
-export async function canvasToJpeg(canvas: HTMLCanvasElement): Promise<Blob> {
+export async function canvasToJpeg(
+  canvas: HTMLCanvasElement,
+  quality = JPEG_QUALITY,
+): Promise<Blob> {
   const out = await new Promise<Blob | null>((resolve) =>
-    canvas.toBlob(resolve, "image/jpeg", JPEG_QUALITY),
+    canvas.toBlob(resolve, "image/jpeg", quality),
   );
   if (!out) throw new Error("Could not compress photo");
   return out;
 }
 
-export async function loadOrientedImage(file: File): Promise<HTMLCanvasElement> {
+export async function loadOrientedImage(
+  file: File,
+  maxEdge = MAX_EDGE,
+): Promise<HTMLCanvasElement> {
   const meta = readJpegMeta(await file.arrayBuffer());
   const { decoded, orientation } = await decodeImage(file, meta);
 
@@ -284,6 +291,7 @@ export async function loadOrientedImage(file: File): Promise<HTMLCanvasElement> 
       decoded.width,
       decoded.height,
       orientation,
+      maxEdge,
     );
     return canvas;
   } finally {
@@ -320,6 +328,12 @@ export async function cropToJpeg(
   return canvasToJpeg(canvas);
 }
 
-export async function compressImage(file: File): Promise<Blob> {
-  return canvasToJpeg(await loadOrientedImage(file));
+export async function compressImage(
+  file: File,
+  options?: { maxEdge?: number; quality?: number },
+): Promise<Blob> {
+  return canvasToJpeg(
+    await loadOrientedImage(file, options?.maxEdge),
+    options?.quality,
+  );
 }
