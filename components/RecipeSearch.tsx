@@ -3,9 +3,19 @@
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { RecipeCard } from "@/components/RecipeCard";
+import { RecipeGalleryCard } from "@/components/RecipeGalleryCard";
+import { recipePhotoUrl } from "@/lib/recipe-photo";
 import { searchRecipes } from "@/lib/search";
 import type { Allergen, Protein, Recipe } from "@/lib/types";
 import { ALLERGEN_LABELS, ALLERGENS, PROTEIN_LABELS } from "@/lib/types";
+
+type ViewMode = "list" | "gallery";
+
+const VIEW_STORAGE_KEY = "recipe-box-view-mode";
+
+function isViewMode(value: string | null): value is ViewMode {
+  return value === "list" || value === "gallery";
+}
 
 const PROTEIN_CHIPS: Protein[] = [
   "chicken",
@@ -46,6 +56,7 @@ export function RecipeSearch({ recipes }: { recipes: Recipe[] }) {
   const [avoidAllergens, setAvoidAllergens] = useState<Allergen[]>([]);
   const [allergyOpen, setAllergyOpen] = useState(false);
   const [archivedIds, setArchivedIds] = useState<string[]>([]);
+  const [viewMode, setViewMode] = useState<ViewMode>("list");
 
   const results = useMemo(
     () =>
@@ -57,6 +68,22 @@ export function RecipeSearch({ recipes }: { recipes: Recipe[] }) {
       }).filter((recipe) => !archivedIds.includes(recipe.id)),
     [recipes, query, proteins, avoidAllergens, archivedIds],
   );
+
+  const galleryResults = useMemo(
+    () => results.filter((recipe) => recipePhotoUrl(recipe)),
+    [results],
+  );
+  const shown = viewMode === "gallery" ? galleryResults : results;
+
+  useEffect(() => {
+    const stored = localStorage.getItem(VIEW_STORAGE_KEY);
+    if (isViewMode(stored)) setViewMode(stored);
+  }, []);
+
+  function chooseView(mode: ViewMode) {
+    setViewMode(mode);
+    localStorage.setItem(VIEW_STORAGE_KEY, mode);
+  }
 
   useEffect(() => {
     if (!allergyOpen) return;
@@ -198,21 +225,58 @@ export function RecipeSearch({ recipes }: { recipes: Recipe[] }) {
         })}
       </div>
 
-      <p className="mt-4 text-sm text-[var(--muted)]">
-        {results.length} recipe{results.length === 1 ? "" : "s"}
-      </p>
+      <div className="mt-4 flex items-center justify-between gap-3">
+        <p className="text-sm text-[var(--muted)]">
+          {viewMode === "gallery"
+            ? `${shown.length} recipe${shown.length === 1 ? "" : "s"} with photos`
+            : `${shown.length} recipe${shown.length === 1 ? "" : "s"}`}
+        </p>
+        <div
+          className="flex shrink-0 rounded-full bg-[var(--chip)] p-0.5"
+          role="group"
+          aria-label="Recipe view"
+        >
+          {(["list", "gallery"] as const).map((mode) => (
+            <button
+              key={mode}
+              type="button"
+              aria-pressed={viewMode === mode}
+              onClick={() => chooseView(mode)}
+              className={`rounded-full px-3 py-1.5 text-sm font-semibold outline-none transition-colors focus-visible:ring-2 focus-visible:ring-[var(--accent)] ${
+                viewMode === mode
+                  ? "bg-[var(--ink)] text-[var(--paper)]"
+                  : "text-[var(--muted)] lg:hover:text-[var(--ink)]"
+              }`}
+            >
+              {mode === "list" ? "List" : "Gallery"}
+            </button>
+          ))}
+        </div>
+      </div>
 
-      <ul className="mt-3 space-y-3 lg:grid lg:grid-cols-2 lg:items-stretch lg:gap-4 lg:space-y-0 xl:grid-cols-3">
-        {results.map((recipe) => (
+      <ul
+        className={
+          viewMode === "gallery"
+            ? "mt-3 grid grid-cols-1 gap-4 lg:grid-cols-2 xl:grid-cols-3"
+            : "mt-3 space-y-3 lg:grid lg:grid-cols-2 lg:items-stretch lg:gap-4 lg:space-y-0 xl:grid-cols-3"
+        }
+      >
+        {shown.map((recipe) => (
           <li key={recipe.id} className="h-full lg:flex">
-            <RecipeCard recipe={recipe} onArchived={onArchived} />
+            {viewMode === "gallery" ? (
+              <RecipeGalleryCard recipe={recipe} />
+            ) : (
+              <RecipeCard recipe={recipe} onArchived={onArchived} />
+            )}
           </li>
         ))}
       </ul>
 
-      {results.length === 0 && (
+      {shown.length === 0 && (
         <p className="mt-10 text-center text-[var(--muted)]">
-          Nothing matches. Try a different ingredient or clear a filter.
+          {viewMode === "gallery"
+            ? "No photos in these results. Switch to List, or add photos on a recipe."
+            : "Nothing matches. Try a different ingredient or clear a filter."}
         </p>
       )}
     </div>
