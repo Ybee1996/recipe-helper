@@ -1,6 +1,6 @@
 # Recipe Box
 
-Personal phone-first recipe search and chat over your HelloFresh cards (and later, web recipes).
+Personal phone-first recipe search over your HelloFresh cards (and later, web recipes).
 
 Recipes, ratings, notes, and edits live in **Neon Postgres** so they persist on Vercel.
 
@@ -14,7 +14,7 @@ npm install
 copy .env.example .env.local
 ```
 
-Set `DATABASE_URL` (required), `OPENAI_API_KEY` (chat + URL import), `AUTH_SECRET`, and `SITE_PASSWORD`. Optionally set `SITE_PASSWORD_2` for a second household password.
+Set `DATABASE_URL` (required), `OPENAI_API_KEY` (URL import), `AUTH_SECRET`, and `SITE_PASSWORD`. Optionally set `SITE_PASSWORD_2` for a second household password.
 
 3. Create the table and load existing JSON:
 
@@ -26,7 +26,7 @@ npm run dev
 
 Open the local URL on your phone (same Wi-Fi) or use the browser. Add to Home Screen from Safari/Chrome for an app-like feel.
 
-Search and handwritten recipes work without an API key. Chat and **Paste URL** need `OPENAI_API_KEY`.
+Search and handwritten recipes work without an API key. **Paste URL** needs `OPENAI_API_KEY`.
 
 ## Add recipes
 
