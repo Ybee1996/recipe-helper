@@ -4,10 +4,12 @@ import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { RecipeCard } from "@/components/RecipeCard";
 import { RecipeGalleryCard } from "@/components/RecipeGalleryCard";
+import { StarIcon } from "@/components/FavouriteButton";
+import { CategoryPicker, AddCategoryButton } from "@/components/CategoryPicker";
 import { recipePhotoUrl } from "@/lib/recipe-photo";
 import { searchRecipes } from "@/lib/search";
 import type { Allergen, Protein, Recipe } from "@/lib/types";
-import { ALLERGEN_LABELS, ALLERGENS, PROTEIN_LABELS } from "@/lib/types";
+import { ALLERGEN_LABELS, ALLERGENS } from "@/lib/types";
 
 type ViewMode = "list" | "gallery";
 
@@ -16,15 +18,6 @@ const VIEW_STORAGE_KEY = "recipe-box-view-mode";
 function isViewMode(value: string | null): value is ViewMode {
   return value === "list" || value === "gallery";
 }
-
-const PROTEIN_CHIPS: Protein[] = [
-  "chicken",
-  "beef",
-  "pork",
-  "fish",
-  "veggie",
-  "dessert",
-];
 
 function toggle<T>(list: T[], value: T): T[] {
   return list.includes(value)
@@ -57,16 +50,46 @@ export function RecipeSearch({ recipes }: { recipes: Recipe[] }) {
   const [allergyOpen, setAllergyOpen] = useState(false);
   const [archivedIds, setArchivedIds] = useState<string[]>([]);
   const [viewMode, setViewMode] = useState<ViewMode>("list");
+  const [favouritesOnly, setFavouritesOnly] = useState(false);
+  const [favouriteById, setFavouriteById] = useState<Record<string, boolean>>(
+    {},
+  );
+
+  const recipesWithFavourites = useMemo(
+    () =>
+      recipes.map((recipe) => ({
+        ...recipe,
+        favourite: favouriteById[recipe.id] ?? recipe.favourite,
+      })),
+    [recipes, favouriteById],
+  );
+
+  const extraCategoryIds = useMemo(
+    () =>
+      recipes
+        .map((recipe) => recipe.protein)
+        .filter((id) => id !== "other"),
+    [recipes],
+  );
 
   const results = useMemo(
     () =>
-      searchRecipes(recipes, {
+      searchRecipes(recipesWithFavourites, {
         query,
         proteins,
         dietary: [],
         avoidAllergens,
-      }).filter((recipe) => !archivedIds.includes(recipe.id)),
-    [recipes, query, proteins, avoidAllergens, archivedIds],
+      })
+        .filter((recipe) => !archivedIds.includes(recipe.id))
+        .filter((recipe) => !favouritesOnly || recipe.favourite),
+    [
+      recipesWithFavourites,
+      query,
+      proteins,
+      avoidAllergens,
+      archivedIds,
+      favouritesOnly,
+    ],
   );
 
   const galleryResults = useMemo(
@@ -97,6 +120,10 @@ export function RecipeSearch({ recipes }: { recipes: Recipe[] }) {
   function onArchived(id: string) {
     setArchivedIds((ids) => (ids.includes(id) ? ids : [...ids, id]));
     router.refresh();
+  }
+
+  function onFavouriteChange(id: string, favourite: boolean) {
+    setFavouriteById((current) => ({ ...current, [id]: favourite }));
   }
 
   const allergyOn = avoidAllergens.length > 0;
@@ -205,27 +232,31 @@ export function RecipeSearch({ recipes }: { recipes: Recipe[] }) {
         </div>
       )}
 
-      <div className="no-scrollbar -mx-4 mt-3 flex gap-2 overflow-x-auto px-4 pb-1 lg:mx-0 lg:flex-wrap lg:overflow-visible lg:px-0">
-        {PROTEIN_CHIPS.map((protein) => {
-          const on = proteins.includes(protein);
-          return (
-            <button
-              key={protein}
-              type="button"
-              aria-pressed={on}
-              onClick={() =>
-                setProteins(on ? [] : [protein])
-              }
-              className={`shrink-0 rounded-full px-3.5 py-2 text-sm font-semibold outline-none transition-colors focus-visible:ring-2 focus-visible:ring-[var(--accent)] ${
-                on
-                  ? "bg-[var(--ink)] text-[var(--paper)]"
-                  : "bg-[var(--chip)] text-[var(--ink)] lg:hover:bg-[var(--line)]"
-              }`}
-            >
-              {PROTEIN_LABELS[protein]}
-            </button>
-          );
-        })}
+      <div className="mt-3 flex items-start gap-2">
+        <div className="no-scrollbar flex min-w-0 flex-1 gap-2 overflow-x-auto pb-1 lg:flex-wrap lg:overflow-visible">
+          <button
+            type="button"
+            aria-label="Favourites"
+            title="Favourites"
+            aria-pressed={favouritesOnly}
+            onClick={() => setFavouritesOnly((on) => !on)}
+            className={`inline-flex h-[2.375rem] w-[2.375rem] shrink-0 items-center justify-center rounded-full outline-none transition-colors focus-visible:ring-2 focus-visible:ring-[var(--accent)] ${
+              favouritesOnly
+                ? "bg-[var(--accent)] text-white"
+                : "bg-[var(--chip)] text-[var(--ink)] lg:hover:bg-[var(--line)]"
+            }`}
+          >
+            <StarIcon filled={favouritesOnly} size={16} />
+          </button>
+          <CategoryPicker
+            selected={proteins[0] ?? null}
+            onSelect={(id) => setProteins(id ? [id] : [])}
+            variant="filter"
+            extraIds={extraCategoryIds}
+            showAdd={false}
+          />
+        </div>
+        <AddCategoryButton onAdded={(category) => setProteins([category.id])} />
       </div>
 
       <div className="mt-4 flex items-center justify-between gap-3">
@@ -267,9 +298,17 @@ export function RecipeSearch({ recipes }: { recipes: Recipe[] }) {
         {shown.map((recipe) => (
           <li key={recipe.id} className="h-full lg:flex">
             {viewMode === "gallery" ? (
-              <RecipeGalleryCard recipe={recipe} />
+              <RecipeGalleryCard
+                recipe={recipe}
+                onArchived={onArchived}
+                onFavouriteChange={onFavouriteChange}
+              />
             ) : (
-              <RecipeCard recipe={recipe} onArchived={onArchived} />
+              <RecipeCard
+                recipe={recipe}
+                onArchived={onArchived}
+                onFavouriteChange={onFavouriteChange}
+              />
             )}
           </li>
         ))}
@@ -277,9 +316,16 @@ export function RecipeSearch({ recipes }: { recipes: Recipe[] }) {
 
       {shown.length === 0 && (
         <p className="mt-10 text-center text-[var(--muted)]">
-          {viewMode === "gallery"
-            ? "No photos in these results. Switch to List, or add photos on a recipe."
-            : "Nothing matches. Try a different ingredient or clear a filter."}
+          {favouritesOnly &&
+          !query &&
+          proteins.length === 0 &&
+          !allergyOn
+            ? viewMode === "gallery"
+              ? "No favourites with photos. Switch to List, or add photos on a recipe."
+              : "No favourites yet. Hold a recipe card and tap the star."
+            : viewMode === "gallery"
+              ? "No photos in these results. Switch to List, or add photos on a recipe."
+              : "Nothing matches. Try a different ingredient or clear a filter."}
         </p>
       )}
     </div>

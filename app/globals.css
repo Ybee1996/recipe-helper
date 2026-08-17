@@ -63,3 +63,21 @@ button:not(:disabled),
   -ms-overflow-style: none;
   scrollbar-width: none;
 }
+
+@keyframes hold-pop {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.82);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
+
+.hold-pop {
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  animation: hold-pop 0.16s ease-out;
+}

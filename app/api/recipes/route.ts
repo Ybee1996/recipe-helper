@@ -1,7 +1,8 @@
 import { NextResponse } from "next/server";
+import { isKnownProtein } from "@/lib/categories";
 import { insertRecipe } from "@/lib/recipes";
 import { recipeFromClient, recipeFromManual } from "@/lib/recipe-input";
-import { PROTEINS, type Protein } from "@/lib/types";
+import { isProtein, type Protein } from "@/lib/types";
 
 export const dynamic = "force-dynamic";
 
@@ -41,8 +42,8 @@ export async function POST(req: Request) {
   }
 
   const protein = body.protein;
-  if (!protein || !(PROTEINS as readonly string[]).includes(protein)) {
-    return NextResponse.json({ error: "Pick a protein" }, { status: 400 });
+  if (!isProtein(protein) || !(await isKnownProtein(protein))) {
+    return NextResponse.json({ error: "Pick a category" }, { status: 400 });
   }
 
   let cookTimeMin: number | null | undefined = body.cookTimeMin;

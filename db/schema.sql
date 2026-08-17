@@ -18,3 +18,9 @@ CREATE TABLE IF NOT EXISTS shopping_items (
   checked boolean NOT NULL DEFAULT false,
   created_at timestamptz NOT NULL DEFAULT now()
 );
+
+CREATE TABLE IF NOT EXISTS categories (
+  id text PRIMARY KEY,
+  label text NOT NULL,
+  created_at timestamptz NOT NULL DEFAULT now()
+);

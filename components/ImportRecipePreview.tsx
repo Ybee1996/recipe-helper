@@ -9,7 +9,7 @@ import {
 import { EditableSteps } from "@/components/EditableSteps";
 import { SourceRecipeLink } from "@/components/SourceRecipeLink";
 import { formatCookTime } from "@/lib/format-time";
-import { ALLERGEN_LABELS, PROTEIN_LABELS, type Recipe, type Step } from "@/lib/types";
+import { ALLERGEN_LABELS, proteinLabel, type Recipe, type Step } from "@/lib/types";
 
 const fieldClass =
   "w-full rounded-2xl border border-[var(--line)] bg-[var(--card)] px-4 py-3.5 text-base outline-none ring-[var(--accent)] placeholder:text-[var(--muted)] focus:ring-2";
@@ -78,7 +78,7 @@ export function ImportRecipePreview({
 
       <div className="mt-3 flex flex-wrap gap-2">
         <span className="rounded-full bg-[var(--chip)] px-3 py-1 text-xs font-semibold uppercase tracking-wide">
-          {PROTEIN_LABELS[recipe.protein]}
+          {proteinLabel(recipe.protein)}
         </span>
         {formatCookTime(recipe.cookTimeMin) && (
           <span className="rounded-full bg-[var(--chip)] px-3 py-1 text-xs font-semibold">

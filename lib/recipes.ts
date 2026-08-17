@@ -1,7 +1,9 @@
-import type { Protein, Recipe, RecipeSource, UserRecipeOverlay } from "./types";
-import { PROTEINS } from "./types";
+import type { Recipe, RecipeSource, UserRecipeOverlay } from "./types";
+import { isProtein } from "./types";
 import { getSql } from "./db";
 import { parseOverlay } from "./user-store";
+
+export { isProtein } from "./types";
 
 export type RecipeRow = {
   id: string;
@@ -18,10 +20,6 @@ export function isRecipe(value: unknown): value is Recipe {
   return typeof r.id === "string" && typeof r.title === "string";
 }
 
-export function isProtein(value: unknown): value is Protein {
-  return typeof value === "string" && (PROTEINS as readonly string[]).includes(value);
-}
-
 export function slugId(text: string, prefix = "web"): string {
   const slug =
     text
@@ -34,19 +32,20 @@ export function slugId(text: string, prefix = "web"): string {
 
 export function toStoredData(
   recipe: Recipe,
-): Omit<Recipe, "rating" | "note" | "imageUrl" | "originalImageUrl"> {
+): Omit<Recipe, "rating" | "note" | "imageUrl" | "originalImageUrl" | "favourite"> {
   const {
     rating: _rating,
     note: _note,
     imageUrl: _imageUrl,
     originalImageUrl: _originalImageUrl,
+    favourite: _favourite,
     ...data
   } = recipe;
   return data;
 }
 
 export function applyOverlay(recipe: Recipe, overlay?: UserRecipeOverlay): Recipe {
-  if (!overlay) return recipe;
+  if (!overlay) return { ...recipe, favourite: false };
   return {
     ...recipe,
     title: overlay.title ?? recipe.title,
@@ -54,6 +53,7 @@ export function applyOverlay(recipe: Recipe, overlay?: UserRecipeOverlay): Recip
     note: overlay.note ?? null,
     imageUrl: overlay.imageUrl ?? null,
     originalImageUrl: overlay.originalImageUrl ?? null,
+    favourite: overlay.favourite === true,
     protein: overlay.protein ?? recipe.protein,
     cookTimeMin:
       overlay.cookTimeMin !== undefined ? overlay.cookTimeMin : recipe.cookTimeMin,
@@ -72,7 +72,11 @@ function rowToRecipe(row: RecipeRow): Recipe | null {
     ...data,
     id: row.id,
     title: row.title,
-    protein: isProtein(row.protein) ? row.protein : data.protein,
+    protein: isProtein(row.protein)
+      ? row.protein
+      : isProtein(data.protein)
+        ? data.protein
+        : "other",
     source,
     highProtein: data.highProtein || (data.nutrition?.protein_g ?? 0) >= 30,
     ingredients: data.ingredients ?? [],

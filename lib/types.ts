@@ -7,7 +7,23 @@ export const PROTEINS = [
   "dessert",
   "other",
 ] as const;
-export type Protein = (typeof PROTEINS)[number];
+export type BuiltinProtein = (typeof PROTEINS)[number];
+/** Built-in category or a user-created slug. */
+export type Protein = BuiltinProtein | (string & {});
+
+export const PROTEIN_FILTERS: BuiltinProtein[] = [
+  "chicken",
+  "beef",
+  "pork",
+  "fish",
+  "veggie",
+  "dessert",
+];
+
+export interface CustomCategory {
+  id: string;
+  label: string;
+}
 
 export const ALLERGENS = [
   "gluten",
@@ -81,6 +97,7 @@ export interface Recipe {
   note?: string | null;
   imageUrl?: string | null;
   originalImageUrl?: string | null;
+  favourite?: boolean;
 }
 
 /** Personal edits stored separately so PDF ingest never overwrites them. */
@@ -90,6 +107,7 @@ export interface UserRecipeOverlay {
   note?: string | null;
   imageUrl?: string | null;
   originalImageUrl?: string | null;
+  favourite?: boolean;
   protein?: Protein;
   cookTimeMin?: number | null;
   servings?: number;
@@ -121,7 +139,7 @@ export const ALLERGEN_LABELS: Record<Allergen, string> = {
   crustacean: "Crustacean",
 };
 
-export const PROTEIN_LABELS: Record<Protein, string> = {
+export const PROTEIN_LABELS: Record<BuiltinProtein, string> = {
   chicken: "Chicken",
   beef: "Beef",
   pork: "Pork",
@@ -130,3 +148,34 @@ export const PROTEIN_LABELS: Record<Protein, string> = {
   dessert: "Dessert",
   other: "Other",
 };
+
+export function isBuiltinProtein(value: unknown): value is BuiltinProtein {
+  return (
+    typeof value === "string" &&
+    (PROTEINS as readonly string[]).includes(value)
+  );
+}
+
+export function isProtein(value: unknown): value is Protein {
+  return (
+    typeof value === "string" &&
+    /^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(value) &&
+    value.length <= 40
+  );
+}
+
+export function proteinLabel(
+  protein: string,
+  custom: readonly CustomCategory[] = [],
+): string {
+  if (isBuiltinProtein(protein)) return PROTEIN_LABELS[protein];
+  const match = custom.find((c) => c.id === protein);
+  if (match) return match.label;
+  return (
+    protein
+      .split("-")
+      .filter(Boolean)
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(" ") || protein
+  );
+}

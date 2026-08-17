@@ -1,5 +1,5 @@
 import type { Ingredient, Protein, Step, UserRecipeOverlay } from "./types";
-import { PROTEINS } from "./types";
+import { isProtein } from "./types";
 import { getSql } from "./db";
 
 export type OverlayMap = Record<string, UserRecipeOverlay>;
@@ -60,10 +60,7 @@ export function parseOverlay(value: unknown): UserRecipeOverlay | null {
   if (Array.isArray(raw.steps) && raw.steps.every(isStep)) {
     overlay.steps = raw.steps.map((s, i) => ({ ...s, n: i + 1 }));
   }
-  if (
-    typeof raw.protein === "string" &&
-    (PROTEINS as readonly string[]).includes(raw.protein)
-  ) {
+  if (isProtein(raw.protein)) {
     overlay.protein = raw.protein as Protein;
   }
   if (raw.cookTimeMin === null) overlay.cookTimeMin = null;
@@ -84,6 +81,7 @@ export function parseOverlay(value: unknown): UserRecipeOverlay | null {
   if (typeof raw.title === "string" && raw.title.trim()) {
     overlay.title = raw.title.trim();
   }
+  if (raw.favourite === true) overlay.favourite = true;
   if (typeof raw.updatedAt === "string") overlay.updatedAt = raw.updatedAt;
   return overlay;
 }
@@ -100,7 +98,8 @@ export function overlayIsEmpty(overlay: UserRecipeOverlay): boolean {
     overlay.protein === undefined &&
     overlay.cookTimeMin === undefined &&
     overlay.servings === undefined &&
-    !overlay.title
+    !overlay.title &&
+    !overlay.favourite
   );
 }
 
@@ -178,6 +177,10 @@ export async function patchOverlay(
   if ("servings" in patch) {
     if (patch.servings === undefined) delete next.servings;
     else next.servings = patch.servings;
+  }
+  if ("favourite" in patch) {
+    if (patch.favourite) next.favourite = true;
+    else delete next.favourite;
   }
 
   const stored = overlayIsEmpty(next) ? {} : next;

@@ -14,6 +14,7 @@ import { RecipeImage } from "@/components/RecipeImage";
 import { NoteEditButton, RecipeNote } from "@/components/RecipeNote";
 import { useShoppingList } from "@/components/ShoppingListProvider";
 import { SourceRecipeLink } from "@/components/SourceRecipeLink";
+import { FavouriteButton } from "@/components/FavouriteButton";
 import { StarRating } from "@/components/StarRating";
 import { saveOverlay } from "@/lib/save-overlay";
 import { displayQty } from "@/lib/filters";
@@ -22,7 +23,9 @@ import {
   splitCookTime,
 } from "@/lib/format-time";
 import type { Protein, Recipe, Step } from "@/lib/types";
-import { ALLERGEN_LABELS, PROTEIN_LABELS, PROTEINS } from "@/lib/types";
+import { ALLERGEN_LABELS } from "@/lib/types";
+import { CategoryPicker } from "@/components/CategoryPicker";
+import { useCategories } from "@/components/CategoriesProvider";
 
 function listedFrom(recipe: Recipe): ListedIngredient[] {
   return [
@@ -66,6 +69,7 @@ function EditIcon() {
 
 export function RecipeDetail({ recipe }: { recipe: Recipe }) {
   const router = useRouter();
+  const { labelFor } = useCategories();
   const { items: shoppingItems, addItem, addItems, removeByRecipe, removeByRecipeName } =
     useShoppingList();
   const scalable = recipe.source === "web";
@@ -298,36 +302,45 @@ export function RecipeDetail({ recipe }: { recipe: Recipe }) {
         >
           ← Recipes
         </Link>
-        {editing ? (
-          <div className="flex items-center gap-2">
-            <button
-              type="button"
-              disabled={saving}
-              onClick={cancelEditing}
-              className="rounded-full bg-[var(--chip)] px-3.5 py-1.5 text-sm font-semibold disabled:opacity-50 lg:transition-colors lg:hover:bg-[var(--line)]"
-            >
-              Cancel
-            </button>
-            <button
-              type="button"
-              disabled={saving}
-              onClick={() => void saveEditing()}
-              className="rounded-full bg-[var(--ink)] px-3.5 py-1.5 text-sm font-semibold text-[var(--paper)] disabled:opacity-50"
-            >
-              {saving ? "Saving…" : "Save"}
-            </button>
-          </div>
-        ) : (
-          <button
-            type="button"
-            onClick={startEditing}
-            aria-label="Edit recipe"
-            title="Edit recipe"
+        <div className={`flex items-center ${editing ? "gap-2" : "gap-1"}`}>
+          <FavouriteButton
+            recipeId={recipe.id}
+            recipeTitle={title}
+            favourited={Boolean(recipe.favourite)}
+            iconSize={18}
             className="inline-flex shrink-0 items-center justify-center rounded-full p-1.5 text-[var(--muted)] transition-colors hover:bg-[var(--chip)] hover:text-[var(--accent)]"
-          >
-            <EditIcon />
-          </button>
-        )}
+          />
+          {editing ? (
+            <>
+              <button
+                type="button"
+                disabled={saving}
+                onClick={cancelEditing}
+                className="rounded-full bg-[var(--chip)] px-3.5 py-1.5 text-sm font-semibold disabled:opacity-50 lg:transition-colors lg:hover:bg-[var(--line)]"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                disabled={saving}
+                onClick={() => void saveEditing()}
+                className="rounded-full bg-[var(--ink)] px-3.5 py-1.5 text-sm font-semibold text-[var(--paper)] disabled:opacity-50"
+              >
+                {saving ? "Saving…" : "Save"}
+              </button>
+            </>
+          ) : (
+            <button
+              type="button"
+              onClick={startEditing}
+              aria-label="Edit recipe"
+              title="Edit recipe"
+              className="inline-flex shrink-0 items-center justify-center rounded-full p-1.5 text-[var(--muted)] transition-colors hover:bg-[var(--chip)] hover:text-[var(--accent)]"
+            >
+              <EditIcon />
+            </button>
+          )}
+        </div>
       </div>
 
       <div className="mt-3 flex items-start justify-between gap-3">
@@ -366,29 +379,21 @@ export function RecipeDetail({ recipe }: { recipe: Recipe }) {
               <fieldset>
                 <legend className="mb-2 text-sm font-semibold">Category</legend>
                 <div className="flex flex-wrap gap-2">
-                  {PROTEINS.map((p) => {
-                    const on = protein === p;
-                    return (
-                      <button
-                        key={p}
-                        type="button"
-                        onClick={() => setProtein(p)}
-                        className={`rounded-full px-3 py-1 text-xs font-semibold uppercase tracking-wide outline-none transition-colors focus-visible:ring-2 focus-visible:ring-[var(--accent)] ${
-                          on
-                            ? "bg-[var(--ink)] text-[var(--paper)]"
-                            : "bg-[var(--chip)] text-[var(--ink)] lg:hover:bg-[var(--line)]"
-                        }`}
-                      >
-                        {PROTEIN_LABELS[p]}
-                      </button>
-                    );
-                  })}
+                  <CategoryPicker
+                    selected={protein}
+                    onSelect={(id) => {
+                      if (id) setProtein(id);
+                    }}
+                    variant="edit"
+                    extraIds={[protein]}
+                    selectOnCreate
+                  />
                 </div>
               </fieldset>
             ) : (
               <div className="flex flex-wrap items-center gap-2">
                 <span className="rounded-full bg-[var(--chip)] px-3 py-1 text-xs font-semibold uppercase tracking-wide">
-                  {PROTEIN_LABELS[protein]}
+                  {labelFor(protein)}
                 </span>
                 {recipe.highProtein && (
                   <span className="rounded-full bg-[var(--sage)] px-3 py-1 text-xs font-semibold uppercase tracking-wide text-white">

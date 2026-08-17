@@ -4,7 +4,8 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { ImportRecipePreview } from "@/components/ImportRecipePreview";
 import { splitPantry, type ListedIngredient } from "@/components/EditableIngredients";
-import { PROTEINS, PROTEIN_LABELS, type Protein, type Recipe, type Step } from "@/lib/types";
+import { CategoryPicker } from "@/components/CategoryPicker";
+import { type Protein, type Recipe, type Step } from "@/lib/types";
 
 type Mode = "url" | "blank";
 
@@ -220,23 +221,14 @@ export function AddRecipeForm() {
           <fieldset>
             <legend className="mb-1.5 text-sm font-semibold">Category</legend>
             <div className="flex flex-wrap gap-2">
-              {PROTEINS.map((p) => {
-                const on = protein === p;
-                return (
-                  <button
-                    key={p}
-                    type="button"
-                    onClick={() => setProtein(p)}
-                    className={`rounded-full px-3.5 py-2 text-sm font-semibold outline-none transition-colors focus-visible:ring-2 focus-visible:ring-[var(--accent)] ${
-                      on
-                        ? "bg-[var(--ink)] text-[var(--paper)]"
-                        : "bg-[var(--chip)] text-[var(--ink)] lg:hover:bg-[var(--line)]"
-                    }`}
-                  >
-                    {PROTEIN_LABELS[p]}
-                  </button>
-                );
-              })}
+              <CategoryPicker
+                selected={protein}
+                onSelect={(id) => {
+                  if (id) setProtein(id);
+                }}
+                variant="form"
+                selectOnCreate
+              />
             </div>
           </fieldset>
 

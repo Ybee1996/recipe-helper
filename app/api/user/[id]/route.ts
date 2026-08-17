@@ -1,5 +1,7 @@
 import { NextResponse } from "next/server";
-import { getRecipe, isProtein } from "@/lib/recipes";
+import { isKnownProtein } from "@/lib/categories";
+import { getRecipe } from "@/lib/recipes";
+import { isProtein } from "@/lib/types";
 import type { Ingredient, Step, UserRecipeOverlay } from "@/lib/types";
 import { getOverlay, patchOverlay } from "@/lib/user-store";
 
@@ -93,8 +95,8 @@ export async function PATCH(
   }
 
   if ("protein" in body) {
-    if (!isProtein(body.protein)) {
-      return NextResponse.json({ error: "Invalid protein" }, { status: 400 });
+    if (!isProtein(body.protein) || !(await isKnownProtein(body.protein))) {
+      return NextResponse.json({ error: "Invalid category" }, { status: 400 });
     }
     patch.protein = body.protein;
   }
@@ -125,6 +127,16 @@ export async function PATCH(
         { status: 400 },
       );
     }
+  }
+
+  if ("favourite" in body) {
+    if (typeof body.favourite !== "boolean") {
+      return NextResponse.json(
+        { error: "Favourite must be true or false" },
+        { status: 400 },
+      );
+    }
+    patch.favourite = body.favourite;
   }
 
   const overlay = await patchOverlay(id, patch);
