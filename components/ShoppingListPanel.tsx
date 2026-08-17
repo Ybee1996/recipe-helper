@@ -45,7 +45,7 @@ export function ShoppingListPanel({ onNavigate }: { onNavigate?: () => void }) {
             Shopping list
           </h2>
           {total > 0 ? (
-            <p className="mt-1 text-[0.78rem] text-[var(--muted)]">
+            <p className="mt-1 text-[1.03rem] text-[var(--muted)]">
               {checked.length} of {total} picked up
             </p>
           ) : null}
@@ -62,7 +62,7 @@ export function ShoppingListPanel({ onNavigate }: { onNavigate?: () => void }) {
       </header>
 
       {total > 0 ? (
-        <p data-sheet-chrome className="px-5 pb-3 text-xs italic text-[var(--ink-faint)]">
+        <p data-sheet-chrome className="px-5 pb-3 text-base italic text-[var(--ink-faint)]">
           Tap an item once you&rsquo;ve got it
         </p>
       ) : null}
@@ -113,7 +113,7 @@ export function ShoppingListPanel({ onNavigate }: { onNavigate?: () => void }) {
 
       <div data-sheet-scroll className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-3 pb-1 pt-2">
         {total === 0 ? (
-          <p className="px-5 py-9 text-center text-sm leading-relaxed text-[var(--muted)]">
+          <p className="px-5 py-9 text-center text-lg leading-relaxed text-[var(--muted)]">
             No items yet.
             <br />
             Add one above, or from a recipe.
@@ -137,13 +137,13 @@ export function ShoppingListPanel({ onNavigate }: { onNavigate?: () => void }) {
             {checked.length > 0 ? (
               <section>
                 <div className="flex items-baseline justify-between gap-2 px-2.5 pb-1.5 pt-3.5">
-                  <h3 className="text-[0.69rem] font-semibold uppercase tracking-[0.06em] text-[var(--ink-faint)]">
+                  <h3 className="text-[0.94rem] font-semibold uppercase tracking-[0.06em] text-[var(--ink-faint)]">
                     Got it &mdash; {checked.length}
                   </h3>
                   <button
                     type="button"
                     onClick={clearChecked}
-                    className="rounded-md px-1 text-[0.69rem] font-semibold uppercase tracking-[0.06em] text-[var(--ink-faint)] outline-none transition-colors focus-visible:ring-2 focus-visible:ring-[var(--accent)] lg:hover:text-[var(--danger)]"
+                    className="rounded-md px-1 text-[0.94rem] font-semibold uppercase tracking-[0.06em] text-[var(--ink-faint)] outline-none transition-colors focus-visible:ring-2 focus-visible:ring-[var(--accent)] lg:hover:text-[var(--danger)]"
                   >
                     Clear
                   </button>
@@ -165,7 +165,7 @@ export function ShoppingListPanel({ onNavigate }: { onNavigate?: () => void }) {
         )}
       </div>
 
-      <p className="hidden shrink-0 px-5 pb-4 pt-2.5 text-center text-xs text-[var(--ink-faint)] lg:block">
+      <p className="hidden shrink-0 px-5 pb-4 pt-2.5 text-center text-base text-[var(--ink-faint)] lg:block">
         Synced across devices
       </p>
     </div>
@@ -203,13 +203,13 @@ function ShoppingRow({
         className="absolute inset-0 rounded-[10px] outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]"
       />
 
-      <span className="pointer-events-none min-w-[1.15rem] shrink-0 text-right text-[0.78rem] tabular-nums text-[var(--ink-faint)]">
+      <span className="pointer-events-none min-w-[1.15rem] shrink-0 text-right text-[1.03rem] tabular-nums text-[var(--ink-faint)]">
         {qtyLabel}
       </span>
 
       <span className="pointer-events-none min-w-0 flex-1">
         <span
-          className={`block break-words text-base leading-snug ${
+          className={`block break-words text-xl leading-snug ${
             item.checked
               ? "text-[var(--ink-faint)] line-through decoration-[1.5px]"
               : ""
@@ -219,7 +219,7 @@ function ShoppingRow({
           {item.name}
         </span>
         {item.recipeTitle ? (
-          <span className="mt-0.5 block text-[0.69rem] text-[var(--ink-faint)]">
+          <span className="mt-0.5 block text-[0.94rem] text-[var(--ink-faint)]">
             {item.recipeId ? (
               <Link
                 href={`/recipe/${item.recipeId}`}
@@ -236,7 +236,7 @@ function ShoppingRow({
       </span>
 
       {item.checked ? (
-        <span className="pointer-events-none shrink-0 whitespace-nowrap rounded-full bg-[var(--accent-soft)] px-2.5 py-[3px] text-[0.66rem] font-bold uppercase tracking-[0.04em] text-[var(--accent-dark)]">
+        <span className="pointer-events-none shrink-0 whitespace-nowrap rounded-full bg-[var(--accent-soft)] px-2.5 py-[3px] text-[0.91rem] font-bold uppercase tracking-[0.04em] text-[var(--accent-dark)]">
           Got it
         </span>
       ) : null}
@@ -245,7 +245,7 @@ function ShoppingRow({
         type="button"
         onClick={onRemove}
         aria-label={`Remove ${item.name}`}
-        className="relative z-10 shrink-0 rounded-md px-1.5 py-1 text-[0.94rem] leading-none text-[var(--ink-faint)] opacity-55 outline-none transition-opacity focus-visible:opacity-100 focus-visible:ring-2 focus-visible:ring-[var(--accent)] lg:opacity-0 lg:group-hover:opacity-100 lg:hover:text-[var(--danger)]"
+        className="relative z-10 shrink-0 rounded-md px-1.5 py-1 text-[1.19rem] leading-none text-[var(--ink-faint)] opacity-55 outline-none transition-opacity focus-visible:opacity-100 focus-visible:ring-2 focus-visible:ring-[var(--accent)] lg:opacity-0 lg:group-hover:opacity-100 lg:hover:text-[var(--danger)]"
       >
         ✕
       </button>
