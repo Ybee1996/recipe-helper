@@ -256,6 +256,18 @@ export function findIngredientSpans(
   return spans;
 }
 
+export function splitLetteredSubsteps(text: string): string[] {
+  const markers = text.match(/(?:^|\s)[a-z]\)/gi);
+  if (!markers || markers.length < 2) return [text];
+
+  const parts = text
+    .split(/(?:\s+)(?=[a-z]\))/i)
+    .map((part) => part.trim())
+    .filter(Boolean);
+
+  return parts.length >= 2 ? parts : [text];
+}
+
 export function splitMethodText(
   text: string,
   ingredients: Ingredient[],

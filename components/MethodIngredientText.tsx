@@ -2,7 +2,7 @@
 
 import { useEffect, useId, useRef, useState } from "react";
 import { displayQty } from "@/lib/filters";
-import { splitMethodText } from "@/lib/method-ingredients";
+import { splitLetteredSubsteps, splitMethodText } from "@/lib/method-ingredients";
 import type { Ingredient } from "@/lib/types";
 
 function IngredientMention({
@@ -64,40 +64,48 @@ export function MethodIngredientText({
   baseServings?: number;
   className?: string;
 }) {
-  const rootRef = useRef<HTMLParagraphElement>(null);
-  const [openIndex, setOpenIndex] = useState<number | null>(null);
-  const parts = splitMethodText(text, ingredients);
+  const rootRef = useRef<HTMLDivElement>(null);
+  const [openKey, setOpenKey] = useState<string | null>(null);
+  const segments = splitLetteredSubsteps(text);
 
   useEffect(() => {
-    if (openIndex == null) return;
+    if (openKey == null) return;
     function onPointerDown(event: PointerEvent) {
       if (!rootRef.current?.contains(event.target as Node)) {
-        setOpenIndex(null);
+        setOpenKey(null);
       }
     }
     document.addEventListener("pointerdown", onPointerDown);
     return () => document.removeEventListener("pointerdown", onPointerDown);
-  }, [openIndex]);
+  }, [openKey]);
 
   return (
-    <p ref={rootRef} className={className}>
-      {parts.map((part, index) =>
-        part.type === "text" ? (
-          <span key={index}>{part.value}</span>
-        ) : (
-          <IngredientMention
-            key={index}
-            text={part.value}
-            ingredient={part.ingredient}
-            servings={servings}
-            baseServings={baseServings}
-            open={openIndex === index}
-            onToggle={() =>
-              setOpenIndex((current) => (current === index ? null : index))
-            }
-          />
-        ),
-      )}
-    </p>
+    <div
+      ref={rootRef}
+      className={`${className}${segments.length > 1 ? " space-y-1" : ""}`}
+    >
+      {segments.map((segment, segIndex) => (
+        <p key={segIndex}>
+          {splitMethodText(segment, ingredients).map((part, index) => {
+            const key = `${segIndex}-${index}`;
+            return part.type === "text" ? (
+              <span key={key}>{part.value}</span>
+            ) : (
+              <IngredientMention
+                key={key}
+                text={part.value}
+                ingredient={part.ingredient}
+                servings={servings}
+                baseServings={baseServings}
+                open={openKey === key}
+                onToggle={() =>
+                  setOpenKey((current) => (current === key ? null : key))
+                }
+              />
+            );
+          })}
+        </p>
+      ))}
+    </div>
   );
 }
