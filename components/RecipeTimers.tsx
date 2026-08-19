@@ -78,84 +78,181 @@ function colorForTimer(id: string): string {
   return TIMER_COLORS[hash] ?? TIMER_COLORS[0];
 }
 
+const CHIP = {
+  large: { px: 92, stroke: 2.75, inset: "inset-[11px]" },
+  small: { px: 58, stroke: 2.4, inset: "inset-[7px]" },
+} as const;
+
+const HOLD_MS = 500;
+const MOVE_CANCEL_PX = 12;
+let ignoreChipClickUntil = 0;
+
+function vibratePulse() {
+  try {
+    navigator.vibrate?.(20);
+  } catch {
+    // Vibration is best-effort; iOS Safari does not support it.
+  }
+}
+
 function TimerChip({ timer }: { timer: RecipeTimer }) {
-  const { remainingOf, deleteTimer } = useRecipeTimers();
+  const { remainingOf, deleteTimer, toggleTimerSize } = useRecipeTimers();
   const remaining = remainingOf(timer);
   const label = timer.ended ? "00:00" : formatTimerRemaining(remaining);
   const color = colorForTimer(timer.id);
+  const large = timer.size === "large";
+  const { px: size, stroke, inset } = large ? CHIP.large : CHIP.small;
   const progress =
     timer.ended || timer.durationMs <= 0
       ? 0
       : Math.max(0, Math.min(1, remaining / timer.durationMs));
-  const size = 92;
-  const stroke = 2.75;
   const radius = size / 2 - stroke - 1;
   const circ = 2 * Math.PI * radius;
+  const holdTimer = useRef<number | null>(null);
+  const holdArmed = useRef(false);
+  const holdStart = useRef<{ x: number; y: number } | null>(null);
+
+  function clearHold() {
+    if (holdTimer.current != null) {
+      window.clearTimeout(holdTimer.current);
+      holdTimer.current = null;
+    }
+  }
+
+  function cancelHold() {
+    clearHold();
+    holdStart.current = null;
+  }
+
+  useEffect(() => () => clearHold(), []);
+
+  function onPointerDown(event: React.PointerEvent) {
+    if (event.button !== 0) return;
+    holdArmed.current = false;
+    holdStart.current = { x: event.clientX, y: event.clientY };
+    clearHold();
+    holdTimer.current = window.setTimeout(() => {
+      holdArmed.current = true;
+      holdTimer.current = null;
+      vibratePulse();
+      ignoreChipClickUntil = performance.now() + 500;
+      deleteTimer(timer.id);
+    }, HOLD_MS);
+  }
+
+  function onPointerMove(event: React.PointerEvent) {
+    if (!holdStart.current || holdTimer.current == null) return;
+    const dx = event.clientX - holdStart.current.x;
+    const dy = event.clientY - holdStart.current.y;
+    if (dx * dx + dy * dy > MOVE_CANCEL_PX * MOVE_CANCEL_PX) {
+      cancelHold();
+    }
+  }
+
+  function onChipClick() {
+    if (holdArmed.current || performance.now() < ignoreChipClickUntil) {
+      holdArmed.current = false;
+      return;
+    }
+    if (timer.ended) {
+      deleteTimer(timer.id);
+      return;
+    }
+    toggleTimerSize(timer.id);
+  }
 
   return (
-    <button
-      type="button"
-      onClick={() => deleteTimer(timer.id)}
-      aria-label={
-        timer.ended
-          ? `${timer.name} finished, dismiss`
-          : `Cancel ${timer.name} timer, ${label} left`
-      }
-      title="Tap to cancel"
-      className={`relative h-[92px] w-[92px] shrink-0 rounded-full ${
-        timer.ended ? "timer-ended-pulse" : ""
-      }`}
-      style={{ color }}
+    <div
+      className={`relative shrink-0 select-none ${timer.ended ? "timer-ended-pulse" : ""}`}
+      style={{ width: size, height: size, color, WebkitTouchCallout: "none" }}
     >
-      <svg
-        width={size}
-        height={size}
-        viewBox={`0 0 ${size} ${size}`}
-        className="absolute inset-0"
-        aria-hidden="true"
+      <button
+        type="button"
+        onClick={onChipClick}
+        onPointerDown={onPointerDown}
+        onPointerMove={onPointerMove}
+        onPointerUp={cancelHold}
+        onPointerCancel={cancelHold}
+        onContextMenu={(event) => event.preventDefault()}
+        aria-label={
+          timer.ended
+            ? `${timer.name} finished, dismiss`
+            : large
+              ? `Shrink ${timer.name} timer, ${label} left. Hold to cancel.`
+              : `Expand ${timer.name} timer, ${label} left. Hold to cancel.`
+        }
+        title={
+          timer.ended
+            ? "Tap to dismiss"
+            : large
+              ? "Tap to shrink · Hold to cancel"
+              : "Tap to expand · Hold to cancel"
+        }
+        className="absolute inset-0 rounded-full"
       >
-        <circle
-          cx={size / 2}
-          cy={size / 2}
-          r={radius}
-          fill="var(--card)"
-          stroke="var(--line)"
-          strokeWidth={stroke}
-        />
-        <circle
-          cx={size / 2}
-          cy={size / 2}
-          r={radius}
-          fill="none"
-          stroke="currentColor"
-          strokeWidth={stroke}
-          strokeLinecap="round"
-          strokeDasharray={circ}
-          strokeDashoffset={circ * (1 - progress)}
-          transform={`rotate(-90 ${size / 2} ${size / 2})`}
-          className={timer.running && !timer.ended ? "" : "opacity-70"}
-        />
-      </svg>
-      <span className="absolute inset-[11px] flex flex-col items-center justify-center px-1.5 text-center">
-        <span
-          className="text-[1.05rem] font-semibold leading-none tabular-nums tracking-tight"
-          style={{ fontFamily: "ui-sans-serif, system-ui, sans-serif" }}
+        <svg
+          width={size}
+          height={size}
+          viewBox={`0 0 ${size} ${size}`}
+          className="absolute inset-0"
+          aria-hidden="true"
         >
-          {label}
+          <circle
+            cx={size / 2}
+            cy={size / 2}
+            r={radius}
+            fill="var(--card)"
+            stroke="var(--line)"
+            strokeWidth={stroke}
+          />
+          <circle
+            cx={size / 2}
+            cy={size / 2}
+            r={radius}
+            fill="none"
+            stroke="currentColor"
+            strokeWidth={stroke}
+            strokeLinecap="round"
+            strokeDasharray={circ}
+            strokeDashoffset={circ * (1 - progress)}
+            transform={`rotate(-90 ${size / 2} ${size / 2})`}
+            className={timer.running && !timer.ended ? "" : "opacity-70"}
+          />
+        </svg>
+        <span
+          className={`absolute ${inset} flex flex-col items-center justify-center px-1 text-center`}
+        >
+          <span
+            className={`font-semibold leading-none tabular-nums tracking-tight ${
+              large ? "text-[1.05rem]" : "text-[0.72rem]"
+            }`}
+            style={{ fontFamily: "ui-sans-serif, system-ui, sans-serif" }}
+          >
+            {label}
+          </span>
+          {large ? (
+            <>
+              <span className="mt-1.5 h-px w-8 bg-current opacity-55" aria-hidden="true" />
+              <span className="mt-1 max-w-full truncate text-[0.62rem] font-semibold leading-tight tracking-wide">
+                {timer.name}
+              </span>
+            </>
+          ) : null}
         </span>
-        <span className="mt-1.5 h-px w-8 bg-current opacity-55" aria-hidden="true" />
-        <span className="mt-1 max-w-full truncate text-[0.62rem] font-semibold leading-tight tracking-wide">
-          {timer.name}
-        </span>
-      </span>
-      <span
-        className="absolute right-0 top-0 grid h-7 w-7 place-items-center rounded-full border-[1.5px] bg-[var(--paper)]"
-        style={{ borderColor: color }}
-        aria-hidden="true"
-      >
-        <TimerIcon size={13} />
-      </span>
-    </button>
+      </button>
+      {large ? (
+        <button
+          type="button"
+          onClick={() => deleteTimer(timer.id)}
+          aria-label={`Cancel ${timer.name} timer`}
+          title="Tap to cancel"
+          className="absolute right-0 top-0 z-10 grid h-7 w-7 place-items-center rounded-full border-[1.5px] bg-[var(--paper)]"
+          style={{ borderColor: color }}
+        >
+          <TimerIcon size={13} />
+        </button>
+      ) : null}
+    </div>
   );
 }
 
@@ -165,7 +262,7 @@ function TimerChips({ className = "" }: { className?: string }) {
 
   return (
     <div
-      className={`flex gap-3 overflow-x-auto no-scrollbar py-1 ${className}`}
+      className={`flex items-center gap-3 overflow-x-auto no-scrollbar py-1 ${className}`}
       aria-label="Timers"
     >
       {timers.map((timer) => (
@@ -175,10 +272,24 @@ function TimerChips({ className = "" }: { className?: string }) {
   );
 }
 
-export function TimerChipStrip({ className = "" }: { className?: string }) {
-  const { registerChipHost } = useRecipeTimers();
+export function TimerChipStrip({
+  className = "",
+  sticky = false,
+}: {
+  className?: string;
+  sticky?: boolean;
+}) {
+  const { registerChipHost, timers } = useRecipeTimers();
   useEffect(() => registerChipHost(), [registerChipHost]);
-  return <TimerChips className={className} />;
+  if (!timers.length) return null;
+
+  if (!sticky) return <TimerChips className={className} />;
+
+  return (
+    <div className="sticky top-0 z-20 -mx-4 bg-[var(--paper)]/95 px-4 pt-2 pb-1 backdrop-blur-md lg:-mx-10 lg:px-10">
+      <TimerChips className={className} />
+    </div>
+  );
 }
 
 function defaultTimerName(existing: string[]): string {

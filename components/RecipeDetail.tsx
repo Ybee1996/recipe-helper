@@ -460,7 +460,7 @@ export function RecipeDetail({ recipe }: { recipe: Recipe }) {
         </div>
       </div>
 
-      {editing ? null : <TimerChipStrip className="mt-2" />}
+      {editing ? null : <TimerChipStrip sticky />}
 
       <div className="mt-3 flex items-start justify-between gap-3">
         <div className="flex min-w-0 flex-1 items-center gap-2">

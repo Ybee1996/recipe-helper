@@ -19,6 +19,8 @@ import {
   type AlarmAudio,
 } from "@/lib/timer-alarm-audio";
 
+export type TimerSize = "small" | "large";
+
 export type RecipeTimer = {
   id: string;
   name: string;
@@ -27,6 +29,7 @@ export type RecipeTimer = {
   endsAt: number | null;
   running: boolean;
   ended: boolean;
+  size: TimerSize;
 };
 
 type RecipeTimersContextValue = {
@@ -41,6 +44,7 @@ type RecipeTimersContextValue = {
   resetTimer: (id: string) => void;
   deleteTimer: (id: string) => void;
   remainingOf: (timer: RecipeTimer) => number;
+  toggleTimerSize: (id: string) => void;
   setCookAwake: (on: boolean) => void;
   registerChipHost: () => () => void;
   chipHosts: number;
@@ -78,6 +82,10 @@ function isStoredTimer(value: unknown): value is RecipeTimer {
   );
 }
 
+function storedTimerSize(value: unknown): TimerSize {
+  return value === "large" ? "large" : "small";
+}
+
 function loadStoredTimers(): RecipeTimer[] {
   if (typeof sessionStorage === "undefined") return [];
   try {
@@ -87,13 +95,14 @@ function loadStoredTimers(): RecipeTimer[] {
     if (!Array.isArray(parsed)) return [];
     const now = Date.now();
     return parsed.filter(isStoredTimer).map((timer) => {
-      if (timer.ended) {
-        return { ...timer, running: false, remainingMs: 0, endsAt: null };
+      const sized = { ...timer, size: storedTimerSize(timer.size) };
+      if (sized.ended) {
+        return { ...sized, running: false, remainingMs: 0, endsAt: null };
       }
-      if (timer.running && timer.endsAt != null && timer.endsAt <= now) {
-        return { ...timer, running: false, ended: true, remainingMs: 0, endsAt: null };
+      if (sized.running && sized.endsAt != null && sized.endsAt <= now) {
+        return { ...sized, running: false, ended: true, remainingMs: 0, endsAt: null };
       }
-      return timer;
+      return sized;
     });
   } catch {
     return [];
@@ -294,6 +303,7 @@ export function RecipeTimersProvider({ children }: { children: React.ReactNode }
           endsAt,
           running: true,
           ended: false,
+          size: "small",
         },
       ]);
     },
@@ -361,6 +371,15 @@ export function RecipeTimersProvider({ children }: { children: React.ReactNode }
     setTimers((prev) => prev.filter((timer) => timer.id !== id));
   }, [stopAlarm]);
 
+  const toggleTimerSize = useCallback((id: string) => {
+    setTimers((prev) =>
+      prev.map((timer) => {
+        if (timer.id !== id) return timer;
+        return { ...timer, size: timer.size === "large" ? "small" : "large" };
+      }),
+    );
+  }, []);
+
   const remainingOf = useCallback(
     (timer: RecipeTimer) => remainingOfTimer(timer, now),
     [now],
@@ -391,6 +410,7 @@ export function RecipeTimersProvider({ children }: { children: React.ReactNode }
       resetTimer,
       deleteTimer,
       remainingOf,
+      toggleTimerSize,
       setCookAwake,
       registerChipHost,
       chipHosts,
@@ -407,6 +427,7 @@ export function RecipeTimersProvider({ children }: { children: React.ReactNode }
       resetTimer,
       deleteTimer,
       remainingOf,
+      toggleTimerSize,
       registerChipHost,
       chipHosts,
     ],
