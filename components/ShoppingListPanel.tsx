@@ -1,11 +1,16 @@
 "use client";
 
 import Link from "next/link";
-import { useRef, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { useShoppingList } from "@/components/ShoppingListProvider";
+import {
+  matchShoppingHistory,
+  type ShoppingHistoryEntry,
+} from "@/lib/shopping-history";
 import type { ShoppingItem } from "@/lib/shopping-list";
 
 export const SHOPPING_LIST_TITLE_ID = "shopping-list-title";
+const SUGGEST_LIST_ID = "shopping-suggest-list";
 
 const DISPLAY_FONT = "var(--font-display), Georgia, serif";
 
@@ -13,23 +18,105 @@ export function ShoppingListPanel({ onNavigate }: { onNavigate?: () => void }) {
   const { items, addItem, removeItem, toggleItem, clearChecked, clearAll } = useShoppingList();
   const [name, setName] = useState("");
   const [qty, setQty] = useState("");
+  const [highlight, setHighlight] = useState(-1);
+  const [suggestDismissed, setSuggestDismissed] = useState(false);
   const nameRef = useRef<HTMLInputElement>(null);
+  const blurTimer = useRef<number>(0);
 
   const unchecked = items.filter((item) => !item.checked);
   const checked = items.filter((item) => item.checked);
   const total = items.length;
 
+  const excludeLower = useMemo(
+    () =>
+      new Set(
+        items
+          .filter((item) => !item.checked)
+          .map((item) => item.name.trim().toLowerCase()),
+      ),
+    [items],
+  );
+
+  const suggestions = useMemo(() => {
+    if (suggestDismissed) return [];
+    return matchShoppingHistory(name, excludeLower);
+  }, [name, excludeLower, suggestDismissed]);
+
+  function resetAddForm() {
+    setName("");
+    setQty("");
+    setHighlight(-1);
+    setSuggestDismissed(false);
+    nameRef.current?.focus({ preventScroll: true });
+  }
+
   function submitAdd() {
     const trimmed = name.trim();
     if (!trimmed) return;
     addItem({ name: trimmed, qty: qty.trim() });
-    setName("");
-    setQty("");
-    nameRef.current?.focus({ preventScroll: true });
+    resetAddForm();
+  }
+
+  function acceptSuggestion(entry: ShoppingHistoryEntry) {
+    const usedQty = qty.trim() ? qty.trim() : entry.qty;
+    addItem({ name: entry.name, qty: usedQty });
+    resetAddForm();
+  }
+
+  function hideSuggestions() {
+    setSuggestDismissed(true);
+    setHighlight(-1);
   }
 
   function handleAddFocus(e: React.FocusEvent<HTMLInputElement>) {
     e.currentTarget.focus({ preventScroll: true });
+  }
+
+  function handleNameFocus(e: React.FocusEvent<HTMLInputElement>) {
+    handleAddFocus(e);
+    window.clearTimeout(blurTimer.current);
+    setSuggestDismissed(false);
+  }
+
+  function handleNameBlur() {
+    window.clearTimeout(blurTimer.current);
+    blurTimer.current = window.setTimeout(() => setSuggestDismissed(true), 180);
+  }
+
+  function handleNameChange(value: string) {
+    setName(value);
+    setHighlight(-1);
+    if (!value.trim()) setSuggestDismissed(false);
+  }
+
+  function handleNameKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
+    if (e.key === "Escape") {
+      if (suggestions.length === 0) return;
+      e.preventDefault();
+      e.stopPropagation();
+      hideSuggestions();
+      return;
+    }
+    if (e.key === "ArrowDown") {
+      if (suggestions.length === 0) return;
+      e.preventDefault();
+      setHighlight((i) => (i + 1) % suggestions.length);
+      return;
+    }
+    if (e.key === "ArrowUp") {
+      if (suggestions.length === 0) return;
+      e.preventDefault();
+      setHighlight((i) => (i <= 0 ? suggestions.length - 1 : i - 1));
+      return;
+    }
+    if (e.key !== "Enter") return;
+    e.preventDefault();
+    if (highlight >= 0) {
+      const picked = suggestions[highlight];
+      if (picked) acceptSuggestion(picked);
+      return;
+    }
+    submitAdd();
   }
 
   return (
@@ -87,14 +174,17 @@ export function ShoppingListPanel({ onNavigate }: { onNavigate?: () => void }) {
         <input
           ref={nameRef}
           value={name}
-          onChange={(e) => setName(e.target.value)}
-          onFocus={handleAddFocus}
-          onKeyDown={(e) => {
-            if (e.key !== "Enter") return;
-            e.preventDefault();
-            submitAdd();
-          }}
+          onChange={(e) => handleNameChange(e.target.value)}
+          onFocus={handleNameFocus}
+          onBlur={handleNameBlur}
+          onKeyDown={handleNameKeyDown}
           aria-label="Item name"
+          aria-autocomplete="list"
+          aria-expanded={suggestions.length > 0}
+          aria-controls={SUGGEST_LIST_ID}
+          aria-activedescendant={
+            highlight >= 0 ? `${SUGGEST_LIST_ID}-${highlight}` : undefined
+          }
           placeholder="Add item…"
           maxLength={60}
           autoComplete="off"
@@ -110,6 +200,67 @@ export function ShoppingListPanel({ onNavigate }: { onNavigate?: () => void }) {
           Add
         </button>
       </div>
+
+      {suggestions.length > 0 ? (
+        <div
+          data-sheet-chrome
+          className="relative shrink-0 border-b border-[var(--line)] bg-[var(--card)]"
+        >
+          <div className="flex items-center justify-between gap-2 px-3">
+            <p className="px-2 text-[0.78rem] font-medium text-[var(--muted)]">
+              Suggestions
+            </p>
+            <button
+              type="button"
+              aria-label="Hide suggestions"
+              onPointerDown={(e) => {
+                e.preventDefault();
+                hideSuggestions();
+              }}
+              onClick={hideSuggestions}
+              className="grid h-11 w-11 shrink-0 place-items-center rounded-md text-[1.19rem] leading-none text-[var(--ink-faint)] outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)] lg:hover:text-[var(--danger)]"
+            >
+              ✕
+            </button>
+          </div>
+          <ul id={SUGGEST_LIST_ID} role="listbox" className="px-2 pb-2">
+            {suggestions.map((entry, index) => {
+              const qtyLabel = formatSuggestQty(entry.qty);
+              const selected = highlight === index;
+              return (
+                <li key={entry.name.toLowerCase()}>
+                  <button
+                    type="button"
+                    id={`${SUGGEST_LIST_ID}-${index}`}
+                    role="option"
+                    aria-selected={selected}
+                    tabIndex={-1}
+                    onPointerDown={(e) => {
+                      e.preventDefault();
+                      acceptSuggestion(entry);
+                    }}
+                    className={`flex min-h-11 w-full items-center gap-2.5 rounded-[10px] px-2.5 text-left outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)] ${
+                      selected
+                        ? "bg-[var(--accent-soft)]"
+                        : "lg:hover:bg-[var(--tint)]"
+                    }`}
+                  >
+                    <span className="min-w-[1.15rem] shrink-0 text-right text-[1.03rem] tabular-nums text-[var(--ink-faint)]">
+                      {qtyLabel}
+                    </span>
+                    <span
+                      className="min-w-0 flex-1 break-words text-xl leading-snug"
+                      style={{ fontFamily: DISPLAY_FONT }}
+                    >
+                      {entry.name}
+                    </span>
+                  </button>
+                </li>
+              );
+            })}
+          </ul>
+        </div>
+      ) : null}
 
       <div data-sheet-scroll className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-3 pb-1 pt-2">
         {total === 0 ? (
@@ -170,6 +321,12 @@ export function ShoppingListPanel({ onNavigate }: { onNavigate?: () => void }) {
       </p>
     </div>
   );
+}
+
+function formatSuggestQty(qty: string): string {
+  const trimmed = qty.trim();
+  if (!trimmed) return "";
+  return /^\d+(\.\d+)?$/.test(trimmed) ? `${trimmed}×` : trimmed;
 }
 
 function ShoppingRow({

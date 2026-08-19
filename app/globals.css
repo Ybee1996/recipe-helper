@@ -61,10 +61,22 @@ a,
   touch-action: manipulation;
 }
 
+/* Beat the rule above: sheet handles need none or Android steals the pan. */
+[data-sheet-handle],
+[data-sheet-handle][role="button"],
+[data-sheet-handle] *,
+[data-sheet-dragging] {
+  touch-action: none;
+}
+
 button:not(:disabled):active,
 a:active,
 [role="button"]:not(:disabled):active {
   opacity: 0.62;
+}
+
+[data-sheet-handle]:active {
+  opacity: 1;
 }
 
 ::selection {

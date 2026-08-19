@@ -23,6 +23,7 @@ import {
   type ShoppingItem,
   type ShoppingListOp,
 } from "@/lib/shopping-list";
+import { recordShoppingHistory } from "@/lib/shopping-history";
 
 interface ShoppingListContextValue {
   items: ShoppingItem[];
@@ -151,6 +152,7 @@ export function ShoppingListProvider({
       const name = input.name.trim();
       if (!name) return;
       const item = newShoppingItem({ ...input, name });
+      recordShoppingHistory(item.name, item.qty);
       persist([...itemsRef.current, item]);
       sendOp({ op: "add", items: [item] });
     },
@@ -164,6 +166,7 @@ export function ShoppingListProvider({
         .filter((input) => input.name)
         .map((input) => newShoppingItem(input));
       if (!next.length) return;
+      for (const item of next) recordShoppingHistory(item.name, item.qty);
       persist([...itemsRef.current, ...next]);
       sendOp({ op: "add", items: next });
     },
