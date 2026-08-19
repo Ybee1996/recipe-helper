@@ -134,3 +134,19 @@ a:active,
 .busy-bar {
   animation: busy-bar 1.15s ease-in-out infinite;
 }
+
+@keyframes timer-ended-pulse {
+  0%,
+  100% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 color-mix(in srgb, var(--accent) 45%, transparent);
+  }
+  50% {
+    transform: scale(1.03);
+    box-shadow: 0 0 0 6px color-mix(in srgb, var(--accent) 0%, transparent);
+  }
+}
+
+.timer-ended-pulse {
+  animation: timer-ended-pulse 1.1s ease-in-out infinite;
+}

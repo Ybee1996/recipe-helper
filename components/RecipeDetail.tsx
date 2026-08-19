@@ -30,6 +30,8 @@ import { ALLERGEN_LABELS } from "@/lib/types";
 import { CategoryPicker } from "@/components/CategoryPicker";
 import { useCategories } from "@/components/CategoriesProvider";
 import { Spinner } from "@/components/Spinner";
+import { CookingView } from "@/components/CookingView";
+import { TimerChipStrip, TimerIconButton } from "@/components/RecipeTimers";
 
 function listedFrom(recipe: Recipe): ListedIngredient[] {
   return [
@@ -109,6 +111,7 @@ export function RecipeDetail({ recipe }: { recipe: Recipe }) {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [calendarOpen, setCalendarOpen] = useState(false);
+  const [cookOpen, setCookOpen] = useState(false);
 
   const storedServings = scalable ? recipe.servings || 2 : 2;
   const [yieldServings, setYieldServings] = useState(storedServings);
@@ -156,6 +159,41 @@ export function RecipeDetail({ recipe }: { recipe: Recipe }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [recipe.id, recipe.servings, scalable]);
 
+  const pushedCook = useRef(false);
+
+  useEffect(() => {
+    setCookOpen(new URLSearchParams(window.location.search).get("cook") === "1");
+    function onPop() {
+      pushedCook.current = false;
+      setCookOpen(new URLSearchParams(window.location.search).get("cook") === "1");
+    }
+    window.addEventListener("popstate", onPop);
+    return () => window.removeEventListener("popstate", onPop);
+  }, [recipe.id]);
+
+  function openCook() {
+    if (editing) return;
+    setCookOpen(true);
+    const url = new URL(window.location.href);
+    if (url.searchParams.get("cook") === "1") return;
+    url.searchParams.set("cook", "1");
+    window.history.pushState(window.history.state, "", url);
+    pushedCook.current = true;
+  }
+
+  function closeCook() {
+    setCookOpen(false);
+    const url = new URL(window.location.href);
+    if (url.searchParams.get("cook") !== "1") return;
+    if (pushedCook.current) {
+      pushedCook.current = false;
+      window.history.back();
+      return;
+    }
+    url.searchParams.delete("cook");
+    window.history.replaceState(window.history.state, "", url);
+  }
+
   async function persist(
     payload: Parameters<typeof saveOverlay>[1],
     refresh = true,
@@ -186,6 +224,7 @@ export function RecipeDetail({ recipe }: { recipe: Recipe }) {
     setError(null);
     setNoteEditing(false);
     setEditing(true);
+    if (cookOpen) closeCook();
   }
 
   function cancelEditing() {
@@ -328,6 +367,7 @@ export function RecipeDetail({ recipe }: { recipe: Recipe }) {
             iconSize={18}
             className="inline-flex shrink-0 items-center justify-center rounded-full p-1.5 text-[var(--muted)] transition-colors hover:bg-[var(--chip)] hover:text-[var(--accent)]"
           />
+          {editing ? null : <TimerIconButton />}
           <button
             type="button"
             onClick={() => setCalendarOpen(true)}
@@ -378,6 +418,8 @@ export function RecipeDetail({ recipe }: { recipe: Recipe }) {
           )}
         </div>
       </div>
+
+      {editing ? null : <TimerChipStrip className="mt-2" />}
 
       <div className="mt-3 flex items-start justify-between gap-3">
         <div className="flex min-w-0 flex-1 items-center gap-2">
@@ -510,6 +552,18 @@ export function RecipeDetail({ recipe }: { recipe: Recipe }) {
             </div>
           </div>
 
+          {editing ? null : (
+            <div className="mt-3">
+              <button
+                type="button"
+                onClick={openCook}
+                className="inline-flex min-h-11 items-center text-base font-semibold text-[var(--accent)]"
+              >
+                Cook
+              </button>
+            </div>
+          )}
+
           {noteAboveImage ? noteSection : null}
 
           <RecipeImage
@@ -548,7 +602,14 @@ export function RecipeDetail({ recipe }: { recipe: Recipe }) {
         </div>
 
         <div className={stepsClass}>
-          <EditableSteps steps={steps} editing={editing} onChange={setSteps} />
+          <EditableSteps
+            steps={steps}
+            editing={editing}
+            onChange={setSteps}
+            ingredients={items}
+            servings={servings}
+            baseServings={baseServings}
+          />
         </div>
       </div>
     </article>
@@ -558,6 +619,15 @@ export function RecipeDetail({ recipe }: { recipe: Recipe }) {
       recipeTitle={title}
       imageUrl={originalImageUrl || imageUrl}
       onClose={() => setCalendarOpen(false)}
+    />
+    <CookingView
+      open={cookOpen && !editing}
+      title={title}
+      servings={servings}
+      baseServings={baseServings}
+      items={items}
+      steps={steps}
+      onClose={closeCook}
     />
     </>
   );

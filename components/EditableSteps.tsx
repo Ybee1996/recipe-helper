@@ -1,17 +1,24 @@
 "use client";
 
-import type { Step } from "@/lib/types";
+import { MethodIngredientText } from "@/components/MethodIngredientText";
+import type { Ingredient, Step } from "@/lib/types";
 
 export function EditableSteps({
   steps,
   editing,
   className = "",
+  ingredients,
+  servings,
+  baseServings,
   onToggleEdit,
   onChange,
 }: {
   steps: Step[];
   editing: boolean;
   className?: string;
+  ingredients?: Ingredient[];
+  servings?: number;
+  baseServings?: number;
   onToggleEdit?: () => void;
   onChange: (steps: Step[]) => void;
 }) {
@@ -111,9 +118,13 @@ export function EditableSteps({
               </span>
               <div>
                 <h3 className="font-semibold">{step.title}</h3>
-                <p className="mt-1 text-[0.95rem] leading-relaxed text-[var(--ink)]/90 lg:text-base">
-                  {step.text}
-                </p>
+                <MethodIngredientText
+                  text={step.text}
+                  ingredients={ingredients ?? []}
+                  servings={servings ?? 2}
+                  baseServings={baseServings}
+                  className="mt-1 text-[0.95rem] leading-relaxed text-[var(--ink)]/90 lg:text-base"
+                />
               </div>
             </li>
           ))}
