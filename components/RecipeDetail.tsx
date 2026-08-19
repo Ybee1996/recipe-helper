@@ -14,10 +14,9 @@ import { RecipeImage } from "@/components/RecipeImage";
 import { NoteEditButton, RecipeNote } from "@/components/RecipeNote";
 import { useShoppingList } from "@/components/ShoppingListProvider";
 import { SourceRecipeLink } from "@/components/SourceRecipeLink";
-import { FavouriteButton } from "@/components/FavouriteButton";
 import { CalendarDatePicker } from "@/components/CalendarDatePicker";
-import { CalendarIcon } from "@/components/CalendarIcon";
 import { useCalendar } from "@/components/CalendarProvider";
+import { RecipeActionsSheet } from "@/components/RecipeActionsSheet";
 import { StarRating } from "@/components/StarRating";
 import { saveOverlay } from "@/lib/save-overlay";
 import { displayQty } from "@/lib/filters";
@@ -31,7 +30,7 @@ import { CategoryPicker } from "@/components/CategoryPicker";
 import { useCategories } from "@/components/CategoriesProvider";
 import { Spinner } from "@/components/Spinner";
 import { CookingView } from "@/components/CookingView";
-import { TimerChipStrip, TimerIconButton } from "@/components/RecipeTimers";
+import { TimerChipStrip } from "@/components/RecipeTimers";
 
 function listedFrom(recipe: Recipe): ListedIngredient[] {
   return [
@@ -55,59 +54,6 @@ function BackToRecipesLabel() {
       {pending ? <Spinner size={14} /> : null}
       {pending ? "Recipes" : "← Recipes"}
     </span>
-  );
-}
-
-function EditIcon() {
-  return (
-    <svg
-      width="18"
-      height="18"
-      viewBox="0 0 18 18"
-      fill="none"
-      aria-hidden="true"
-    >
-      <path
-        d="M11.6 3.35a1.4 1.4 0 0 1 2 0l.95.95a1.4 1.4 0 0 1 0 2L7.1 13.75 3.5 14.5l.75-3.6 7.35-7.55Z"
-        stroke="currentColor"
-        strokeWidth="1.5"
-        strokeLinejoin="round"
-      />
-      <path
-        d="M10.4 4.55 13.45 7.6"
-        stroke="currentColor"
-        strokeWidth="1.5"
-        strokeLinecap="round"
-      />
-    </svg>
-  );
-}
-
-function CookIcon() {
-  return (
-    <svg
-      width="18"
-      height="18"
-      viewBox="0 0 18 18"
-      fill="none"
-      aria-hidden="true"
-    >
-      <path
-        d="M4.6 10.4c-1.35 0-2.2-1.35-1.55-2.5.25-.45.75-.75 1.25-.8C4.5 5.3 6.35 3.7 9 3.7s4.5 1.6 4.7 3.4c.5.05 1 .35 1.25.8.65 1.15-.2 2.5-1.55 2.5H4.6Z"
-        stroke="currentColor"
-        strokeWidth="1.5"
-        strokeLinejoin="round"
-      />
-      <rect
-        x="5.25"
-        y="10.4"
-        width="7.5"
-        height="3.9"
-        rx="1.1"
-        stroke="currentColor"
-        strokeWidth="1.5"
-      />
-    </svg>
   );
 }
 
@@ -387,46 +333,7 @@ export function RecipeDetail({ recipe }: { recipe: Recipe }) {
         >
           <BackToRecipesLabel />
         </Link>
-        <div className={`flex items-center ${editing ? "gap-2" : "gap-1"}`}>
-          <FavouriteButton
-            recipeId={recipe.id}
-            recipeTitle={title}
-            favourited={Boolean(recipe.favourite)}
-            iconSize={18}
-            className="inline-flex shrink-0 items-center justify-center rounded-full p-1.5 text-[var(--muted)] transition-colors hover:bg-[var(--chip)] hover:text-[var(--accent)]"
-          />
-          {editing ? null : (
-            <button
-              type="button"
-              onClick={openCook}
-              aria-label="Start cooking"
-              title="Start cooking"
-              className="inline-flex shrink-0 items-center justify-center rounded-full p-1.5 text-[var(--muted)] transition-colors hover:bg-[var(--chip)] hover:text-[var(--accent)]"
-            >
-              <CookIcon />
-            </button>
-          )}
-          {editing ? null : (
-            <TimerIconButton className="inline-flex shrink-0 items-center justify-center rounded-full p-1.5 text-[var(--muted)] transition-colors hover:bg-[var(--chip)] hover:text-[var(--accent)]" />
-          )}
-          <button
-            type="button"
-            onClick={() => setCalendarOpen(true)}
-            aria-pressed={planned}
-            aria-label={
-              planned
-                ? `Change calendar dates for ${title}`
-                : `Add ${title} to calendar`
-            }
-            title={planned ? "Change calendar dates" : "Add to calendar"}
-            className={`inline-flex shrink-0 items-center justify-center rounded-full p-1.5 transition-colors hover:bg-[var(--chip)] ${
-              planned
-                ? "text-[var(--plan)]"
-                : "text-[var(--muted)] hover:text-[var(--plan)]"
-            }`}
-          >
-            <CalendarIcon size={18} />
-          </button>
+        <div className={`flex items-center ${editing ? "gap-2" : "gap-3"}`}>
           {editing ? (
             <>
               <button
@@ -447,15 +354,23 @@ export function RecipeDetail({ recipe }: { recipe: Recipe }) {
               </button>
             </>
           ) : (
-            <button
-              type="button"
-              onClick={startEditing}
-              aria-label="Edit recipe"
-              title="Edit recipe"
-              className="inline-flex shrink-0 items-center justify-center rounded-full p-1.5 text-[var(--muted)] transition-colors hover:bg-[var(--chip)] hover:text-[var(--accent)]"
-            >
-              <EditIcon />
-            </button>
+            <>
+              <button
+                type="button"
+                onClick={openCook}
+                className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--accent)] outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)] lg:hover:underline"
+              >
+                Cook
+              </button>
+              <RecipeActionsSheet
+                recipeId={recipe.id}
+                recipeTitle={title}
+                favourited={Boolean(recipe.favourite)}
+                planned={planned}
+                onCalendar={() => setCalendarOpen(true)}
+                onEdit={startEditing}
+              />
+            </>
           )}
         </div>
       </div>
