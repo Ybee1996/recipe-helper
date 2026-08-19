@@ -10,6 +10,7 @@ import {
   SHOPPING_LIST_TITLE_ID,
 } from "@/components/ShoppingListPanel";
 import { useShoppingList } from "@/components/ShoppingListProvider";
+import { useSheetDismiss } from "@/lib/sheet-dismiss";
 
 export const SHOPPING_LIST_DIALOG_ID = "shopping-list-dialog";
 
@@ -94,18 +95,7 @@ export function ShoppingListTrigger({
   );
 }
 
-const DISMISS_PX = 72;
-const DRAG_START_PX = 8;
 const KEYBOARD_MIN_PX = 90;
-
-type DragState = {
-  pointerId: number;
-  startY: number;
-  startT: number;
-  moved: boolean;
-  captured: boolean;
-  fromList: boolean;
-};
 
 export function ShoppingListOverlay() {
   const { listOpen, closeList } = useShoppingList();
@@ -113,11 +103,11 @@ export function ShoppingListOverlay() {
   const prevPathname = useRef(pathname);
   const [mounted, setMounted] = useState(false);
   const [keyboard, setKeyboard] = useState<{ inset: number; height: number } | null>(null);
-  const [dragY, setDragY] = useState(0);
   const dialogRef = useRef<HTMLDivElement>(null);
   const previousFocus = useRef<HTMLElement | null>(null);
-  const drag = useRef<DragState | null>(null);
-  const dragYRef = useRef(0);
+  const sheetActive = mounted && listOpen;
+  const { dragY, dragging, onPointerDown, onPointerMove, onPointerUp, onPointerCancel } =
+    useSheetDismiss(dialogRef, sheetActive, closeList);
 
   useEffect(() => {
     setMounted(true);
@@ -130,11 +120,7 @@ export function ShoppingListOverlay() {
   }, [pathname, closeList]);
 
   useEffect(() => {
-    if (!listOpen) {
-      setDragY(0);
-      setKeyboard(null);
-      dragYRef.current = 0;
-    }
+    if (!listOpen) setKeyboard(null);
   }, [listOpen]);
 
   // The sheet is sized in CSS (svh) so it opens identically every time; JS only
@@ -199,6 +185,7 @@ export function ShoppingListOverlay() {
 
     function onKeyDown(e: KeyboardEvent) {
       if (e.key === "Escape") {
+        if (e.defaultPrevented) return;
         e.preventDefault();
         closeList();
         return;
@@ -230,68 +217,7 @@ export function ShoppingListOverlay() {
     };
   }, [listOpen, closeList]);
 
-  function isDesktop() {
-    return window.matchMedia("(min-width: 1024px)").matches;
-  }
-
-  function onSheetPointerDown(e: React.PointerEvent<HTMLDivElement>) {
-    if (e.pointerType === "mouse" && e.button !== 0) return;
-    if (isDesktop()) return;
-    const target = e.target as HTMLElement;
-    const fromHandle = !!target.closest("[data-sheet-handle]");
-    const fromChrome = !!target.closest("[data-sheet-chrome]");
-    if (target.closest("input, textarea, select, a, button") && !fromHandle) return;
-
-    const scroller = dialogRef.current?.querySelector<HTMLElement>("[data-sheet-scroll]");
-    const atTop = !scroller || scroller.scrollTop <= 1;
-    if (!fromHandle && !fromChrome && !atTop) return;
-
-    drag.current = {
-      pointerId: e.pointerId,
-      startY: e.clientY,
-      startT: Date.now(),
-      moved: false,
-      captured: false,
-      fromList: !fromHandle && !fromChrome,
-    };
-  }
-
-  function onSheetPointerMove(e: React.PointerEvent<HTMLDivElement>) {
-    const state = drag.current;
-    if (!state || e.pointerId !== state.pointerId) return;
-    const dy = e.clientY - state.startY;
-    if (!state.captured) {
-      if (Math.abs(dy) < DRAG_START_PX) return;
-      if (dy < 0 && state.fromList) {
-        drag.current = null;
-        return;
-      }
-      state.captured = true;
-      state.moved = true;
-      e.currentTarget.setPointerCapture(e.pointerId);
-    }
-    dragYRef.current = Math.max(0, dy);
-    setDragY(dragYRef.current);
-  }
-
-  function onSheetPointerUp(e: React.PointerEvent<HTMLDivElement>) {
-    const state = drag.current;
-    if (!state || e.pointerId !== state.pointerId) return;
-    const dy = e.clientY - state.startY;
-    const elapsed = Math.max(16, Date.now() - state.startT);
-    const vy = dy / elapsed;
-    const moved = state.moved;
-    drag.current = null;
-    dragYRef.current = 0;
-    setDragY(0);
-
-    if (!moved) return;
-    if (dy > DISMISS_PX || vy > 0.5) closeList();
-  }
-
   if (!mounted || !listOpen) return null;
-
-  const dragging = dragY > 0;
 
   return createPortal(
     <>
@@ -311,10 +237,11 @@ export function ShoppingListOverlay() {
         aria-modal="true"
         aria-labelledby={SHOPPING_LIST_TITLE_ID}
         tabIndex={-1}
-        onPointerDown={onSheetPointerDown}
-        onPointerMove={onSheetPointerMove}
-        onPointerUp={onSheetPointerUp}
-        onPointerCancel={onSheetPointerUp}
+        data-sheet-dragging={dragging ? "" : undefined}
+        onPointerDown={onPointerDown}
+        onPointerMove={onPointerMove}
+        onPointerUp={onPointerUp}
+        onPointerCancel={onPointerCancel}
         onScroll={(e) => {
           e.currentTarget.scrollTop = 0;
         }}
@@ -331,6 +258,7 @@ export function ShoppingListOverlay() {
           tabIndex={0}
           aria-label="Close shopping list"
           className="flex h-11 w-full shrink-0 touch-none items-center justify-center lg:hidden"
+          style={{ touchAction: "none" }}
           onKeyDown={(e) => {
             if (e.key === "Enter" || e.key === " ") {
               e.preventDefault();
