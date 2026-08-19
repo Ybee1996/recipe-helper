@@ -63,132 +63,113 @@ export function TimerIconButton({
   );
 }
 
-function TimerChip({
-  timer,
-  menuPlacement = "bottom",
-}: {
-  timer: RecipeTimer;
-  menuPlacement?: "top" | "bottom";
-}) {
-  const { remainingOf, pauseTimer, resumeTimer, resetTimer, deleteTimer } =
-    useRecipeTimers();
-  const [menuOpen, setMenuOpen] = useState(false);
-  const rootRef = useRef<HTMLDivElement>(null);
-  const remaining = remainingOf(timer);
-  const label = timer.ended ? "Done" : formatTimerRemaining(remaining);
+const TIMER_COLORS = [
+  "var(--accent)",
+  "var(--plan)",
+  "var(--sage)",
+  "var(--danger)",
+] as const;
 
-  useEffect(() => {
-    if (!menuOpen) return;
-    function onPointerDown(event: PointerEvent) {
-      if (!rootRef.current?.contains(event.target as Node)) setMenuOpen(false);
-    }
-    function onKey(event: KeyboardEvent) {
-      if (event.key === "Escape") setMenuOpen(false);
-    }
-    document.addEventListener("pointerdown", onPointerDown);
-    document.addEventListener("keydown", onKey);
-    return () => {
-      document.removeEventListener("pointerdown", onPointerDown);
-      document.removeEventListener("keydown", onKey);
-    };
-  }, [menuOpen]);
-
-  function onChipClick() {
-    if (timer.ended) {
-      deleteTimer(timer.id);
-      return;
-    }
-    setMenuOpen((open) => !open);
+function colorForTimer(id: string): string {
+  let hash = 0;
+  for (let i = 0; i < id.length; i += 1) {
+    hash = (hash + id.charCodeAt(i) * (i + 1)) % TIMER_COLORS.length;
   }
+  return TIMER_COLORS[hash] ?? TIMER_COLORS[0];
+}
+
+function TimerChip({ timer }: { timer: RecipeTimer }) {
+  const { remainingOf, deleteTimer } = useRecipeTimers();
+  const remaining = remainingOf(timer);
+  const label = timer.ended ? "00:00" : formatTimerRemaining(remaining);
+  const color = colorForTimer(timer.id);
+  const progress =
+    timer.ended || timer.durationMs <= 0
+      ? 0
+      : Math.max(0, Math.min(1, remaining / timer.durationMs));
+  const size = 92;
+  const stroke = 2.75;
+  const radius = size / 2 - stroke - 1;
+  const circ = 2 * Math.PI * radius;
 
   return (
-    <div ref={rootRef} className="relative shrink-0">
-      <button
-        type="button"
-        onClick={onChipClick}
-        aria-expanded={menuOpen}
-        aria-label={
-          timer.ended
-            ? `${timer.name} finished, dismiss`
-            : `${timer.name} ${label}${timer.running ? "" : ", paused"}`
-        }
-        className={`inline-flex min-h-11 items-center gap-1.5 rounded-full px-3 text-xs font-semibold tracking-wide ${
-          timer.ended
-            ? "timer-ended-pulse bg-[var(--accent)] text-white"
-            : timer.running
-              ? "border border-[var(--line)] bg-[var(--card)] text-[var(--ink)]"
-              : "border border-dashed border-[var(--ink-faint)] bg-[var(--chip)] text-[var(--muted)]"
-        }`}
+    <button
+      type="button"
+      onClick={() => deleteTimer(timer.id)}
+      aria-label={
+        timer.ended
+          ? `${timer.name} finished, dismiss`
+          : `Cancel ${timer.name} timer, ${label} left`
+      }
+      title="Tap to cancel"
+      className={`relative h-[92px] w-[92px] shrink-0 rounded-full ${
+        timer.ended ? "timer-ended-pulse" : ""
+      }`}
+      style={{ color }}
+    >
+      <svg
+        width={size}
+        height={size}
+        viewBox={`0 0 ${size} ${size}`}
+        className="absolute inset-0"
+        aria-hidden="true"
       >
-        <span className="max-w-[7rem] truncate">{timer.name}</span>
-        <span className="tabular-nums">{label}</span>
-      </button>
-      {menuOpen && !timer.ended ? (
-        <div
-          role="menu"
-          className={`absolute left-0 z-30 min-w-[9.5rem] overflow-hidden rounded-xl border border-[var(--line)] bg-[var(--card)] py-1 text-sm font-semibold shadow-lg ${
-            menuPlacement === "top"
-              ? "bottom-[calc(100%+0.35rem)]"
-              : "top-[calc(100%+0.35rem)]"
-          }`}
+        <circle
+          cx={size / 2}
+          cy={size / 2}
+          r={radius}
+          fill="var(--card)"
+          stroke="var(--line)"
+          strokeWidth={stroke}
+        />
+        <circle
+          cx={size / 2}
+          cy={size / 2}
+          r={radius}
+          fill="none"
+          stroke="currentColor"
+          strokeWidth={stroke}
+          strokeLinecap="round"
+          strokeDasharray={circ}
+          strokeDashoffset={circ * (1 - progress)}
+          transform={`rotate(-90 ${size / 2} ${size / 2})`}
+          className={timer.running && !timer.ended ? "" : "opacity-70"}
+        />
+      </svg>
+      <span className="absolute inset-[11px] flex flex-col items-center justify-center px-1.5 text-center">
+        <span
+          className="text-[1.05rem] font-semibold leading-none tabular-nums tracking-tight"
+          style={{ fontFamily: "ui-sans-serif, system-ui, sans-serif" }}
         >
-          <button
-            type="button"
-            role="menuitem"
-            className="flex min-h-11 w-full items-center px-3 text-left hover:bg-[var(--chip)]"
-            onClick={() => {
-              if (timer.running) pauseTimer(timer.id);
-              else resumeTimer(timer.id);
-              setMenuOpen(false);
-            }}
-          >
-            {timer.running ? "Pause" : "Resume"}
-          </button>
-          <button
-            type="button"
-            role="menuitem"
-            className="flex min-h-11 w-full items-center px-3 text-left hover:bg-[var(--chip)]"
-            onClick={() => {
-              resetTimer(timer.id);
-              setMenuOpen(false);
-            }}
-          >
-            Reset
-          </button>
-          <button
-            type="button"
-            role="menuitem"
-            className="flex min-h-11 w-full items-center px-3 text-left text-[var(--accent)] hover:bg-[var(--chip)]"
-            onClick={() => {
-              deleteTimer(timer.id);
-              setMenuOpen(false);
-            }}
-          >
-            Delete
-          </button>
-        </div>
-      ) : null}
-    </div>
+          {label}
+        </span>
+        <span className="mt-1.5 h-px w-8 bg-current opacity-55" aria-hidden="true" />
+        <span className="mt-1 max-w-full truncate text-[0.62rem] font-semibold leading-tight tracking-wide">
+          {timer.name}
+        </span>
+      </span>
+      <span
+        className="absolute right-0 top-0 grid h-7 w-7 place-items-center rounded-full border-[1.5px] bg-[var(--paper)]"
+        style={{ borderColor: color }}
+        aria-hidden="true"
+      >
+        <TimerIcon size={13} />
+      </span>
+    </button>
   );
 }
 
-function TimerChips({
-  className = "",
-  menuPlacement = "bottom",
-}: {
-  className?: string;
-  menuPlacement?: "top" | "bottom";
-}) {
+function TimerChips({ className = "" }: { className?: string }) {
   const { timers } = useRecipeTimers();
   if (!timers.length) return null;
 
   return (
     <div
-      className={`flex gap-1.5 overflow-x-auto no-scrollbar py-0.5 ${className}`}
+      className={`flex gap-3 overflow-x-auto no-scrollbar py-1 ${className}`}
       aria-label="Timers"
     >
       {timers.map((timer) => (
-        <TimerChip key={timer.id} timer={timer} menuPlacement={menuPlacement} />
+        <TimerChip key={timer.id} timer={timer} />
       ))}
     </div>
   );
@@ -220,6 +201,10 @@ function TimerSetupDialog() {
   const [seconds, setSeconds] = useState("");
   const [error, setError] = useState<string | null>(null);
   const nameRef = useRef<HTMLInputElement>(null);
+  const closeSetupRef = useRef(closeSetup);
+  closeSetupRef.current = closeSetup;
+  const scrollYRef = useRef(0);
+  const pinTopRef = useRef(false);
 
   useEffect(() => {
     setMounted(true);
@@ -231,22 +216,50 @@ function TimerSetupDialog() {
     setMinutes("10");
     setSeconds("");
     setError(null);
-    const prevOverflow = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-    const focusTimer = window.setTimeout(() => nameRef.current?.focus(), 50);
+
+    const html = document.documentElement;
+    const body = document.body;
+    scrollYRef.current = window.scrollY;
+    const prevHtmlOverflow = html.style.overflow;
+    const prevHtmlOverscroll = html.style.overscrollBehavior;
+    const prevBody = body.style.cssText;
+    html.style.overflow = "hidden";
+    html.style.overscrollBehavior = "none";
+    body.style.overflow = "hidden";
+    body.style.position = "fixed";
+    body.style.top = `-${scrollYRef.current}px`;
+    body.style.left = "0";
+    body.style.right = "0";
+    body.style.width = "100%";
+
+    const focusTimer = window.setTimeout(() => {
+      nameRef.current?.focus({ preventScroll: true });
+    }, 50);
     function onKey(event: KeyboardEvent) {
       if (event.key === "Escape") {
         event.preventDefault();
-        closeSetup();
+        closeSetupRef.current();
       }
     }
     window.addEventListener("keydown", onKey);
     return () => {
-      document.body.style.overflow = prevOverflow;
+      html.style.overflow = prevHtmlOverflow;
+      html.style.overscrollBehavior = prevHtmlOverscroll;
+      body.style.cssText = prevBody;
       window.clearTimeout(focusTimer);
       window.removeEventListener("keydown", onKey);
+      const top = pinTopRef.current;
+      pinTopRef.current = false;
+      const y = top ? 0 : scrollYRef.current;
+      const restore = () => window.scrollTo(0, y);
+      restore();
+      requestAnimationFrame(restore);
+      if (top) {
+        window.setTimeout(restore, 80);
+        window.setTimeout(restore, 320);
+      }
     };
-  }, [setupOpen, closeSetup]);
+  }, [setupOpen]);
 
   if (!mounted || !setupOpen) return null;
 
@@ -260,6 +273,10 @@ function TimerSetupDialog() {
       return;
     }
     const label = name.trim() || defaultTimerName(timers.map((t) => t.name));
+    if (document.activeElement instanceof HTMLElement) {
+      document.activeElement.blur();
+    }
+    pinTopRef.current = true;
     addTimer(label, durationMs);
     closeSetup();
   }
@@ -362,7 +379,7 @@ function TimerFloatingStrip() {
   return createPortal(
     <div className="pointer-events-none fixed inset-x-0 bottom-[4.75rem] z-40 flex justify-center px-3 lg:bottom-6">
       <div className="pointer-events-auto max-w-full rounded-2xl bg-[var(--paper)]/95 p-1 shadow-md ring-1 ring-[var(--line)] backdrop-blur-md">
-        <TimerChips menuPlacement="top" />
+        <TimerChips />
       </div>
     </div>,
     document.body,

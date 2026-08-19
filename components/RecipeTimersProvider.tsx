@@ -9,6 +9,15 @@ import {
   useRef,
   useState,
 } from "react";
+import {
+  ALARM_MS,
+  playAlarm,
+  primeAlarmAudio,
+  resumeAlarmAudio,
+  stopVibrate,
+  vibrateAlarm,
+  type AlarmAudio,
+} from "@/lib/timer-alarm-audio";
 
 export type RecipeTimer = {
   id: string;
@@ -118,45 +127,6 @@ async function requestWakeLock(): Promise<WakeLockSentinelLike | null> {
   }
 }
 
-type AudioContextCtor = new (contextOptions?: AudioContextOptions) => AudioContext;
-
-function getAudioContextCtor(): AudioContextCtor | null {
-  if (typeof window === "undefined") return null;
-  const win = window as unknown as {
-    AudioContext?: AudioContextCtor;
-    webkitAudioContext?: AudioContextCtor;
-  };
-  return win.AudioContext ?? win.webkitAudioContext ?? null;
-}
-
-function vibrateAlarm() {
-  try {
-    navigator.vibrate?.([180, 80, 180, 80, 180, 80, 240]);
-  } catch {
-    // Vibration is best-effort.
-  }
-}
-
-function playBeepBurst(ctx: AudioContext) {
-  const now = ctx.currentTime;
-  const beeps = 4;
-  for (let i = 0; i < beeps; i += 1) {
-    const osc = ctx.createOscillator();
-    const gain = ctx.createGain();
-    osc.type = "sine";
-    osc.frequency.value = i === beeps - 1 ? 988 : 880;
-    gain.gain.setValueAtTime(0.0001, now);
-    const start = now + i * 0.38;
-    const end = start + 0.16;
-    gain.gain.exponentialRampToValueAtTime(0.12, start + 0.02);
-    gain.gain.exponentialRampToValueAtTime(0.0001, end);
-    osc.connect(gain);
-    gain.connect(ctx.destination);
-    osc.start(start);
-    osc.stop(end + 0.02);
-  }
-}
-
 export function RecipeTimersProvider({ children }: { children: React.ReactNode }) {
   const [timers, setTimers] = useState<RecipeTimer[]>([]);
   const [now, setNow] = useState(() => Date.now());
@@ -164,9 +134,26 @@ export function RecipeTimersProvider({ children }: { children: React.ReactNode }
   const [cookAwake, setCookAwake] = useState(false);
   const [chipHosts, setChipHosts] = useState(0);
   const [hydrated, setHydrated] = useState(false);
+  const [alarming, setAlarming] = useState(0);
   const wakeLockRef = useRef<WakeLockSentinelLike | null>(null);
-  const audioRef = useRef<AudioContext | null>(null);
+  const audioRef = useRef<AlarmAudio | null>(null);
   const alarmedRef = useRef(new Set<string>());
+  const alarmAbortRef = useRef(new Map<string, AbortController>());
+
+  const stopAlarm = useCallback((id: string) => {
+    const controller = alarmAbortRef.current.get(id);
+    if (!controller) return;
+    controller.abort();
+    alarmAbortRef.current.delete(id);
+    setAlarming((n) => Math.max(0, n - 1));
+    if (alarmAbortRef.current.size === 0) stopVibrate();
+  }, []);
+
+  const unlockAudio = useCallback(() => {
+    void primeAlarmAudio(audioRef.current).then((pack) => {
+      if (pack) audioRef.current = pack;
+    });
+  }, []);
 
   useEffect(() => {
     const stored = loadStoredTimers();
@@ -183,7 +170,7 @@ export function RecipeTimersProvider({ children }: { children: React.ReactNode }
   }, [timers, hydrated]);
 
   const anyRunning = timers.some((timer) => timer.running && !timer.ended);
-  const keepAwake = cookAwake || anyRunning;
+  const keepAwake = cookAwake || anyRunning || alarming > 0;
 
   useEffect(() => {
     if (!anyRunning) return;
@@ -211,23 +198,44 @@ export function RecipeTimersProvider({ children }: { children: React.ReactNode }
   }, [anyRunning]);
 
   useEffect(() => {
+    if (!anyRunning && alarming === 0) return;
+    const id = window.setInterval(() => {
+      void resumeAlarmAudio(audioRef.current);
+    }, 1500);
+    function onVisibility() {
+      if (document.visibilityState === "visible") {
+        void resumeAlarmAudio(audioRef.current);
+      }
+    }
+    document.addEventListener("visibilitychange", onVisibility);
+    return () => {
+      window.clearInterval(id);
+      document.removeEventListener("visibilitychange", onVisibility);
+    };
+  }, [anyRunning, alarming]);
+
+  useEffect(() => {
     for (const timer of timers) {
       if (!timer.ended || alarmedRef.current.has(timer.id)) continue;
       alarmedRef.current.add(timer.id);
+      const controller = new AbortController();
+      alarmAbortRef.current.set(timer.id, controller);
+      setAlarming((n) => n + 1);
       vibrateAlarm();
-      const ctx = audioRef.current;
-      if (ctx && ctx.state !== "closed") {
-        void ctx.resume().then(() => playBeepBurst(ctx)).catch(() => {});
+      window.setTimeout(() => {
+        if (alarmAbortRef.current.get(timer.id) !== controller) return;
+        alarmAbortRef.current.delete(timer.id);
+        setAlarming((n) => Math.max(0, n - 1));
+      }, ALARM_MS + 50);
+      const pack = audioRef.current;
+      if (pack) {
+        playAlarm(pack, controller.signal);
       } else {
-        const Ctor = getAudioContextCtor();
-        if (!Ctor) continue;
-        try {
-          const fresh = new Ctor();
+        void primeAlarmAudio(null).then((fresh) => {
+          if (!fresh || controller.signal.aborted) return;
           audioRef.current = fresh;
-          void fresh.resume().then(() => playBeepBurst(fresh)).catch(() => {});
-        } catch {
-          // Audio is best-effort.
-        }
+          playAlarm(fresh, controller.signal);
+        });
       }
     }
   }, [timers]);
@@ -268,19 +276,6 @@ export function RecipeTimersProvider({ children }: { children: React.ReactNode }
       void releaseWakeLock();
     };
   }, [releaseWakeLock]);
-
-  const unlockAudio = useCallback(() => {
-    const Ctor = getAudioContextCtor();
-    if (!Ctor) return;
-    if (!audioRef.current || audioRef.current.state === "closed") {
-      try {
-        audioRef.current = new Ctor();
-      } catch {
-        return;
-      }
-    }
-    void audioRef.current.resume().catch(() => {});
-  }, []);
 
   const addTimer = useCallback(
     (name: string, durationMs: number) => {
@@ -342,6 +337,7 @@ export function RecipeTimersProvider({ children }: { children: React.ReactNode }
   }, [unlockAudio]);
 
   const resetTimer = useCallback((id: string) => {
+    stopAlarm(id);
     alarmedRef.current.delete(id);
     const t = Date.now();
     setNow(t);
@@ -357,12 +353,13 @@ export function RecipeTimersProvider({ children }: { children: React.ReactNode }
         };
       }),
     );
-  }, []);
+  }, [stopAlarm]);
 
   const deleteTimer = useCallback((id: string) => {
+    stopAlarm(id);
     alarmedRef.current.delete(id);
     setTimers((prev) => prev.filter((timer) => timer.id !== id));
-  }, []);
+  }, [stopAlarm]);
 
   const remainingOf = useCallback(
     (timer: RecipeTimer) => remainingOfTimer(timer, now),
@@ -374,16 +371,20 @@ export function RecipeTimersProvider({ children }: { children: React.ReactNode }
     return () => setChipHosts((n) => Math.max(0, n - 1));
   }, []);
 
+  const openSetup = useCallback(() => {
+    unlockAudio();
+    setSetupOpen(true);
+  }, [unlockAudio]);
+
+  const closeSetup = useCallback(() => setSetupOpen(false), []);
+
   const value = useMemo<RecipeTimersContextValue>(
     () => ({
       timers,
       now,
       setupOpen,
-      openSetup: () => {
-        unlockAudio();
-        setSetupOpen(true);
-      },
-      closeSetup: () => setSetupOpen(false),
+      openSetup,
+      closeSetup,
       addTimer,
       pauseTimer,
       resumeTimer,
@@ -398,6 +399,8 @@ export function RecipeTimersProvider({ children }: { children: React.ReactNode }
       timers,
       now,
       setupOpen,
+      openSetup,
+      closeSetup,
       addTimer,
       pauseTimer,
       resumeTimer,
@@ -406,7 +409,6 @@ export function RecipeTimersProvider({ children }: { children: React.ReactNode }
       remainingOf,
       registerChipHost,
       chipHosts,
-      unlockAudio,
     ],
   );
 

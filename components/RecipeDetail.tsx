@@ -83,6 +83,34 @@ function EditIcon() {
   );
 }
 
+function CookIcon() {
+  return (
+    <svg
+      width="18"
+      height="18"
+      viewBox="0 0 18 18"
+      fill="none"
+      aria-hidden="true"
+    >
+      <path
+        d="M4.6 10.4c-1.35 0-2.2-1.35-1.55-2.5.25-.45.75-.75 1.25-.8C4.5 5.3 6.35 3.7 9 3.7s4.5 1.6 4.7 3.4c.5.05 1 .35 1.25.8.65 1.15-.2 2.5-1.55 2.5H4.6Z"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        strokeLinejoin="round"
+      />
+      <rect
+        x="5.25"
+        y="10.4"
+        width="7.5"
+        height="3.9"
+        rx="1.1"
+        stroke="currentColor"
+        strokeWidth="1.5"
+      />
+    </svg>
+  );
+}
+
 export function RecipeDetail({ recipe }: { recipe: Recipe }) {
   const router = useRouter();
   const { labelFor } = useCategories();
@@ -368,6 +396,17 @@ export function RecipeDetail({ recipe }: { recipe: Recipe }) {
             className="inline-flex shrink-0 items-center justify-center rounded-full p-1.5 text-[var(--muted)] transition-colors hover:bg-[var(--chip)] hover:text-[var(--accent)]"
           />
           {editing ? null : (
+            <button
+              type="button"
+              onClick={openCook}
+              aria-label="Start cooking"
+              title="Start cooking"
+              className="inline-flex shrink-0 items-center justify-center rounded-full p-1.5 text-[var(--muted)] transition-colors hover:bg-[var(--chip)] hover:text-[var(--accent)]"
+            >
+              <CookIcon />
+            </button>
+          )}
+          {editing ? null : (
             <TimerIconButton className="inline-flex shrink-0 items-center justify-center rounded-full p-1.5 text-[var(--muted)] transition-colors hover:bg-[var(--chip)] hover:text-[var(--accent)]" />
           )}
           <button
@@ -553,18 +592,6 @@ export function RecipeDetail({ recipe }: { recipe: Recipe }) {
               />
             </div>
           </div>
-
-          {editing ? null : (
-            <div className="mt-3">
-              <button
-                type="button"
-                onClick={openCook}
-                className="inline-flex min-h-11 items-center text-base font-semibold text-[var(--accent)]"
-              >
-                Cook
-              </button>
-            </div>
-          )}
 
           {noteAboveImage ? noteSection : null}
 
