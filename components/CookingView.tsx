@@ -307,8 +307,10 @@ function CookingViewInner({
   );
   const stepSwipe = useTouchSwipe(
     () => setStepIndex((i) => Math.min(lastStep, i + 1)),
-    () => setStepIndex((i) => Math.max(0, i - 1)),
-    usableSteps.length > 1,
+    () => {
+      if (stepIndex <= 0) setPane("ingredients");
+      else setStepIndex((i) => Math.max(0, i - 1));
+    },
   );
 
   function toggleChecked(index: number) {

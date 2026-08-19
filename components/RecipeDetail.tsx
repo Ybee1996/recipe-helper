@@ -367,7 +367,9 @@ export function RecipeDetail({ recipe }: { recipe: Recipe }) {
             iconSize={18}
             className="inline-flex shrink-0 items-center justify-center rounded-full p-1.5 text-[var(--muted)] transition-colors hover:bg-[var(--chip)] hover:text-[var(--accent)]"
           />
-          {editing ? null : <TimerIconButton />}
+          {editing ? null : (
+            <TimerIconButton className="inline-flex shrink-0 items-center justify-center rounded-full p-1.5 text-[var(--muted)] transition-colors hover:bg-[var(--chip)] hover:text-[var(--accent)]" />
+          )}
           <button
             type="button"
             onClick={() => setCalendarOpen(true)}

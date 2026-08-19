@@ -185,7 +185,11 @@ export function useSheetDismiss<T extends HTMLElement>(
     const vy = dy / elapsed;
     if (state.moved && (dy > SHEET_DISMISS_PX || vy > DISMISS_VELOCITY)) {
       finishDrag(undefined);
+      return;
     }
+    drag.current = null;
+    dragYRef.current = 0;
+    setDragY(0);
   }
 
   return {
