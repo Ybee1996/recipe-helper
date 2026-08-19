@@ -292,6 +292,29 @@ export function TimerChipStrip({
   );
 }
 
+export function CookTimerDock() {
+  const { openSetup, timers, registerChipHost } = useRecipeTimers();
+  useEffect(() => registerChipHost(), [registerChipHost]);
+
+  return (
+    <div className="shrink-0 border-t border-[var(--line)] bg-[var(--card)] px-3 pt-2 pb-[max(0.65rem,env(safe-area-inset-bottom))]">
+      <div className="mx-auto flex max-w-2xl items-center gap-2">
+        <div className="flex min-h-12 min-w-0 flex-1 items-center">
+          {timers.length ? <TimerChips /> : null}
+        </div>
+        <button
+          type="button"
+          onClick={openSetup}
+          className="inline-flex h-11 shrink-0 items-center gap-1.5 rounded-full bg-[var(--ink)] px-3.5 text-sm font-semibold text-[var(--paper)]"
+        >
+          <TimerIcon size={16} />
+          Timer
+        </button>
+      </div>
+    </div>
+  );
+}
+
 function defaultTimerName(existing: string[]): string {
   const names = new Set(existing.map((name) => name.trim().toLowerCase()));
   if (!names.has("timer")) return "Timer";
