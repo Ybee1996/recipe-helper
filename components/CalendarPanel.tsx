@@ -122,6 +122,10 @@ function AddRecipeButton({ onClick, label }: { onClick: () => void; label: strin
   );
 }
 
+function EmptyDayNote() {
+  return <p className="px-1 py-1.5 text-sm text-[var(--muted)]">No recipes</p>;
+}
+
 export function CalendarPanel({ onNavigate }: { onNavigate?: () => void }) {
   const { entries, calendarOpen, removeEntry } = useCalendar();
   const [view, setView] = useState<CalendarView>("week");
@@ -187,7 +191,16 @@ export function CalendarPanel({ onNavigate }: { onNavigate?: () => void }) {
     );
   }
 
-  if (pickingFor) {
+  function openAddRecipe(date: string) {
+    if (date < today) return;
+    setPickingFor(date);
+  }
+
+  const pickingDate = pickingFor && pickingFor >= today ? pickingFor : null;
+  const selectedEntries = entriesOnDate(entries, selected);
+  const selectedPast = selected < today;
+
+  if (pickingDate) {
     return (
       <div className="flex min-h-0 flex-1 flex-col lg:pt-5">
         <header data-sheet-chrome className="px-5 pb-2">
@@ -200,7 +213,7 @@ export function CalendarPanel({ onNavigate }: { onNavigate?: () => void }) {
             Calendar
           </h2>
         </header>
-        <AddToCalendarPicker date={pickingFor} onClose={() => setPickingFor(null)} />
+        <AddToCalendarPicker date={pickingDate} onClose={() => setPickingFor(null)} />
       </div>
     );
   }
@@ -306,10 +319,14 @@ export function CalendarPanel({ onNavigate }: { onNavigate?: () => void }) {
                         onNavigate={onNavigate}
                       />
                     ))}
-                    <AddRecipeButton
-                      onClick={() => setPickingFor(date)}
-                      label={dayEntries.length ? "Add another recipe" : "Add recipe"}
-                    />
+                    {!past ? (
+                      <AddRecipeButton
+                        onClick={() => openAddRecipe(date)}
+                        label={dayEntries.length ? "Add another recipe" : "Add recipe"}
+                      />
+                    ) : dayEntries.length === 0 ? (
+                      <EmptyDayNote />
+                    ) : null}
                   </div>
                 </li>
               );
@@ -378,23 +395,27 @@ export function CalendarPanel({ onNavigate }: { onNavigate?: () => void }) {
                 ) : null}
               </h3>
               <div className="space-y-2">
-                {entriesOnDate(entries, selected).map((entry) => (
+                {selectedEntries.map((entry) => (
                   <CalendarRecipeRow
                     key={entry.id}
                     entry={entry}
-                    past={selected < today}
+                    past={selectedPast}
                     onRemove={() => removeEntry(entry.id)}
                     onNavigate={onNavigate}
                   />
                 ))}
-                <AddRecipeButton
-                  onClick={() => setPickingFor(selected)}
-                  label={
-                    entriesOnDate(entries, selected).length
-                      ? "Add another recipe"
-                      : "Add recipe"
-                  }
-                />
+                {!selectedPast ? (
+                  <AddRecipeButton
+                    onClick={() => openAddRecipe(selected)}
+                    label={
+                      selectedEntries.length
+                        ? "Add another recipe"
+                        : "Add recipe"
+                    }
+                  />
+                ) : selectedEntries.length === 0 ? (
+                  <EmptyDayNote />
+                ) : null}
               </div>
             </div>
           </div>
