@@ -37,6 +37,7 @@ interface ShoppingListContextValue {
   removeItem: (id: string) => void;
   removeByRecipe: (recipeId: string) => void;
   removeByRecipeName: (recipeId: string, name: string) => void;
+  updateItemQtys: (updates: { id: string; qty: string }[]) => void;
   toggleItem: (id: string) => void;
   clearChecked: () => void;
   clearAll: () => void;
@@ -203,6 +204,33 @@ export function ShoppingListProvider({
     [persist, sendOp],
   );
 
+  const updateItemQtys = useCallback(
+    (updates: { id: string; qty: string }[]) => {
+      if (!updates.length) return;
+      const byId = new Map(
+        updates.map((u) => [u.id, u.qty.trim().slice(0, 8)] as const),
+      );
+      let changed = false;
+      const next = itemsRef.current.map((item) => {
+        if (!byId.has(item.id)) return item;
+        const qty = byId.get(item.id)!;
+        if (item.qty === qty) return item;
+        changed = true;
+        return { ...item, qty };
+      });
+      if (!changed) return;
+      for (const item of next) {
+        if (byId.has(item.id)) recordShoppingHistory(item.name, item.qty);
+      }
+      persist(next);
+      sendOp({
+        op: "updateQtys",
+        updates: [...byId.entries()].map(([id, qty]) => ({ id, qty })),
+      });
+    },
+    [persist, sendOp],
+  );
+
   const toggleItem = useCallback(
     (id: string) => {
       const current = itemsRef.current.find((item) => item.id === id);
@@ -250,6 +278,7 @@ export function ShoppingListProvider({
       removeItem,
       removeByRecipe,
       removeByRecipeName,
+      updateItemQtys,
       toggleItem,
       clearChecked,
       clearAll,
@@ -266,6 +295,7 @@ export function ShoppingListProvider({
       removeItem,
       removeByRecipe,
       removeByRecipeName,
+      updateItemQtys,
       toggleItem,
       clearChecked,
       clearAll,

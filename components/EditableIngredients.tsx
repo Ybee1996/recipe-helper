@@ -103,6 +103,7 @@ export function EditableIngredients({
   onChange,
   onToggleShoppingItem,
   onToggleAllShopping,
+  onScaleShoppingForServings,
   shoppingNamesFromRecipe,
 }: {
   items: ListedIngredient[];
@@ -115,6 +116,7 @@ export function EditableIngredients({
   onChange: (items: ListedIngredient[]) => void;
   onToggleShoppingItem?: (item: ListedIngredient, qty: string, onList: boolean) => void;
   onToggleAllShopping?: (allOnList: boolean) => void;
+  onScaleShoppingForServings?: (nextServings: number) => number;
   shoppingNamesFromRecipe?: Set<string>;
 }) {
   const [toast, setToast] = useState<{ id: number; message: string } | null>(
@@ -140,6 +142,20 @@ export function EditableIngredients({
     setToast({ id: Date.now(), message });
   }
 
+  function handleServings(next: number) {
+    if (next === servings) return;
+    onServings(next);
+    if (editing) return;
+    const updated = onScaleShoppingForServings?.(next) ?? 0;
+    if (updated > 0) {
+      showToast(
+        updated === 1
+          ? "Updated shopping list quantity"
+          : "Updated shopping list quantities",
+      );
+    }
+  }
+
   function update(index: number, next: ListedIngredient) {
     onChange(items.map((item, i) => (i === index ? next : item)));
   }
@@ -163,7 +179,7 @@ export function EditableIngredients({
           <ServingsControl
             servings={servings}
             baseServings={baseServings}
-            onServings={onServings}
+            onServings={handleServings}
           />
           {onToggleEdit ? (
             <button

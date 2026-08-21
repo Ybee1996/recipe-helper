@@ -112,6 +112,24 @@ export async function applyShoppingListOp(
       `;
       break;
     }
+    case "updateQtys": {
+      const updates = op.updates
+        .filter((u) => typeof u.id === "string" && u.id && u.id.length <= 80)
+        .map((u) => ({
+          id: u.id,
+          qty: u.qty.trim().slice(0, 8),
+        }));
+      if (updates.length) {
+        await sql`
+          UPDATE shopping_items AS s
+          SET qty = u.qty
+          FROM jsonb_to_recordset(${JSON.stringify(updates)}::jsonb)
+            AS u(id text, qty text)
+          WHERE s.id = u.id
+        `;
+      }
+      break;
+    }
     case "removeByRecipe": {
       await sql`DELETE FROM shopping_items WHERE recipe_id = ${op.recipeId}`;
       break;

@@ -245,15 +245,17 @@ export function ShoppingListPanel({ onNavigate }: { onNavigate?: () => void }) {
                         : "lg:hover:bg-[var(--tint)]"
                     }`}
                   >
-                    <span className="min-w-[1.15rem] shrink-0 text-right text-[1.03rem] tabular-nums text-[var(--ink-faint)]">
-                      {qtyLabel}
-                    </span>
                     <span
                       className="min-w-0 flex-1 break-words text-xl leading-snug"
                       style={{ fontFamily: DISPLAY_FONT }}
                     >
                       {entry.name}
                     </span>
+                    {qtyLabel ? (
+                      <span className="shrink-0 text-right text-[1.03rem] tabular-nums text-[var(--ink-faint)]">
+                        {qtyLabel}
+                      </span>
+                    ) : null}
                   </button>
                 </li>
               );
@@ -360,10 +362,6 @@ function ShoppingRow({
         className="absolute inset-0 rounded-[10px] outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]"
       />
 
-      <span className="pointer-events-none min-w-[1.15rem] shrink-0 text-right text-[1.03rem] tabular-nums text-[var(--ink-faint)]">
-        {qtyLabel}
-      </span>
-
       <span className="pointer-events-none min-w-0 flex-1">
         <span
           className={`block break-words text-xl leading-snug ${
@@ -391,6 +389,12 @@ function ShoppingRow({
           </span>
         ) : null}
       </span>
+
+      {qtyLabel ? (
+        <span className="pointer-events-none shrink-0 text-right text-[1.03rem] tabular-nums text-[var(--ink-faint)]">
+          {qtyLabel}
+        </span>
+      ) : null}
 
       {item.checked ? (
         <span className="pointer-events-none shrink-0 whitespace-nowrap rounded-full bg-[var(--accent-soft)] px-2.5 py-[3px] text-[0.91rem] font-bold uppercase tracking-[0.04em] text-[var(--accent-dark)]">

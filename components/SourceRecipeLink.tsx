@@ -13,11 +13,11 @@ export function SourceRecipeLink({ url }: { url: string }) {
       rel="noopener noreferrer"
       title={`Original recipe on ${host}`}
       aria-label={`View original recipe on ${host}`}
-      className="mt-1 inline-flex shrink-0 items-center justify-center rounded-full p-1.5 text-[var(--muted)] transition-colors hover:bg-[var(--chip)] hover:text-[var(--accent)]"
+      className="inline-flex min-h-11 min-w-11 shrink-0 items-center justify-center rounded-full p-1.5 text-[var(--muted)] transition-colors hover:bg-[var(--chip)] hover:text-[var(--accent)]"
     >
       <svg
-        width="16"
-        height="16"
+        width="18"
+        height="18"
         viewBox="0 0 16 16"
         fill="none"
         aria-hidden="true"

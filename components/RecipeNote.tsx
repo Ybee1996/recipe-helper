@@ -28,14 +28,16 @@ function NoteIcon() {
 }
 
 const editButtonClass =
-  "inline-flex shrink-0 items-center justify-center rounded-full p-1.5 text-[var(--muted)] transition-colors hover:bg-[var(--chip)] hover:text-[var(--accent)]";
+  "inline-flex min-h-11 min-w-11 shrink-0 items-center justify-center rounded-full p-1.5 transition-colors hover:bg-[var(--chip)]";
 
 export function NoteEditButton({
   label,
   onClick,
+  hasNote = false,
 }: {
   label: string;
   onClick: () => void;
+  hasNote?: boolean;
 }) {
   return (
     <button
@@ -43,7 +45,11 @@ export function NoteEditButton({
       onClick={onClick}
       aria-label={label}
       title={label}
-      className={editButtonClass}
+      className={`${editButtonClass} ${
+        hasNote
+          ? "text-[var(--accent)] hover:text-[var(--accent-dark)]"
+          : "text-[var(--muted)] hover:text-[var(--accent)]"
+      }`}
     >
       <NoteIcon />
     </button>
@@ -138,14 +144,5 @@ export function RecipeNote({
     );
   }
 
-  if (!existing) return null;
-
-  return (
-    <section className="mt-6">
-      <h2 className="text-lg font-semibold">Note</h2>
-      <p className="mt-2 whitespace-pre-wrap rounded-2xl border border-[var(--line)] bg-[var(--card)] px-4 py-3 text-[0.95rem] leading-relaxed">
-        {existing}
-      </p>
-    </section>
-  );
+  return null;
 }

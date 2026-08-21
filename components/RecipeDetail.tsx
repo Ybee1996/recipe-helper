@@ -11,6 +11,7 @@ import {
 import { CookTimeDisplay } from "@/components/CookTimeDisplay";
 import { EditableSteps } from "@/components/EditableSteps";
 import { RecipeImage } from "@/components/RecipeImage";
+import { FavouriteButton } from "@/components/FavouriteButton";
 import { NoteEditButton, RecipeNote } from "@/components/RecipeNote";
 import { useShoppingList } from "@/components/ShoppingListProvider";
 import { SourceRecipeLink } from "@/components/SourceRecipeLink";
@@ -60,8 +61,14 @@ function BackToRecipesLabel() {
 export function RecipeDetail({ recipe }: { recipe: Recipe }) {
   const router = useRouter();
   const { labelFor } = useCategories();
-  const { items: shoppingItems, addItem, addItems, removeByRecipe, removeByRecipeName } =
-    useShoppingList();
+  const {
+    items: shoppingItems,
+    addItem,
+    addItems,
+    removeByRecipe,
+    removeByRecipeName,
+    updateItemQtys,
+  } = useShoppingList();
   const { isUpcoming } = useCalendar();
   const planned = isUpcoming(recipe.id);
   const scalable = recipe.source === "web";
@@ -251,7 +258,7 @@ export function RecipeDetail({ recipe }: { recipe: Recipe }) {
   const baseServings = scalable ? yieldServings : undefined;
   const hasNote = Boolean((note ?? "").trim());
   const showNoteButton = !editing && !noteEditing;
-  const showNote = hasNote || noteEditing;
+  const showNote = noteEditing || (editing && hasNote);
   const noteAboveImage = noteEditing && !hasNote;
   const noteSection = showNote ? (
     <RecipeNote
@@ -310,6 +317,26 @@ export function RecipeDetail({ recipe }: { recipe: Recipe }) {
     addItems(toAdd);
   }
 
+  function scaleShoppingForServings(nextServings: number): number {
+    const byName = new Map(
+      items
+        .filter((item) => !item.pantry && item.name.trim())
+        .map((item) => [item.name.trim(), item] as const),
+    );
+    const updates: { id: string; qty: string }[] = [];
+    for (const shopItem of shoppingItems) {
+      if (shopItem.recipeId !== recipe.id) continue;
+      const ingredient = byName.get(shopItem.name.trim());
+      if (!ingredient) continue;
+      const nextQty = displayQty(ingredient, nextServings, baseServings).trim();
+      if (nextQty === shopItem.qty.trim()) continue;
+      updates.push({ id: shopItem.id, qty: nextQty });
+    }
+    if (!updates.length) return 0;
+    updateItemQtys(updates);
+    return updates.length;
+  }
+
   // The desktop rail is too narrow for the ingredient/step edit controls, so
   // editing falls back to the single-column flow at every width. Groups stay in
   // reading order in the DOM and are placed into columns explicitly, so the
@@ -363,9 +390,6 @@ export function RecipeDetail({ recipe }: { recipe: Recipe }) {
                 Cook
               </button>
               <RecipeActionsSheet
-                recipeId={recipe.id}
-                recipeTitle={title}
-                favourited={Boolean(recipe.favourite)}
                 planned={planned}
                 onCalendar={() => setCalendarOpen(true)}
                 onEdit={startEditing}
@@ -377,33 +401,43 @@ export function RecipeDetail({ recipe }: { recipe: Recipe }) {
 
       {editing ? null : <TimerChipStrip sticky />}
 
-      <div className="mt-3 flex items-start justify-between gap-3">
-        <div className="flex min-w-0 flex-1 items-center gap-2">
-          {editing ? (
-            <input
-              type="text"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              aria-label="Recipe title"
-              className="min-w-0 flex-1 rounded-xl border border-[var(--line)] bg-[var(--paper)] px-3 py-1.5 text-[1.75rem] font-medium leading-tight outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)] lg:text-4xl"
-              style={{ fontFamily: "var(--font-display), Georgia, serif" }}
-            />
-          ) : (
-            <h1
-              className="min-w-0 text-[1.75rem] font-medium leading-tight lg:text-4xl"
-              style={{ fontFamily: "var(--font-display), Georgia, serif" }}
-            >
-              {title}
-            </h1>
-          )}
-          {showNoteButton ? (
-            <NoteEditButton
-              label={hasNote ? "Edit note" : "Add note"}
-              onClick={() => setNoteEditing(true)}
-            />
-          ) : null}
-        </div>
-        {recipe.sourceUrl ? <SourceRecipeLink url={recipe.sourceUrl} /> : null}
+      <div className="mt-3 flex min-w-0 flex-wrap items-center gap-1.5">
+        {editing ? (
+          <input
+            type="text"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            aria-label="Recipe title"
+            className="min-w-0 flex-1 rounded-xl border border-[var(--line)] bg-[var(--paper)] px-3 py-1.5 text-[1.75rem] font-medium leading-tight outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)] lg:text-4xl"
+            style={{ fontFamily: "var(--font-display), Georgia, serif" }}
+          />
+        ) : (
+          <h1
+            className="min-w-0 max-w-full text-[1.75rem] font-medium leading-tight lg:text-4xl"
+            style={{ fontFamily: "var(--font-display), Georgia, serif" }}
+          >
+            {title}
+          </h1>
+        )}
+        {!editing && recipe.sourceUrl ? (
+          <SourceRecipeLink url={recipe.sourceUrl} />
+        ) : null}
+        {showNoteButton ? (
+          <NoteEditButton
+            label={hasNote ? "Show note" : "Add note"}
+            hasNote={hasNote}
+            onClick={() => setNoteEditing(true)}
+          />
+        ) : null}
+        {!editing ? (
+          <FavouriteButton
+            recipeId={recipe.id}
+            recipeTitle={title}
+            favourited={Boolean(recipe.favourite)}
+            iconSize={26}
+            className="inline-flex min-h-11 min-w-11 shrink-0 items-center justify-center rounded-full p-1.5 text-[var(--muted)] transition-colors hover:bg-[var(--chip)] hover:text-[var(--accent)]"
+          />
+        ) : null}
       </div>
 
       <div className={gridClass}>
@@ -535,6 +569,9 @@ export function RecipeDetail({ recipe }: { recipe: Recipe }) {
             onChange={setItems}
             onToggleShoppingItem={editing ? undefined : toggleIngredientOnList}
             onToggleAllShopping={editing ? undefined : toggleAllIngredientsOnList}
+            onScaleShoppingForServings={
+              editing ? undefined : scaleShoppingForServings
+            }
             shoppingNamesFromRecipe={shoppingNamesFromRecipe}
           />
 

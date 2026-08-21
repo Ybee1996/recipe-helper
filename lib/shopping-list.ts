@@ -7,10 +7,13 @@ export interface ShoppingItem {
   checked: boolean;
 }
 
+export type ShoppingQtyUpdate = { id: string; qty: string };
+
 export type ShoppingListOp =
   | { op: "add"; items: ShoppingItem[] }
   | { op: "remove"; ids: string[] }
   | { op: "setChecked"; id: string; checked: boolean }
+  | { op: "updateQtys"; updates: ShoppingQtyUpdate[] }
   | { op: "removeByRecipe"; recipeId: string }
   | { op: "removeByRecipeName"; recipeId: string; name: string }
   | { op: "clearChecked" }

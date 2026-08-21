@@ -90,20 +90,20 @@ export function ImportRecipePreview({
         </p>
       </header>
 
-      <div className="flex items-start justify-between gap-3">
-        <label className="min-w-0 flex-1">
-          <span className="mb-1.5 block text-sm font-semibold">Title</span>
+      <label className="block">
+        <span className="mb-1.5 block text-sm font-semibold">Title</span>
+        <div className="flex items-center gap-1.5">
           <input
             type="text"
             value={title}
             onChange={(e) => setTitle(e.target.value.slice(0, EXTRACT_TITLE_MAX))}
             maxLength={EXTRACT_TITLE_MAX}
             required
-            className={fieldClass}
+            className={`${fieldClass} min-w-0 flex-1`}
           />
-        </label>
-        {recipe.sourceUrl ? <SourceRecipeLink url={recipe.sourceUrl} /> : null}
-      </div>
+          {recipe.sourceUrl ? <SourceRecipeLink url={recipe.sourceUrl} /> : null}
+        </div>
+      </label>
 
       <div className="mt-3 flex flex-wrap gap-2">
         <span className="rounded-full bg-[var(--chip)] px-3 py-1 text-xs font-semibold uppercase tracking-wide">
