@@ -14,7 +14,9 @@ export const EXTRACT_IMPORT_RULES =
   `Keep the recipe title to ${EXTRACT_TITLE_MAX} characters or fewer; use a short dish name. ` +
   "Omit salt and pepper from ingredients and pantry, including sea salt, kosher salt, table salt, " +
   "black pepper, white pepper, ground pepper, peppercorns, and salt and pepper. " +
-  "Keep vegetables such as bell pepper or chilli.";
+  "Keep vegetables such as bell pepper or chilli. " +
+  "When the method describes how an ingredient is prepared (for example crushed garlic, grated ginger, " +
+  "minced onion, diced tomatoes), include that preparation in the ingredient name.";
 
 function clipTitle(title: string, max = EXTRACT_TITLE_MAX): string {
   const trimmed = title.trim();

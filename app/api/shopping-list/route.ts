@@ -37,6 +37,21 @@ function parseOp(body: unknown): ShoppingListOp | null {
       if (typeof checked !== "boolean") return null;
       return { op: "setChecked", id, checked };
     }
+    case "updateQtys": {
+      const updates = (raw as { updates?: unknown }).updates;
+      if (!Array.isArray(updates) || updates.length === 0 || updates.length > 200) {
+        return null;
+      }
+      const parsed: { id: string; qty: string }[] = [];
+      for (const entry of updates) {
+        if (!entry || typeof entry !== "object") return null;
+        const { id, qty } = entry as { id?: unknown; qty?: unknown };
+        if (typeof id !== "string" || !id || id.length > 80) return null;
+        if (typeof qty !== "string") return null;
+        parsed.push({ id, qty: qty.trim().slice(0, 8) });
+      }
+      return { op: "updateQtys", updates: parsed };
+    }
     case "removeByRecipe": {
       const recipeId = (raw as { recipeId?: unknown }).recipeId;
       if (typeof recipeId !== "string" || !recipeId) return null;

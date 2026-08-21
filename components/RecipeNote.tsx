@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { forwardRef, useEffect, useState } from "react";
 
 function NoteIcon() {
   return (
@@ -27,15 +27,44 @@ function NoteIcon() {
   );
 }
 
+function PencilIcon() {
+  return (
+    <svg
+      width="16"
+      height="16"
+      viewBox="0 0 18 18"
+      fill="none"
+      aria-hidden="true"
+    >
+      <path
+        d="M11.6 3.35a1.4 1.4 0 0 1 2 0l.95.95a1.4 1.4 0 0 1 0 2L7.1 13.75 3.5 14.5l.75-3.6 7.35-7.55Z"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        strokeLinejoin="round"
+      />
+      <path
+        d="M10.4 4.55 13.45 7.6"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+      />
+    </svg>
+  );
+}
+
 const editButtonClass =
-  "inline-flex shrink-0 items-center justify-center rounded-full p-1.5 text-[var(--muted)] transition-colors hover:bg-[var(--chip)] hover:text-[var(--accent)]";
+  "inline-flex min-h-11 min-w-11 shrink-0 items-center justify-center rounded-full p-1.5 transition-colors hover:bg-[var(--chip)]";
 
 export function NoteEditButton({
   label,
   onClick,
+  hasNote = false,
+  expanded = false,
 }: {
   label: string;
   onClick: () => void;
+  hasNote?: boolean;
+  expanded?: boolean;
 }) {
   return (
     <button
@@ -43,28 +72,41 @@ export function NoteEditButton({
       onClick={onClick}
       aria-label={label}
       title={label}
-      className={editButtonClass}
+      aria-expanded={expanded}
+      className={`${editButtonClass} ${
+        hasNote
+          ? "text-[var(--accent)] hover:text-[var(--accent-dark)]"
+          : "text-[var(--muted)] hover:text-[var(--accent)]"
+      }`}
     >
       <NoteIcon />
     </button>
   );
 }
 
-export function RecipeNote({
-  note,
-  recipeEditing,
-  editingNote,
-  onEditingNoteChange,
-  onChange,
-  onSave,
-}: {
-  note: string | null;
-  recipeEditing: boolean;
-  editingNote: boolean;
-  onEditingNoteChange: (editing: boolean) => void;
-  onChange: (text: string | null) => void;
-  onSave: (text: string | null) => Promise<boolean>;
-}) {
+export const RecipeNote = forwardRef<
+  HTMLElement,
+  {
+    note: string | null;
+    recipeEditing: boolean;
+    editingNote: boolean;
+    onEditingNoteChange: (editing: boolean) => void;
+    onClose?: () => void;
+    onChange: (text: string | null) => void;
+    onSave: (text: string | null) => Promise<boolean>;
+  }
+>(function RecipeNote(
+  {
+    note,
+    recipeEditing,
+    editingNote,
+    onEditingNoteChange,
+    onClose,
+    onChange,
+    onSave,
+  },
+  ref,
+) {
   const existing = (note ?? "").trim();
   const [draft, setDraft] = useState(note ?? "");
   const [saving, setSaving] = useState(false);
@@ -76,6 +118,7 @@ export function RecipeNote({
   function cancelEditing() {
     setDraft(note ?? "");
     onEditingNoteChange(false);
+    if (!existing) onClose?.();
   }
 
   async function saveNote() {
@@ -88,14 +131,15 @@ export function RecipeNote({
     if (!ok) return;
     onChange(next);
     onEditingNoteChange(false);
+    if (!next) onClose?.();
   }
 
   if (recipeEditing) {
     if (!existing) return null;
     return (
-      <section className="mt-6">
+      <section ref={ref} className="mt-6 scroll-mt-24 outline-none lg:scroll-mt-8" tabIndex={-1}>
         <h2 className="text-lg font-semibold">Note</h2>
-        <p className="mt-2 whitespace-pre-wrap rounded-2xl border border-[var(--line)] bg-[var(--card)] px-4 py-3 text-[0.95rem] leading-relaxed">
+        <p className="mt-2 whitespace-pre-wrap text-[0.98rem] leading-relaxed text-[var(--muted)] italic">
           {existing}
         </p>
       </section>
@@ -104,7 +148,7 @@ export function RecipeNote({
 
   if (editingNote) {
     return (
-      <section className="mt-4">
+      <section ref={ref} className="mt-4 scroll-mt-24 outline-none lg:scroll-mt-8" tabIndex={-1}>
         <div className="flex items-center justify-between gap-2">
           <h2 className="text-sm font-semibold">Note</h2>
           <div className="flex items-center gap-2">
@@ -138,14 +182,34 @@ export function RecipeNote({
     );
   }
 
-  if (!existing) return null;
-
   return (
-    <section className="mt-6">
-      <h2 className="text-lg font-semibold">Note</h2>
-      <p className="mt-2 whitespace-pre-wrap rounded-2xl border border-[var(--line)] bg-[var(--card)] px-4 py-3 text-[0.95rem] leading-relaxed">
-        {existing}
-      </p>
+    <section ref={ref} className="mt-4 scroll-mt-24 outline-none lg:scroll-mt-8" tabIndex={-1}>
+      <div className="flex items-center justify-between gap-2">
+        <h2 className="text-[0.72rem] font-semibold uppercase tracking-[0.14em] text-[var(--ink-faint)]">
+          Note
+        </h2>
+        <button
+          type="button"
+          onClick={() => onEditingNoteChange(true)}
+          aria-label={existing ? "Edit note" : "Write note"}
+          title={existing ? "Edit note" : "Write note"}
+          className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-full text-[var(--muted)] transition-colors hover:bg-[var(--chip)] hover:text-[var(--accent)]"
+        >
+          <PencilIcon />
+        </button>
+      </div>
+      {existing ? (
+        <p
+          className="mt-1 whitespace-pre-wrap border-l-2 border-[var(--accent-soft)] pl-3.5 text-[1.02rem] leading-relaxed text-[var(--ink)]"
+          style={{ fontFamily: "var(--font-display), Georgia, serif" }}
+        >
+          {existing}
+        </p>
+      ) : (
+        <p className="mt-1 border-l-2 border-[var(--line)] pl-3.5 text-[0.95rem] leading-relaxed text-[var(--muted)] italic">
+          No note yet. Tap the pencil to add one.
+        </p>
+      )}
     </section>
   );
-}
+});

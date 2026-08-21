@@ -3,10 +3,8 @@
 import { useEffect, useId, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { CalendarIcon } from "@/components/CalendarIcon";
-import { StarIcon } from "@/components/FavouriteButton";
 import { TimerIcon } from "@/components/RecipeTimers";
 import { useRecipeTimers } from "@/components/RecipeTimersProvider";
-import { saveOverlay } from "@/lib/save-overlay";
 import { useSheetDismiss } from "@/lib/sheet-dismiss";
 
 const FOCUSABLE =
@@ -50,16 +48,10 @@ const rowClass =
   "flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left text-sm font-semibold text-[var(--ink)] outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)] active:bg-[var(--chip)] lg:hover:bg-[var(--chip)]";
 
 export function RecipeActionsSheet({
-  recipeId,
-  recipeTitle,
-  favourited,
   planned,
   onCalendar,
   onEdit,
 }: {
-  recipeId: string;
-  recipeTitle: string;
-  favourited: boolean;
   planned: boolean;
   onCalendar: () => void;
   onEdit: () => void;
@@ -70,8 +62,6 @@ export function RecipeActionsSheet({
   const live = timers.filter((t) => !t.ended).length;
   const [open, setOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
-  const [favouriteOn, setFavouriteOn] = useState(favourited);
-  const [favouriteBusy, setFavouriteBusy] = useState(false);
   const dialogRef = useRef<HTMLDivElement>(null);
   const previousFocus = useRef<HTMLElement | null>(null);
   const pendingAction = useRef<(() => void) | null>(null);
@@ -81,10 +71,6 @@ export function RecipeActionsSheet({
   useEffect(() => {
     setMounted(true);
   }, []);
-
-  useEffect(() => {
-    setFavouriteOn(favourited);
-  }, [favourited]);
 
   useEffect(() => {
     if (!open) {
@@ -143,21 +129,6 @@ export function RecipeActionsSheet({
   function closeThen(action: () => void) {
     pendingAction.current = action;
     setOpen(false);
-  }
-
-  async function toggleFavourite() {
-    if (favouriteBusy) return;
-    const next = !favouriteOn;
-    setFavouriteOn(next);
-    setFavouriteBusy(true);
-    setOpen(false);
-    try {
-      await saveOverlay(recipeId, { favourite: next });
-    } catch {
-      setFavouriteOn(!next);
-    } finally {
-      setFavouriteBusy(false);
-    }
   }
 
   return (
@@ -220,27 +191,6 @@ export function RecipeActionsSheet({
                   Actions
                 </h2>
                 <div className="flex flex-col">
-                  <button
-                    type="button"
-                    disabled={favouriteBusy}
-                    aria-pressed={favouriteOn}
-                    aria-label={
-                      favouriteOn
-                        ? `Remove ${recipeTitle} from favourites`
-                        : `Add ${recipeTitle} to favourites`
-                    }
-                    onClick={() => void toggleFavourite()}
-                    className={rowClass}
-                  >
-                    <span
-                      className={`inline-flex h-8 w-8 items-center justify-center rounded-full bg-[var(--chip)] ${
-                        favouriteOn ? "text-[var(--accent)]" : "text-[var(--ink)]"
-                      }`}
-                    >
-                      <StarIcon filled={favouriteOn} size={16} />
-                    </span>
-                    {favouriteOn ? "Remove favourite" : "Favourite"}
-                  </button>
                   <button
                     type="button"
                     onClick={() => closeThen(openSetup)}
