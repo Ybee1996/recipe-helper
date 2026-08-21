@@ -27,6 +27,31 @@ function NoteIcon() {
   );
 }
 
+function PencilIcon() {
+  return (
+    <svg
+      width="16"
+      height="16"
+      viewBox="0 0 18 18"
+      fill="none"
+      aria-hidden="true"
+    >
+      <path
+        d="M11.6 3.35a1.4 1.4 0 0 1 2 0l.95.95a1.4 1.4 0 0 1 0 2L7.1 13.75 3.5 14.5l.75-3.6 7.35-7.55Z"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        strokeLinejoin="round"
+      />
+      <path
+        d="M10.4 4.55 13.45 7.6"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+      />
+    </svg>
+  );
+}
+
 const editButtonClass =
   "inline-flex min-h-11 min-w-11 shrink-0 items-center justify-center rounded-full p-1.5 transition-colors hover:bg-[var(--chip)]";
 
@@ -34,10 +59,12 @@ export function NoteEditButton({
   label,
   onClick,
   hasNote = false,
+  expanded = false,
 }: {
   label: string;
   onClick: () => void;
   hasNote?: boolean;
+  expanded?: boolean;
 }) {
   return (
     <button
@@ -45,6 +72,7 @@ export function NoteEditButton({
       onClick={onClick}
       aria-label={label}
       title={label}
+      aria-expanded={expanded}
       className={`${editButtonClass} ${
         hasNote
           ? "text-[var(--accent)] hover:text-[var(--accent-dark)]"
@@ -61,6 +89,7 @@ export function RecipeNote({
   recipeEditing,
   editingNote,
   onEditingNoteChange,
+  onClose,
   onChange,
   onSave,
 }: {
@@ -68,6 +97,7 @@ export function RecipeNote({
   recipeEditing: boolean;
   editingNote: boolean;
   onEditingNoteChange: (editing: boolean) => void;
+  onClose?: () => void;
   onChange: (text: string | null) => void;
   onSave: (text: string | null) => Promise<boolean>;
 }) {
@@ -82,6 +112,7 @@ export function RecipeNote({
   function cancelEditing() {
     setDraft(note ?? "");
     onEditingNoteChange(false);
+    if (!existing) onClose?.();
   }
 
   async function saveNote() {
@@ -94,6 +125,7 @@ export function RecipeNote({
     if (!ok) return;
     onChange(next);
     onEditingNoteChange(false);
+    if (!next) onClose?.();
   }
 
   if (recipeEditing) {
@@ -144,5 +176,29 @@ export function RecipeNote({
     );
   }
 
-  return null;
+  return (
+    <section className="mt-4">
+      <div className="flex items-center justify-between gap-2">
+        <h2 className="text-sm font-semibold">Note</h2>
+        <button
+          type="button"
+          onClick={() => onEditingNoteChange(true)}
+          aria-label={existing ? "Edit note" : "Write note"}
+          title={existing ? "Edit note" : "Write note"}
+          className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-full text-[var(--muted)] transition-colors hover:bg-[var(--chip)] hover:text-[var(--accent)]"
+        >
+          <PencilIcon />
+        </button>
+      </div>
+      {existing ? (
+        <p className="mt-1 whitespace-pre-wrap rounded-2xl border border-[var(--line)] bg-[var(--card)] px-4 py-3 text-[0.95rem] leading-relaxed">
+          {existing}
+        </p>
+      ) : (
+        <p className="mt-1 rounded-2xl border border-dashed border-[var(--line)] bg-[var(--card)] px-4 py-3 text-[0.95rem] text-[var(--muted)]">
+          No note yet. Tap the pencil to add one.
+        </p>
+      )}
+    </section>
+  );
 }

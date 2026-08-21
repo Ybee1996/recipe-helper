@@ -88,6 +88,7 @@ export function RecipeDetail({ recipe }: { recipe: Recipe }) {
   const [items, setItems] = useState<ListedIngredient[]>(() => listedFrom(recipe));
   const [steps, setSteps] = useState<Step[]>(recipe.steps);
   const [editing, setEditing] = useState(false);
+  const [noteOpen, setNoteOpen] = useState(false);
   const [noteEditing, setNoteEditing] = useState(false);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -129,6 +130,7 @@ export function RecipeDetail({ recipe }: { recipe: Recipe }) {
     setItems(listedFrom(recipe));
     setSteps(recipe.steps);
     setEditing(false);
+    setNoteOpen(false);
     setNoteEditing(false);
     setSaving(false);
     setYieldServings(storedServings);
@@ -203,6 +205,7 @@ export function RecipeDetail({ recipe }: { recipe: Recipe }) {
     };
     if (scalable) setServings(yieldServings);
     setError(null);
+    setNoteOpen(false);
     setNoteEditing(false);
     setEditing(true);
     if (cookOpen) closeCook();
@@ -257,15 +260,19 @@ export function RecipeDetail({ recipe }: { recipe: Recipe }) {
   const cookTimeMin = combineCookTime(Number(cookHours) || 0, Number(cookMinutes) || 0);
   const baseServings = scalable ? yieldServings : undefined;
   const hasNote = Boolean((note ?? "").trim());
-  const showNoteButton = !editing && !noteEditing;
-  const showNote = noteEditing || (editing && hasNote);
-  const noteAboveImage = noteEditing && !hasNote;
+  const showNoteButton = !editing;
+  const showNote = noteOpen || (editing && hasNote);
+  const noteAboveImage = noteOpen && !hasNote;
   const noteSection = showNote ? (
     <RecipeNote
       note={note}
       recipeEditing={editing}
       editingNote={noteEditing}
       onEditingNoteChange={setNoteEditing}
+      onClose={() => {
+        setNoteOpen(false);
+        setNoteEditing(false);
+      }}
       onChange={setNote}
       onSave={(text) => persist({ note: text })}
     />
@@ -424,9 +431,24 @@ export function RecipeDetail({ recipe }: { recipe: Recipe }) {
         ) : null}
         {showNoteButton ? (
           <NoteEditButton
-            label={hasNote ? "Show note" : "Add note"}
+            label={
+              noteOpen
+                ? "Hide note"
+                : hasNote
+                  ? "Show note"
+                  : "Add note"
+            }
             hasNote={hasNote}
-            onClick={() => setNoteEditing(true)}
+            expanded={noteOpen}
+            onClick={() => {
+              if (noteOpen) {
+                setNoteOpen(false);
+                setNoteEditing(false);
+                return;
+              }
+              setNoteOpen(true);
+              setNoteEditing(false);
+            }}
           />
         ) : null}
         {!editing ? (
