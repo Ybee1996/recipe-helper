@@ -1,4 +1,10 @@
-export function SourceRecipeLink({ url }: { url: string }) {
+export function SourceRecipeLink({
+  url,
+  className = "",
+}: {
+  url: string;
+  className?: string;
+}) {
   let host = url;
   try {
     host = new URL(url).hostname.replace(/^www\./, "");
@@ -13,11 +19,11 @@ export function SourceRecipeLink({ url }: { url: string }) {
       rel="noopener noreferrer"
       title={`Original recipe on ${host}`}
       aria-label={`View original recipe on ${host}`}
-      className="inline-flex min-h-11 min-w-11 shrink-0 items-center justify-center rounded-full p-1.5 text-[var(--muted)] transition-colors hover:bg-[var(--chip)] hover:text-[var(--accent)]"
+      className={`inline-flex size-9 shrink-0 items-center justify-center rounded-full text-[var(--muted)] transition-colors hover:bg-[var(--chip)] hover:text-[var(--accent)] ${className}`.trim()}
     >
       <svg
-        width="18"
-        height="18"
+        width="16"
+        height="16"
         viewBox="0 0 16 16"
         fill="none"
         aria-hidden="true"

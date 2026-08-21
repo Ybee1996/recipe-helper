@@ -94,6 +94,7 @@ export function RecipeDetail({ recipe }: { recipe: Recipe }) {
   const [error, setError] = useState<string | null>(null);
   const [calendarOpen, setCalendarOpen] = useState(false);
   const [cookOpen, setCookOpen] = useState(false);
+  const noteSectionRef = useRef<HTMLElement | null>(null);
 
   const storedServings = scalable ? recipe.servings || 2 : 2;
   const [yieldServings, setYieldServings] = useState(storedServings);
@@ -262,9 +263,9 @@ export function RecipeDetail({ recipe }: { recipe: Recipe }) {
   const hasNote = Boolean((note ?? "").trim());
   const showNoteButton = !editing;
   const showNote = noteOpen || (editing && hasNote);
-  const noteAboveImage = noteOpen && !hasNote;
   const noteSection = showNote ? (
     <RecipeNote
+      ref={noteSectionRef}
       note={note}
       recipeEditing={editing}
       editingNote={noteEditing}
@@ -277,6 +278,17 @@ export function RecipeDetail({ recipe }: { recipe: Recipe }) {
       onSave={(text) => persist({ note: text })}
     />
   ) : null;
+
+  useEffect(() => {
+    if (!noteOpen) return;
+    const id = window.setTimeout(() => {
+      const el = noteSectionRef.current;
+      if (!el) return;
+      el.scrollIntoView({ behavior: "smooth", block: "start" });
+      el.focus({ preventScroll: true });
+    }, 50);
+    return () => window.clearTimeout(id);
+  }, [noteOpen]);
 
   const shoppingNamesFromRecipe = useMemo(() => {
     const names = new Set<string>();
@@ -408,27 +420,32 @@ export function RecipeDetail({ recipe }: { recipe: Recipe }) {
 
       {editing ? null : <TimerChipStrip sticky />}
 
-      <div className="mt-3 flex min-w-0 flex-wrap items-center gap-1.5">
-        {editing ? (
-          <input
-            type="text"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            aria-label="Recipe title"
-            className="min-w-0 flex-1 rounded-xl border border-[var(--line)] bg-[var(--paper)] px-3 py-1.5 text-[1.75rem] font-medium leading-tight outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)] lg:text-4xl"
-            style={{ fontFamily: "var(--font-display), Georgia, serif" }}
-          />
-        ) : (
-          <h1
-            className="min-w-0 max-w-full text-[1.75rem] font-medium leading-tight lg:text-4xl"
-            style={{ fontFamily: "var(--font-display), Georgia, serif" }}
-          >
-            {title}
-          </h1>
-        )}
-        {!editing && recipe.sourceUrl ? (
-          <SourceRecipeLink url={recipe.sourceUrl} />
-        ) : null}
+      <div className="mt-3 flex items-start gap-1">
+        <div className="min-w-0 flex-1">
+          {editing ? (
+            <input
+              type="text"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              aria-label="Recipe title"
+              className="w-full rounded-xl border border-[var(--line)] bg-[var(--paper)] px-3 py-1.5 text-[1.75rem] font-medium leading-tight outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)] lg:text-4xl"
+              style={{ fontFamily: "var(--font-display), Georgia, serif" }}
+            />
+          ) : (
+            <h1
+              className="text-[1.75rem] font-medium leading-tight lg:text-4xl"
+              style={{ fontFamily: "var(--font-display), Georgia, serif" }}
+            >
+              {title}
+              {recipe.sourceUrl ? (
+                <SourceRecipeLink
+                  url={recipe.sourceUrl}
+                  className="ml-1 align-middle"
+                />
+              ) : null}
+            </h1>
+          )}
+        </div>
         {showNoteButton ? (
           <NoteEditButton
             label={
@@ -564,7 +581,7 @@ export function RecipeDetail({ recipe }: { recipe: Recipe }) {
             </div>
           </div>
 
-          {noteAboveImage ? noteSection : null}
+          {noteOpen ? noteSection : null}
 
           <RecipeImage
             recipeId={recipe.id}
@@ -575,7 +592,7 @@ export function RecipeDetail({ recipe }: { recipe: Recipe }) {
             onError={setError}
           />
 
-          {!noteAboveImage ? noteSection : null}
+          {editing && hasNote ? noteSection : null}
 
           {error && <p className="mt-3 text-sm text-[var(--accent)]">{error}</p>}
         </div>

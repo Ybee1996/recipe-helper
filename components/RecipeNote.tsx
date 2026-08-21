@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { forwardRef, useEffect, useState } from "react";
 
 function NoteIcon() {
   return (
@@ -84,23 +84,29 @@ export function NoteEditButton({
   );
 }
 
-export function RecipeNote({
-  note,
-  recipeEditing,
-  editingNote,
-  onEditingNoteChange,
-  onClose,
-  onChange,
-  onSave,
-}: {
-  note: string | null;
-  recipeEditing: boolean;
-  editingNote: boolean;
-  onEditingNoteChange: (editing: boolean) => void;
-  onClose?: () => void;
-  onChange: (text: string | null) => void;
-  onSave: (text: string | null) => Promise<boolean>;
-}) {
+export const RecipeNote = forwardRef<
+  HTMLElement,
+  {
+    note: string | null;
+    recipeEditing: boolean;
+    editingNote: boolean;
+    onEditingNoteChange: (editing: boolean) => void;
+    onClose?: () => void;
+    onChange: (text: string | null) => void;
+    onSave: (text: string | null) => Promise<boolean>;
+  }
+>(function RecipeNote(
+  {
+    note,
+    recipeEditing,
+    editingNote,
+    onEditingNoteChange,
+    onClose,
+    onChange,
+    onSave,
+  },
+  ref,
+) {
   const existing = (note ?? "").trim();
   const [draft, setDraft] = useState(note ?? "");
   const [saving, setSaving] = useState(false);
@@ -131,9 +137,9 @@ export function RecipeNote({
   if (recipeEditing) {
     if (!existing) return null;
     return (
-      <section className="mt-6">
+      <section ref={ref} className="mt-6 scroll-mt-24 outline-none lg:scroll-mt-8" tabIndex={-1}>
         <h2 className="text-lg font-semibold">Note</h2>
-        <p className="mt-2 whitespace-pre-wrap rounded-2xl border border-[var(--line)] bg-[var(--card)] px-4 py-3 text-[0.95rem] leading-relaxed">
+        <p className="mt-2 whitespace-pre-wrap text-[0.98rem] leading-relaxed text-[var(--muted)] italic">
           {existing}
         </p>
       </section>
@@ -142,7 +148,7 @@ export function RecipeNote({
 
   if (editingNote) {
     return (
-      <section className="mt-4">
+      <section ref={ref} className="mt-4 scroll-mt-24 outline-none lg:scroll-mt-8" tabIndex={-1}>
         <div className="flex items-center justify-between gap-2">
           <h2 className="text-sm font-semibold">Note</h2>
           <div className="flex items-center gap-2">
@@ -177,9 +183,11 @@ export function RecipeNote({
   }
 
   return (
-    <section className="mt-4">
+    <section ref={ref} className="mt-4 scroll-mt-24 outline-none lg:scroll-mt-8" tabIndex={-1}>
       <div className="flex items-center justify-between gap-2">
-        <h2 className="text-sm font-semibold">Note</h2>
+        <h2 className="text-[0.72rem] font-semibold uppercase tracking-[0.14em] text-[var(--ink-faint)]">
+          Note
+        </h2>
         <button
           type="button"
           onClick={() => onEditingNoteChange(true)}
@@ -191,14 +199,17 @@ export function RecipeNote({
         </button>
       </div>
       {existing ? (
-        <p className="mt-1 whitespace-pre-wrap rounded-2xl border border-[var(--line)] bg-[var(--card)] px-4 py-3 text-[0.95rem] leading-relaxed">
+        <p
+          className="mt-1 whitespace-pre-wrap border-l-2 border-[var(--accent-soft)] pl-3.5 text-[1.02rem] leading-relaxed text-[var(--ink)]"
+          style={{ fontFamily: "var(--font-display), Georgia, serif" }}
+        >
           {existing}
         </p>
       ) : (
-        <p className="mt-1 rounded-2xl border border-dashed border-[var(--line)] bg-[var(--card)] px-4 py-3 text-[0.95rem] text-[var(--muted)]">
+        <p className="mt-1 border-l-2 border-[var(--line)] pl-3.5 text-[0.95rem] leading-relaxed text-[var(--muted)] italic">
           No note yet. Tap the pencil to add one.
         </p>
       )}
     </section>
   );
-}
+});
