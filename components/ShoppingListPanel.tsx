@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import { useMemo, useRef, useState } from "react";
 import { useShoppingList } from "@/components/ShoppingListProvider";
 import {
@@ -15,7 +14,7 @@ const SUGGEST_LIST_ID = "shopping-suggest-list";
 const DISPLAY_FONT = "var(--font-display), Georgia, serif";
 
 export function ShoppingListPanel({ onNavigate }: { onNavigate?: () => void }) {
-  const { items, addItem, removeItem, toggleItem, clearChecked, clearAll } = useShoppingList();
+  const { items, addItem, removeItem, clearAll } = useShoppingList();
   const [name, setName] = useState("");
   const [qty, setQty] = useState("");
   const [highlight, setHighlight] = useState(-1);
@@ -23,17 +22,11 @@ export function ShoppingListPanel({ onNavigate }: { onNavigate?: () => void }) {
   const nameRef = useRef<HTMLInputElement>(null);
   const blurTimer = useRef<number>(0);
 
-  const unchecked = items.filter((item) => !item.checked);
-  const checked = items.filter((item) => item.checked);
   const total = items.length;
 
   const excludeLower = useMemo(
     () =>
-      new Set(
-        items
-          .filter((item) => !item.checked)
-          .map((item) => item.name.trim().toLowerCase()),
-      ),
+      new Set(items.map((item) => item.name.trim().toLowerCase())),
     [items],
   );
 
@@ -131,11 +124,6 @@ export function ShoppingListPanel({ onNavigate }: { onNavigate?: () => void }) {
           >
             Shopping list
           </h2>
-          {total > 0 ? (
-            <p className="mt-1 text-[1.03rem] text-[var(--muted)]">
-              {checked.length} of {total} picked up
-            </p>
-          ) : null}
         </div>
         {total > 0 ? (
           <button
@@ -150,7 +138,7 @@ export function ShoppingListPanel({ onNavigate }: { onNavigate?: () => void }) {
 
       {total > 0 ? (
         <p data-sheet-chrome className="px-5 pb-3 text-base italic text-[var(--ink-faint)]">
-          Tap an item once you&rsquo;ve got it
+          Swipe right to remove an item
         </p>
       ) : null}
 
@@ -272,49 +260,15 @@ export function ShoppingListPanel({ onNavigate }: { onNavigate?: () => void }) {
             Add one above, or from a recipe.
           </p>
         ) : (
-          <>
-            {unchecked.length > 0 ? (
-              <ul>
-                {unchecked.map((item) => (
-                  <ShoppingRow
-                    key={item.id}
-                    item={item}
-                    onToggle={() => toggleItem(item.id)}
-                    onRemove={() => removeItem(item.id)}
-                    onNavigate={onNavigate}
-                  />
-                ))}
-              </ul>
-            ) : null}
-
-            {checked.length > 0 ? (
-              <section>
-                <div className="flex items-baseline justify-between gap-2 px-2.5 pb-1.5 pt-3.5">
-                  <h3 className="text-[0.94rem] font-semibold uppercase tracking-[0.06em] text-[var(--ink-faint)]">
-                    Got it &mdash; {checked.length}
-                  </h3>
-                  <button
-                    type="button"
-                    onClick={clearChecked}
-                    className="rounded-md px-1 text-[0.94rem] font-semibold uppercase tracking-[0.06em] text-[var(--ink-faint)] outline-none transition-colors focus-visible:ring-2 focus-visible:ring-[var(--accent)] lg:hover:text-[var(--danger)]"
-                  >
-                    Clear
-                  </button>
-                </div>
-                <ul>
-                  {checked.map((item) => (
-                    <ShoppingRow
-                      key={item.id}
-                      item={item}
-                      onToggle={() => toggleItem(item.id)}
-                      onRemove={() => removeItem(item.id)}
-                      onNavigate={onNavigate}
-                    />
-                  ))}
-                </ul>
-              </section>
-            ) : null}
-          </>
+          <ul>
+            {items.map((item) => (
+              <ShoppingRow
+                key={item.id}
+                item={item}
+                onRemove={() => removeItem(item.id)}
+              />
+            ))}
+          </ul>
         )}
       </div>
 
@@ -331,85 +285,104 @@ function formatSuggestQty(qty: string): string {
   return /^\d+(\.\d+)?$/.test(trimmed) ? `${trimmed}×` : trimmed;
 }
 
+const SWIPE_LOCK_PX = 8;
+const SWIPE_REMOVE_PX = 90;
+
+type SwipeState = {
+  pointerId: number;
+  startX: number;
+  startY: number;
+  locked: "x" | "y" | null;
+};
+
 function ShoppingRow({
   item,
-  onToggle,
   onRemove,
-  onNavigate,
 }: {
   item: ShoppingItem;
-  onToggle: () => void;
   onRemove: () => void;
-  onNavigate?: () => void;
 }) {
   const qty = item.qty.trim();
   const qtyLabel = qty ? (/^\d+(\.\d+)?$/.test(qty) ? `${qty}×` : qty) : "";
+  const swipe = useRef<SwipeState | null>(null);
+  const [dx, setDx] = useState(0);
+  const [dragging, setDragging] = useState(false);
+
+  function onPointerDown(e: React.PointerEvent<HTMLLIElement>) {
+    if (e.pointerType === "mouse" && e.button !== 0) return;
+    swipe.current = {
+      pointerId: e.pointerId,
+      startX: e.clientX,
+      startY: e.clientY,
+      locked: null,
+    };
+  }
+
+  function onPointerMove(e: React.PointerEvent<HTMLLIElement>) {
+    const state = swipe.current;
+    if (!state || state.pointerId !== e.pointerId || state.locked === "y") return;
+    const moveX = e.clientX - state.startX;
+    const moveY = e.clientY - state.startY;
+    if (!state.locked) {
+      if (Math.max(Math.abs(moveX), Math.abs(moveY)) < SWIPE_LOCK_PX) return;
+      if (Math.abs(moveY) > Math.abs(moveX)) {
+        state.locked = "y";
+        return;
+      }
+      state.locked = "x";
+      e.currentTarget.setPointerCapture(e.pointerId);
+      setDragging(true);
+    }
+    setDx(Math.max(0, moveX));
+  }
+
+  function endSwipe(e: React.PointerEvent<HTMLLIElement>, cancelled: boolean) {
+    const state = swipe.current;
+    if (!state || state.pointerId !== e.pointerId) return;
+    swipe.current = null;
+    setDragging(false);
+    if (!cancelled && state.locked === "x" && dx >= SWIPE_REMOVE_PX) {
+      onRemove();
+      return;
+    }
+    setDx(0);
+  }
+
+  function onKeyDown(e: React.KeyboardEvent<HTMLLIElement>) {
+    if (e.key === "Delete" || e.key === "Backspace" || e.key === "ArrowRight") {
+      e.preventDefault();
+      onRemove();
+    }
+  }
 
   return (
     <li
-      className={`group relative flex select-none items-center gap-2.5 rounded-[10px] px-2.5 py-3 transition-colors ${
-        item.checked
-          ? "bg-[var(--got)] lg:hover:bg-[var(--chip)]"
-          : "lg:hover:bg-[var(--tint)]"
-      }`}
+      tabIndex={0}
+      aria-label={qty ? `${qty} ${item.name}` : item.name}
+      onPointerDown={onPointerDown}
+      onPointerMove={onPointerMove}
+      onPointerUp={(e) => endSwipe(e, false)}
+      onPointerCancel={(e) => endSwipe(e, true)}
+      onKeyDown={onKeyDown}
+      style={{
+        transform: dx ? `translateX(${dx}px)` : undefined,
+        opacity: dx ? Math.max(0.35, 1 - dx / 300) : undefined,
+        transition: dragging ? "none" : "transform 180ms ease, opacity 180ms ease",
+      }}
+      className="flex touch-pan-y select-none items-center gap-2.5 rounded-[10px] px-2.5 py-3 outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)] lg:hover:bg-[var(--tint)]"
     >
-      <button
-        type="button"
-        role="checkbox"
-        aria-checked={item.checked}
-        onClick={onToggle}
-        aria-label={qty ? `${qty} ${item.name}` : item.name}
-        className="absolute inset-0 rounded-[10px] outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]"
-      />
-
-      <span className="pointer-events-none min-w-0 flex-1">
-        <span
-          className={`block break-words text-xl leading-snug ${
-            item.checked
-              ? "text-[var(--ink-faint)] line-through decoration-[1.5px]"
-              : ""
-          }`}
-          style={{ fontFamily: DISPLAY_FONT }}
-        >
-          {item.name}
-        </span>
-        {item.recipeTitle ? (
-          <span className="mt-0.5 block text-[0.94rem] text-[var(--ink-faint)]">
-            {item.recipeId ? (
-              <Link
-                href={`/recipe/${item.recipeId}`}
-                onClick={onNavigate}
-                className="pointer-events-auto relative z-10 outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)] lg:hover:text-[var(--accent)] lg:hover:underline"
-              >
-                {item.recipeTitle}
-              </Link>
-            ) : (
-              item.recipeTitle
-            )}
-          </span>
-        ) : null}
+      <span
+        className="min-w-0 flex-1 break-words text-xl leading-snug"
+        style={{ fontFamily: DISPLAY_FONT }}
+      >
+        {item.name}
       </span>
 
       {qtyLabel ? (
-        <span className="pointer-events-none shrink-0 text-right text-[1.03rem] tabular-nums text-[var(--ink-faint)]">
+        <span className="shrink-0 text-right text-[1.03rem] tabular-nums text-[var(--ink-faint)]">
           {qtyLabel}
         </span>
       ) : null}
-
-      {item.checked ? (
-        <span className="pointer-events-none shrink-0 whitespace-nowrap rounded-full bg-[var(--accent-soft)] px-2.5 py-[3px] text-[0.91rem] font-bold uppercase tracking-[0.04em] text-[var(--accent-dark)]">
-          Got it
-        </span>
-      ) : null}
-
-      <button
-        type="button"
-        onClick={onRemove}
-        aria-label={`Remove ${item.name}`}
-        className="relative z-10 shrink-0 rounded-md px-1.5 py-1 text-[1.19rem] leading-none text-[var(--ink-faint)] opacity-55 outline-none transition-opacity focus-visible:opacity-100 focus-visible:ring-2 focus-visible:ring-[var(--accent)] lg:opacity-0 lg:group-hover:opacity-100 lg:hover:text-[var(--danger)]"
-      >
-        ✕
-      </button>
     </li>
   );
 }
