@@ -109,27 +109,38 @@ export function RecipeSearch({ recipes }: { recipes: Recipe[] }) {
     writeBrowseState({ query, proteins, avoidAllergens, favouritesOnly });
   }, [restored, query, proteins, avoidAllergens, favouritesOnly]);
 
-  // Restore scroll once the filtered list has rendered, then track it.
+  // Restore scroll once the filtered list has rendered. Next.js and late
+  // layout (images, fonts) can reset or clamp the scroll after mount, so keep
+  // re-applying it for a short window unless the user starts scrolling.
   useEffect(() => {
     if (!restored) return;
     const y = readBrowseState()?.scrollY;
     let frame = 0;
+    const cancel = () => cancelAnimationFrame(frame);
     if (typeof y === "number" && y > 0) {
-      frame = requestAnimationFrame(() => window.scrollTo(0, y));
+      const until = performance.now() + 800;
+      const apply = () => {
+        if (Math.abs(window.scrollY - y) > 1) window.scrollTo(0, y);
+        if (performance.now() < until) frame = requestAnimationFrame(apply);
+      };
+      frame = requestAnimationFrame(apply);
+      window.addEventListener("wheel", cancel, { passive: true, once: true });
+      window.addEventListener("touchstart", cancel, {
+        passive: true,
+        once: true,
+      });
     }
-    let tracking = true;
-    function onScroll() {
-      if (tracking) writeBrowseState({ scrollY: window.scrollY });
-    }
-    // Skip scroll events fired by the restore itself resetting to the top.
-    const start = setTimeout(() => {
-      window.addEventListener("scroll", onScroll, { passive: true });
-    }, 100);
+    // Save the position at the moment of leaving. Tracking scroll events
+    // instead would capture the reset to 0 that happens during navigation.
+    const save = () => writeBrowseState({ scrollY: window.scrollY });
+    window.addEventListener("click", save, true);
+    window.addEventListener("pagehide", save);
     return () => {
-      tracking = false;
-      cancelAnimationFrame(frame);
-      clearTimeout(start);
-      window.removeEventListener("scroll", onScroll);
+      cancel();
+      window.removeEventListener("wheel", cancel);
+      window.removeEventListener("touchstart", cancel);
+      window.removeEventListener("click", save, true);
+      window.removeEventListener("pagehide", save);
     };
   }, [restored]);
 
