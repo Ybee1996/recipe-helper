@@ -18,6 +18,13 @@ export const EXTRACT_IMPORT_RULES =
   "When the method describes how an ingredient is prepared (for example crushed garlic, grated ginger, " +
   "minced onion, diced tomatoes), include that preparation in the ingredient name.";
 
+export const EXTRACT_METHOD_RULES =
+  "The method must be complete and faithful to the source. Include EVERY step, in the original order, " +
+  "and never merge, skip, summarise or shorten steps. Copy each step's full wording into its text field, " +
+  "keeping all details: temperatures, times, quantities, equipment, doneness cues, resting/chilling times, " +
+  "and tips. If the source numbers or letters sub-steps (1a, a), b)), keep them inside that step's text. " +
+  "Do not invent steps. If a step has no heading in the source, use a short descriptive title for it.";
+
 function clipTitle(title: string, max = EXTRACT_TITLE_MAX): string {
   const trimmed = title.trim();
   if (trimmed.length <= max) return trimmed;
