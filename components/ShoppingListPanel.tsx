@@ -286,7 +286,8 @@ function formatSuggestQty(qty: string): string {
 }
 
 const SWIPE_LOCK_PX = 8;
-const SWIPE_REMOVE_PX = 90;
+const SWIPE_REMOVE_PX = 110;
+const EXIT_MS = 180;
 
 type SwipeState = {
   pointerId: number;
@@ -305,11 +306,22 @@ function ShoppingRow({
   const qty = item.qty.trim();
   const qtyLabel = qty ? (/^\d+(\.\d+)?$/.test(qty) ? `${qty}×` : qty) : "";
   const swipe = useRef<SwipeState | null>(null);
+  const rowRef = useRef<HTMLLIElement>(null);
   const [dx, setDx] = useState(0);
   const [dragging, setDragging] = useState(false);
+  const [exiting, setExiting] = useState(false);
+
+  const armed = dx >= SWIPE_REMOVE_PX;
+
+  function commitRemove() {
+    if (exiting) return;
+    setExiting(true);
+    setDx(rowRef.current?.offsetWidth ?? 400);
+    window.setTimeout(onRemove, EXIT_MS);
+  }
 
   function onPointerDown(e: React.PointerEvent<HTMLLIElement>) {
-    if (e.pointerType === "mouse" && e.button !== 0) return;
+    if (exiting || (e.pointerType === "mouse" && e.button !== 0)) return;
     swipe.current = {
       pointerId: e.pointerId,
       startX: e.clientX,
@@ -341,8 +353,8 @@ function ShoppingRow({
     if (!state || state.pointerId !== e.pointerId) return;
     swipe.current = null;
     setDragging(false);
-    if (!cancelled && state.locked === "x" && dx >= SWIPE_REMOVE_PX) {
-      onRemove();
+    if (!cancelled && state.locked === "x" && armed) {
+      commitRemove();
       return;
     }
     setDx(0);
@@ -351,12 +363,13 @@ function ShoppingRow({
   function onKeyDown(e: React.KeyboardEvent<HTMLLIElement>) {
     if (e.key === "Delete" || e.key === "Backspace" || e.key === "ArrowRight") {
       e.preventDefault();
-      onRemove();
+      commitRemove();
     }
   }
 
   return (
     <li
+      ref={rowRef}
       tabIndex={0}
       aria-label={qty ? `${qty} ${item.name}` : item.name}
       onPointerDown={onPointerDown}
@@ -364,25 +377,57 @@ function ShoppingRow({
       onPointerUp={(e) => endSwipe(e, false)}
       onPointerCancel={(e) => endSwipe(e, true)}
       onKeyDown={onKeyDown}
-      style={{
-        transform: dx ? `translateX(${dx}px)` : undefined,
-        opacity: dx ? Math.max(0.35, 1 - dx / 300) : undefined,
-        transition: dragging ? "none" : "transform 180ms ease, opacity 180ms ease",
-      }}
-      className="flex touch-pan-y select-none items-center gap-2.5 rounded-[10px] px-2.5 py-3 outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)] lg:hover:bg-[var(--tint)]"
+      className="relative touch-pan-y select-none overflow-hidden rounded-[10px] outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]"
     >
-      <span
-        className="min-w-0 flex-1 break-words text-xl leading-snug"
-        style={{ fontFamily: DISPLAY_FONT }}
+      <div
+        aria-hidden
+        className="absolute inset-0 flex items-center bg-[var(--danger)] pl-5 text-white"
+        style={{ visibility: dx > 0 ? "visible" : "hidden" }}
       >
-        {item.name}
-      </span>
+        <svg
+          viewBox="0 0 24 24"
+          width="24"
+          height="24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          style={{
+            opacity: Math.min(1, dx / 48),
+            transform: `scale(${armed ? 1.2 : 0.85})`,
+            transition: "transform 120ms ease",
+          }}
+        >
+          <path d="M3 6h18" />
+          <path d="M8 6V4h8v2" />
+          <path d="M6 6l1 14h10l1-14" />
+          <path d="M10 10v6M14 10v6" />
+        </svg>
+      </div>
 
-      {qtyLabel ? (
-        <span className="shrink-0 text-right text-[1.03rem] tabular-nums text-[var(--ink-faint)]">
-          {qtyLabel}
+      <div
+        className="relative flex items-center gap-2.5 bg-[var(--card)] px-2.5 py-3 lg:hover:bg-[var(--tint)]"
+        style={{
+          transform: dx ? `translateX(${dx}px)` : undefined,
+          transition: dragging
+            ? "none"
+            : `transform ${EXIT_MS}ms ease-out`,
+        }}
+      >
+        <span
+          className="min-w-0 flex-1 break-words text-xl leading-snug"
+          style={{ fontFamily: DISPLAY_FONT }}
+        >
+          {item.name}
         </span>
-      ) : null}
+
+        {qtyLabel ? (
+          <span className="shrink-0 text-right text-[1.03rem] tabular-nums text-[var(--ink-faint)]">
+            {qtyLabel}
+          </span>
+        ) : null}
+      </div>
     </li>
   );
 }
