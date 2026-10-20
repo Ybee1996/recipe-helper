@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useLayoutEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { RecipeCard } from "@/components/RecipeCard";
 import { RecipeGalleryCard } from "@/components/RecipeGalleryCard";
@@ -15,6 +15,36 @@ import { ALLERGEN_LABELS, ALLERGENS } from "@/lib/types";
 type ViewMode = "list" | "gallery";
 
 const VIEW_STORAGE_KEY = "recipe-box-view-mode";
+
+const STATE_STORAGE_KEY = "recipe-box-browse-state";
+
+type BrowseState = {
+  query: string;
+  proteins: Protein[];
+  avoidAllergens: Allergen[];
+  favouritesOnly: boolean;
+  scrollY: number;
+};
+
+function readBrowseState(): Partial<BrowseState> | null {
+  try {
+    const raw = sessionStorage.getItem(STATE_STORAGE_KEY);
+    return raw ? (JSON.parse(raw) as Partial<BrowseState>) : null;
+  } catch {
+    return null;
+  }
+}
+
+function writeBrowseState(patch: Partial<BrowseState>) {
+  try {
+    sessionStorage.setItem(
+      STATE_STORAGE_KEY,
+      JSON.stringify({ ...readBrowseState(), ...patch }),
+    );
+  } catch {
+    // Storage unavailable (private mode, quota): losing the position is fine.
+  }
+}
 
 function isViewMode(value: string | null): value is ViewMode {
   return value === "list" || value === "gallery";
@@ -57,6 +87,51 @@ export function RecipeSearch({ recipes }: { recipes: Recipe[] }) {
     {},
   );
   const [pinnedById, setPinnedById] = useState<Record<string, boolean>>({});
+
+  const [restored, setRestored] = useState(false);
+
+  // Restore filters before first paint so the list doesn't flash unfiltered.
+  useLayoutEffect(() => {
+    const saved = readBrowseState();
+    if (saved) {
+      if (typeof saved.query === "string") setQuery(saved.query);
+      if (Array.isArray(saved.proteins)) setProteins(saved.proteins);
+      if (Array.isArray(saved.avoidAllergens))
+        setAvoidAllergens(saved.avoidAllergens);
+      if (typeof saved.favouritesOnly === "boolean")
+        setFavouritesOnly(saved.favouritesOnly);
+    }
+    setRestored(true);
+  }, []);
+
+  useEffect(() => {
+    if (!restored) return;
+    writeBrowseState({ query, proteins, avoidAllergens, favouritesOnly });
+  }, [restored, query, proteins, avoidAllergens, favouritesOnly]);
+
+  // Restore scroll once the filtered list has rendered, then track it.
+  useEffect(() => {
+    if (!restored) return;
+    const y = readBrowseState()?.scrollY;
+    let frame = 0;
+    if (typeof y === "number" && y > 0) {
+      frame = requestAnimationFrame(() => window.scrollTo(0, y));
+    }
+    let tracking = true;
+    function onScroll() {
+      if (tracking) writeBrowseState({ scrollY: window.scrollY });
+    }
+    // Skip scroll events fired by the restore itself resetting to the top.
+    const start = setTimeout(() => {
+      window.addEventListener("scroll", onScroll, { passive: true });
+    }, 100);
+    return () => {
+      tracking = false;
+      cancelAnimationFrame(frame);
+      clearTimeout(start);
+      window.removeEventListener("scroll", onScroll);
+    };
+  }, [restored]);
 
   const recipesWithFavourites = useMemo(
     () =>
