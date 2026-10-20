@@ -288,6 +288,7 @@ function formatSuggestQty(qty: string): string {
 const SWIPE_LOCK_PX = 8;
 const SWIPE_REMOVE_PX = 110;
 const EXIT_MS = 180;
+const COLLAPSE_MS = 160;
 
 type SwipeState = {
   pointerId: number;
@@ -310,14 +311,18 @@ function ShoppingRow({
   const [dx, setDx] = useState(0);
   const [dragging, setDragging] = useState(false);
   const [exiting, setExiting] = useState(false);
+  const [height, setHeight] = useState<number | null>(null);
 
   const armed = dx >= SWIPE_REMOVE_PX;
 
   function commitRemove() {
     if (exiting) return;
+    const row = rowRef.current;
     setExiting(true);
-    setDx(rowRef.current?.offsetWidth ?? 400);
-    window.setTimeout(onRemove, EXIT_MS);
+    setHeight(row?.offsetHeight ?? null);
+    setDx(row?.offsetWidth ?? 400);
+    window.setTimeout(() => setHeight(0), EXIT_MS);
+    window.setTimeout(onRemove, EXIT_MS + COLLAPSE_MS);
   }
 
   function onPointerDown(e: React.PointerEvent<HTMLLIElement>) {
@@ -377,6 +382,10 @@ function ShoppingRow({
       onPointerUp={(e) => endSwipe(e, false)}
       onPointerCancel={(e) => endSwipe(e, true)}
       onKeyDown={onKeyDown}
+      style={{
+        height: height ?? undefined,
+        transition: `height ${COLLAPSE_MS}ms ease-in-out`,
+      }}
       className="relative touch-pan-y select-none overflow-hidden rounded-[10px] outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]"
     >
       <div
