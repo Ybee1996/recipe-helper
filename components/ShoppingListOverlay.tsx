@@ -35,9 +35,9 @@ export function ShoppingListTrigger({
   className?: string;
   iconSize?: number;
 }) {
-  const { listOpen, toggleList, uncheckedCount } = useShoppingList();
+  const { listOpen, toggleList, itemCount } = useShoppingList();
   const { calendarOpen, closeCalendar } = useCalendar();
-  const count = uncheckedCount > 99 ? "99+" : uncheckedCount;
+  const count = itemCount > 99 ? "99+" : itemCount;
 
   function onToggle(e: React.MouseEvent) {
     e.preventDefault();
@@ -62,7 +62,7 @@ export function ShoppingListTrigger({
       >
         <BasketIcon size={17} />
         Shopping list
-        {uncheckedCount > 0 ? (
+        {itemCount > 0 ? (
           <span className="ml-auto grid h-5 min-w-5 place-items-center rounded-full bg-[var(--accent)] px-1 text-[0.66rem] font-bold leading-none text-white">
             {count}
           </span>
@@ -79,9 +79,9 @@ export function ShoppingListTrigger({
       aria-controls={SHOPPING_LIST_DIALOG_ID}
       aria-haspopup="dialog"
       aria-label={
-        uncheckedCount === 0
+        itemCount === 0
           ? "Shopping list"
-          : `Shopping list, ${uncheckedCount} item${uncheckedCount === 1 ? "" : "s"}`
+          : `Shopping list, ${itemCount} item${itemCount === 1 ? "" : "s"}`
       }
       className={`relative z-10 outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)] ${
         listOpen ? "text-[var(--accent)]" : "text-[var(--muted)]"
@@ -89,7 +89,7 @@ export function ShoppingListTrigger({
     >
       <BasketIcon
         size={iconSize}
-        count={uncheckedCount > 0 ? count : undefined}
+        count={itemCount > 0 ? count : undefined}
       />
     </button>
   );

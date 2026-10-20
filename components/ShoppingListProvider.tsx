@@ -27,7 +27,7 @@ import { recordShoppingHistory } from "@/lib/shopping-history";
 
 interface ShoppingListContextValue {
   items: ShoppingItem[];
-  uncheckedCount: number;
+  itemCount: number;
   listOpen: boolean;
   openList: () => void;
   closeList: () => void;
@@ -38,8 +38,6 @@ interface ShoppingListContextValue {
   removeByRecipe: (recipeId: string) => void;
   removeByRecipeName: (recipeId: string, name: string) => void;
   updateItemQtys: (updates: { id: string; qty: string }[]) => void;
-  toggleItem: (id: string) => void;
-  clearChecked: () => void;
   clearAll: () => void;
 }
 
@@ -231,35 +229,10 @@ export function ShoppingListProvider({
     [persist, sendOp],
   );
 
-  const toggleItem = useCallback(
-    (id: string) => {
-      const current = itemsRef.current.find((item) => item.id === id);
-      if (!current) return;
-      const checked = !current.checked;
-      persist(
-        itemsRef.current.map((item) =>
-          item.id === id ? { ...item, checked } : item,
-        ),
-      );
-      sendOp({ op: "setChecked", id, checked });
-    },
-    [persist, sendOp],
-  );
-
-  const clearChecked = useCallback(() => {
-    persist(itemsRef.current.filter((item) => !item.checked));
-    sendOp({ op: "clearChecked" });
-  }, [persist, sendOp]);
-
   const clearAll = useCallback(() => {
     persist([]);
     sendOp({ op: "clearAll" });
   }, [persist, sendOp]);
-
-  const uncheckedCount = useMemo(
-    () => items.filter((item) => !item.checked).length,
-    [items],
-  );
 
   const openList = useCallback(() => setListOpen(true), []);
   const closeList = useCallback(() => setListOpen(false), []);
@@ -268,7 +241,7 @@ export function ShoppingListProvider({
   const value = useMemo(
     () => ({
       items,
-      uncheckedCount,
+      itemCount: items.length,
       listOpen,
       openList,
       closeList,
@@ -279,13 +252,10 @@ export function ShoppingListProvider({
       removeByRecipe,
       removeByRecipeName,
       updateItemQtys,
-      toggleItem,
-      clearChecked,
       clearAll,
     }),
     [
       items,
-      uncheckedCount,
       listOpen,
       openList,
       closeList,
@@ -296,8 +266,6 @@ export function ShoppingListProvider({
       removeByRecipe,
       removeByRecipeName,
       updateItemQtys,
-      toggleItem,
-      clearChecked,
       clearAll,
     ],
   );
